@@ -14,6 +14,7 @@ import android.Manifest
 import android.provider.ContactsContract
 import android.database.MatrixCursor
 import android.content.ContentResolver
+import kotlinx.coroutines.runBlocking
 
 class ContactsHandlerTest {
     private val context = mockk<Context>()
@@ -21,7 +22,7 @@ class ContactsHandlerTest {
     private val handler = ContactsHandler(context)
 
     @Test
-    fun `handleSearch returns error when permission missing`() {
+    fun `handleSearch returns error when permission missing`() = runBlocking {
         mockkStatic(ContextCompat::class)
         every { ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) } returns PackageManager.PERMISSION_DENIED
 
@@ -33,7 +34,7 @@ class ContactsHandlerTest {
     }
 
     @Test
-    fun `handleSearch returns contacts when permission granted`() {
+    fun `handleSearch returns contacts when permission granted`() = runBlocking {
         mockkStatic(ContextCompat::class)
         every { context.contentResolver } returns contentResolver
         every { ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) } returns PackageManager.PERMISSION_GRANTED

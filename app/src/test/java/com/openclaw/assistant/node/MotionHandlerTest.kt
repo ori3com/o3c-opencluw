@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import android.content.pm.PackageManager
 import android.Manifest
 import android.hardware.SensorManager
+import kotlinx.coroutines.runBlocking
 
 class MotionHandlerTest {
     private val context = mockk<Context>(relaxed = true)
@@ -24,7 +25,7 @@ class MotionHandlerTest {
     private val handler by lazy { MotionHandler(context) }
 
     @Test
-    fun `handleActivity returns error when permission missing`() {
+    fun `handleActivity returns error when permission missing`() = runBlocking {
         mockkStatic(ContextCompat::class)
         every { ContextCompat.checkSelfPermission(context, Manifest.permission.ACTIVITY_RECOGNITION) } returns PackageManager.PERMISSION_DENIED
 
@@ -36,7 +37,7 @@ class MotionHandlerTest {
     }
 
     @Test
-    fun `handleActivity returns activity when permission granted`() {
+    fun `handleActivity returns activity when permission granted`() = runBlocking {
         mockkStatic(ContextCompat::class)
         every { ContextCompat.checkSelfPermission(context, Manifest.permission.ACTIVITY_RECOGNITION) } returns PackageManager.PERMISSION_GRANTED
 

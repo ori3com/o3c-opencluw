@@ -748,8 +748,9 @@ private fun FinalCheckStep(
 
 @Composable
 private fun PairingGuideBlock(deviceId: String?) {
+    val context = LocalContext.current
     val approveCmd = if (deviceId != null) {
-        "openclaw devices approve $deviceId"
+        context.getString(R.string.approve_command_format, deviceId)
     } else {
         "openclaw devices approve <RequestId>"
     }

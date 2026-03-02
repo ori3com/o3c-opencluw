@@ -220,7 +220,9 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="save">Enregistrer</string>
     <string name="operator_offline_title">Opérateur hors ligne / Autorisation requise</string>
     <string name="operator_offline_message">Votre appareil est connecté, mais l\'IA n\'est pas autorisée à le faire fonctionner.\n\nVeuillez exécuter la commande suivante sur votre serveur pour accorder l\'accès à l\'opérateur :</string>
-    <string name="operator_offline_command">openclaw devices approve %s</string>
+    <string name="operator_offline_command">openclaw devices approve $(openclaw devices list --json | python3 -c \"import sys, json; print(next(d[\'requestId\'] for d in json.load(sys.stdin) if d.get(\'deviceId\') == \'%s\'))\")</string>
+    <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | python3 -c \"import sys, json; print(next(d[\'requestId\'] for d in json.load(sys.stdin) if d.get(\'deviceId\') == \'%s\'))\")</string>
+    <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | python3 -c \"import sys, json; print(next(d[\'requestId\'] for d in json.load(sys.stdin) if d.get(\'deviceId\') == \'%s\'))\")</string>
     <string name="operator_offline_copy">Copier la commande</string>
     <string name="operator_offline_copied">Commande copiée dans le presse-papiers</string>
     <string name="operator_offline_action">Exécuter sur le serveur</string>

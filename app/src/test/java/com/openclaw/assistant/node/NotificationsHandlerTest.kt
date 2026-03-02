@@ -11,6 +11,7 @@ import android.service.notification.StatusBarNotification
 import io.mockk.unmockkStatic
 import android.provider.Settings
 import android.content.ContentResolver
+import kotlinx.coroutines.runBlocking
 
 class NotificationsHandlerTest {
     private val context = mockk<Context>()
@@ -19,7 +20,7 @@ class NotificationsHandlerTest {
     private val handler = NotificationsHandler(context, notificationManager)
 
     @Test
-    fun `handleList returns error when service disabled`() {
+    fun `handleList returns error when service disabled`() = runBlocking {
         every { context.contentResolver } returns contentResolver
         every { context.packageName } returns "com.openclaw.assistant"
         mockkStatic(Settings.Secure::class)
@@ -33,7 +34,7 @@ class NotificationsHandlerTest {
     }
 
     @Test
-    fun `handleList returns notifications when service enabled`() {
+    fun `handleList returns notifications when service enabled`() = runBlocking {
         every { context.contentResolver } returns contentResolver
         every { context.packageName } returns "com.openclaw.assistant"
         mockkStatic(Settings.Secure::class)

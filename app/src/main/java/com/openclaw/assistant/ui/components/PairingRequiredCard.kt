@@ -31,8 +31,8 @@ fun PairingRequiredCard(deviceId: String, displayName: String = "") {
     val nodeRuntime = remember { (context.applicationContext as OpenClawApplication).nodeRuntime }
     val clipboardManager = remember { context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager }
 
-    val approveCommand = "openclaw devices approve $deviceId"
-    val rejectCommand = "openclaw devices reject $deviceId"
+    val approveCommand = stringResource(R.string.approve_command_format, deviceId)
+    val rejectCommand = stringResource(R.string.reject_command_format, deviceId)
 
     var expanded by remember { mutableStateOf(false) }
 

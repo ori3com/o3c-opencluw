@@ -793,7 +793,7 @@ fun MainScreen(
 @Composable
 fun OperatorOfflineCard(deviceId: String, displayName: String = "") {
     val context = LocalContext.current
-    val command = "openclaw devices approve $deviceId"
+    val command = context.getString(R.string.operator_offline_command, deviceId)
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(

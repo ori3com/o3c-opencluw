@@ -14,6 +14,7 @@ import android.Manifest
 import android.provider.CalendarContract
 import android.database.MatrixCursor
 import android.content.ContentResolver
+import kotlinx.coroutines.runBlocking
 
 class CalendarHandlerTest {
     private val context = mockk<Context>()
@@ -21,7 +22,7 @@ class CalendarHandlerTest {
     private val handler = CalendarHandler(context)
 
     @Test
-    fun `handleEvents returns error when permission missing`() {
+    fun `handleEvents returns error when permission missing`() = runBlocking {
         mockkStatic(ContextCompat::class)
         every { ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) } returns PackageManager.PERMISSION_DENIED
 
@@ -33,7 +34,7 @@ class CalendarHandlerTest {
     }
 
     @Test
-    fun `handleEvents returns events when permission granted`() {
+    fun `handleEvents returns events when permission granted`() = runBlocking {
         mockkStatic(ContextCompat::class)
         every { context.contentResolver } returns contentResolver
         every { ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) } returns PackageManager.PERMISSION_GRANTED

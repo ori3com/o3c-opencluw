@@ -219,7 +219,9 @@
     <string name="save">節省</string>
     <string name="operator_offline_title">操作員離線/需要許可</string>
     <string name="operator_offline_message">您的裝置已連接，但AI缺乏操作權限。 \n\n請在您的伺服器上執行下列命令以授予操作員存取權限：</string>
-    <string name="operator_offline_command">openclaw devices approve %s</string>
+    <string name="operator_offline_command">openclaw devices approve $(openclaw devices list --json | python3 -c \"import sys, json; print(next(d[\'requestId\'] for d in json.load(sys.stdin) if d.get(\'deviceId\') == \'%s\'))\")</string>
+    <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | python3 -c \"import sys, json; print(next(d[\'requestId\'] for d in json.load(sys.stdin) if d.get(\'deviceId\') == \'%s\'))\")</string>
+    <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | python3 -c \"import sys, json; print(next(d[\'requestId\'] for d in json.load(sys.stdin) if d.get(\'deviceId\') == \'%s\'))\")</string>
     <string name="operator_offline_copy">複製指令</string>
     <string name="operator_offline_copied">命令已複製到剪貼簿</string>
     <string name="operator_offline_action">在伺服器上運行</string>

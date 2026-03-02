@@ -15,6 +15,7 @@ import android.os.Build
 import android.provider.MediaStore
 import android.database.MatrixCursor
 import android.content.ContentResolver
+import kotlinx.coroutines.runBlocking
 
 class PhotosHandlerTest {
     private val context = mockk<Context>()
@@ -22,7 +23,7 @@ class PhotosHandlerTest {
     private val handler = PhotosHandler(context)
 
     @Test
-    fun `handleLatest returns error when permission missing`() {
+    fun `handleLatest returns error when permission missing`() = runBlocking {
         mockkStatic(ContextCompat::class)
         // Assume API < 33
         every { ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) } returns PackageManager.PERMISSION_DENIED
@@ -35,7 +36,7 @@ class PhotosHandlerTest {
     }
 
     @Test
-    fun `handleLatest returns photos when permission granted`() {
+    fun `handleLatest returns photos when permission granted`() = runBlocking {
         mockkStatic(ContextCompat::class)
         every { context.contentResolver } returns contentResolver
         every { ContextCompat.checkSelfPermission(context, any()) } returns PackageManager.PERMISSION_GRANTED
