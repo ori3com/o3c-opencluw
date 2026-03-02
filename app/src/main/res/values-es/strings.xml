@@ -220,9 +220,9 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="save">Guardar</string>
     <string name="operator_offline_title">Operador sin conexión/permiso necesario</string>
     <string name="operator_offline_message">Su dispositivo está conectado, pero la IA no tiene permiso para operarlo.\n\nEjecute el siguiente comando en su servidor para otorgar acceso de operador:</string>
-    <string name="operator_offline_command">openclaw devices approve $(openclaw devices list --json | python3 -c \"import sys, json; print(next(d[\'requestId\'] for d in json.load(sys.stdin) if d.get(\'deviceId\') == \'%s\'))\")</string>
-    <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | python3 -c \"import sys, json; print(next(d[\'requestId\'] for d in json.load(sys.stdin) if d.get(\'deviceId\') == \'%s\'))\")</string>
-    <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | python3 -c \"import sys, json; print(next(d[\'requestId\'] for d in json.load(sys.stdin) if d.get(\'deviceId\') == \'%s\'))\")</string>
+    <string name="operator_offline_command">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
+    <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
+    <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
     <string name="operator_offline_copy">Copiar comando</string>
     <string name="operator_offline_copied">Comando copiado al portapapeles</string>
     <string name="operator_offline_action">Ejecutar en el servidor</string>

@@ -89,7 +89,7 @@ The app connects to your OpenClaw server via the Gateway protocol.
 3. Tap **Connect**
 4. If prompted, approve the device on your server:
    ```bash
-   openclaw devices approve $(openclaw devices list --json | python3 -c "import sys, json; print(next(d['requestId'] for d in json.load(sys.stdin) if d.get('deviceId') == '<DEVICE_ID>'))")
+   openclaw devices approve $(openclaw devices list --json | tr '{' '\n' | grep '"deviceId":"<DEVICE_ID>"' | grep -o '"requestId":"[^"]*"' | cut -d'"' -f4)
    ```
 5. Enable **Use Gateway Chat** to route chat through the gateway
 
@@ -283,7 +283,7 @@ MIT License - See [LICENSE](LICENSE) for details.
 3. **Connect** をタップ
 4. ペアリングが必要な場合は、サーバー側で承認：
    ```bash
-   openclaw devices approve $(openclaw devices list --json | python3 -c "import sys, json; print(next(d['requestId'] for d in json.load(sys.stdin) if d.get('deviceId') == '<DEVICE_ID>'))")
+   openclaw devices approve $(openclaw devices list --json | tr '{' '\n' | grep '"deviceId":"<DEVICE_ID>"' | grep -o '"requestId":"[^"]*"' | cut -d'"' -f4)
    ```
 5. **Use Gateway Chat** を有効にするとゲートウェイ経由でチャット
 
