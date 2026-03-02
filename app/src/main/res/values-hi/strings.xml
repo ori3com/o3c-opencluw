@@ -220,9 +220,6 @@
     <string name="save">बचाना</string>
     <string name="operator_offline_title">ऑपरेटर ऑफ़लाइन/अनुमति आवश्यक</string>
     <string name="operator_offline_message">आपका डिवाइस कनेक्ट है, लेकिन AI के पास इसे संचालित करने की अनुमति नहीं है। \n\n ऑपरेटर पहुंच प्रदान करने के लिए कृपया अपने सर्वर पर निम्नलिखित कमांड चलाएं:</string>
-    <string name="operator_offline_command">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
-    <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
-    <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
     <string name="operator_offline_copy">कमांड कॉपी करें</string>
     <string name="operator_offline_copied">कमांड को क्लिपबोर्ड पर कॉपी किया गया</string>
     <string name="operator_offline_action">सर्वर पर चलाएँ</string>

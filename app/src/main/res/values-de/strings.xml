@@ -219,9 +219,6 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="save">Speichern</string>
     <string name="operator_offline_title">Betreiber offline/Berechtigung erforderlich</string>
     <string name="operator_offline_message">Ihr Gerät ist verbunden, aber der KI fehlt die Berechtigung, es zu bedienen.\n\nBitte führen Sie den folgenden Befehl auf Ihrem Server aus, um Bedienerzugriff zu gewähren:</string>
-    <string name="operator_offline_command">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
-    <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
-    <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
     <string name="operator_offline_copy">Befehl kopieren</string>
     <string name="operator_offline_copied">Befehl in die Zwischenablage kopiert</string>
     <string name="operator_offline_action">Auf dem Server ausführen</string>

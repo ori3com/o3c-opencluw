@@ -219,7 +219,6 @@
     <string name="save">保存</string>
     <string name="operator_offline_title">オペレーターオフライン / 権限が必要</string>
     <string name="operator_offline_message">デバイスは接続済みですが、AIに操作権限がありません。\n\nサーバーで以下のコマンドを実行してアクセスを許可してください：</string>
-    <string name="operator_offline_command">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
     <string name="operator_offline_copy">コマンドをコピー</string>
     <string name="operator_offline_copied">コマンドをコピーしました</string>
     <string name="operator_offline_action">サーバーで実行</string>
@@ -253,8 +252,6 @@
     <string name="pairing_copy_command">コマンドをコピー</string>
     <string name="pairing_command_copied">コマンドをクリップボードにコピーしました</string>
     <string name="pairing_device_id">デバイスID: %s</string>
-    <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
-    <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
     <string name="pairing_approve_command">承認コマンドをコピー</string>
     <string name="pairing_reject_command">拒否コマンドをコピー</string>
     <string name="pairing_refresh_status">ステータスを更新</string>
