@@ -57,6 +57,8 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import com.openclaw.assistant.ui.theme.OpenClawAssistantTheme
+import com.openclaw.assistant.ui.components.TalkOrbOverlay
+import com.openclaw.assistant.ui.theme.OpenClawOrange
 
 /**
  * Voice Interaction Session
@@ -771,80 +773,8 @@ fun AssistantUI(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Microphone icon
-            val infiniteTransition = rememberInfiniteTransition(label = "mic_pulse")
-            val baseScale by infiniteTransition.animateFloat(
-                initialValue = 1f,
-                targetValue = if (state == AssistantState.LISTENING) 1.1f else 1f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(1000, easing = LinearEasing),
-                    repeatMode = RepeatMode.Reverse
-                ),
-                label = "base_scale"
-            )
-
-            // Audio level animation
-            // RMS dB usually ranges from roughly -2 (silence) to 10+ (loud speech).
-            // We map this to a scale factor.
-            // Shift -2 to 0: (level + 2)
-            // Divide by expected max roughly 12: ((level + 2) / 12)
-            // Clamp to 0..1 range just in case.
-            val normalizedLevel = ((audioLevel + 2f) / 10f).coerceIn(0f, 1f)
-            
-            // Scale increases up to 1.5x for loud sounds
-            val targetLevelScale = 1f + (normalizedLevel * 0.5f) 
-            
-            val animatedLevelScale by animateFloatAsState(
-                targetValue = if (state == AssistantState.LISTENING) targetLevelScale else 1f,
-                animationSpec = spring(stiffness = Spring.StiffnessMediumLow), // Slightly faster response
-                label = "audio_level_scale"
-            )
-
-            // Combine breathing (baseScale) with voice reaction. 
-            // When speaking loudly, the voice reaction should dominate.
-            val finalScale = if (state == AssistantState.LISTENING) maxOf(baseScale, animatedLevelScale) else 1f
-
-            Box(
-                modifier = Modifier
-                    .size(80.dp)
-                    .graphicsLayer {
-                        scaleX = finalScale
-                        scaleY = finalScale
-                    }
-                    .clip(CircleShape)
-                    .background(
-                        when (state) {
-                            AssistantState.LISTENING -> Color(0xFF4CAF50)
-                            AssistantState.SPEAKING, AssistantState.PREPARING_SPEECH -> Color(0xFF2196F3)
-                            AssistantState.THINKING, AssistantState.PROCESSING -> Color(0xFFFFC107)
-                            AssistantState.ERROR -> Color(0xFFF44336)
-                            else -> Color(0xFF9E9E9E)
-                        }
-                    )
-                    .then(
-                        if (state == AssistantState.SPEAKING || state == AssistantState.PREPARING_SPEECH) {
-                            Modifier.clickable { onInterrupt() }
-                        } else {
-                            Modifier
-                        }
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = if (state == AssistantState.ERROR) Icons.Default.MicOff else Icons.Default.Mic,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(40.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Status text
-            Text(
-                text = when (state) {
+            TalkOrbOverlay(
+                statusText = when (state) {
                     AssistantState.LISTENING -> stringResource(R.string.state_listening)
                     AssistantState.PROCESSING -> stringResource(R.string.state_processing)
                     AssistantState.THINKING -> stringResource(R.string.state_thinking)
@@ -853,11 +783,26 @@ fun AssistantUI(
                     AssistantState.ERROR -> stringResource(R.string.state_error)
                     else -> stringResource(R.string.state_ready)
                 },
-                fontSize = 14.sp,
-                color = Color.Gray
+                isListening = state == AssistantState.LISTENING,
+                isSpeaking = state == AssistantState.SPEAKING,
+                audioLevel = audioLevel,
+                seamColor = when (state) {
+                    AssistantState.LISTENING -> Color(0xFF4CAF50)
+                    AssistantState.SPEAKING, AssistantState.PREPARING_SPEECH -> Color(0xFF2196F3)
+                    AssistantState.THINKING, AssistantState.PROCESSING -> Color(0xFFFFC107)
+                    AssistantState.ERROR -> Color(0xFFF44336)
+                    else -> OpenClawOrange
+                },
+                modifier = Modifier
+                    .padding(vertical = 16.dp)
+                    .then(
+                        if (state == AssistantState.SPEAKING || state == AssistantState.PREPARING_SPEECH) {
+                            Modifier.clickable { onInterrupt() }
+                        } else {
+                            Modifier
+                        }
+                    )
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             // Recognized text (partial results)
             if (partialText.isNotBlank() && state == AssistantState.LISTENING) {
