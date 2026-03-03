@@ -441,6 +441,7 @@
     <string name="diagnostic_app_permissions">App Permissions</string>
     <string name="technical_details">Technical Details:</string>
     <!-- Update Checker -->
+    <string name="canvas">Canvas</string>
     <string name="check_for_updates">Check for Updates</string>
     <string name="checking_update">Checking…</string>
     <string name="update_available">New version (%s) available</string>

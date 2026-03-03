@@ -731,14 +731,30 @@ fun MainScreen(
             Spacer(modifier = Modifier.height(24.dp))
             
             val chatContext = LocalContext.current
-            Button(
-                onClick = { chatContext.startActivity(Intent(chatContext, SessionListActivity::class.java)) },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                shape = RoundedCornerShape(16.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Icon(Icons.AutoMirrored.Filled.Chat, contentDescription = null)
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(stringResource(R.string.open_chat), fontSize = 18.sp, fontWeight = FontWeight.Medium)
+                Button(
+                    onClick = { chatContext.startActivity(Intent(chatContext, SessionListActivity::class.java)) },
+                    modifier = Modifier.weight(1f).height(56.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Icon(Icons.AutoMirrored.Filled.Chat, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.open_chat), fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                }
+
+                Button(
+                    onClick = { chatContext.startActivity(Intent(chatContext, CanvasActivity::class.java)) },
+                    modifier = Modifier.weight(1f).height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                ) {
+                    Icon(Icons.Default.Palette, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.canvas), fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                }
             }
 
             // Legacy warning if ONLY legacy is configured and fails

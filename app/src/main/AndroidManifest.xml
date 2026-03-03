@@ -122,6 +122,12 @@
             android:exported="false"
             android:theme="@style/Theme.OpenClawAssistant" />
 
+        <!-- Canvas Activity -->
+        <activity
+            android:name="com.openclaw.assistant.CanvasActivity"
+            android:exported="false"
+            android:theme="@style/Theme.OpenClawAssistant" />
+
         <!-- Voice Interaction Service (Home button long press) -->
         <service
             android:name="com.openclaw.assistant.service.OpenClawAssistantService"

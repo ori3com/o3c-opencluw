@@ -45,6 +45,10 @@ class CanvasController {
     applyDebugStatus()
   }
 
+  fun detach() {
+    this.webView = null
+  }
+
   fun navigate(url: String) {
     val trimmed = url.trim()
     this.url = if (trimmed.isBlank() || trimmed == "/") null else trimmed
