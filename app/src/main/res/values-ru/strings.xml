@@ -458,4 +458,9 @@
     <string name="voicevox_other_chars">Ещё %1$d персонаж(ей)</string>
     <string name="voicevox_size_approx_mb">Прибл. %1$d МБ</string>
     <string name="voicevox_size_unknown">Неизвестно</string>
+    <!-- Bottom Navigation Tabs -->
+    <string name="tab_nav_home">Главная</string>
+    <string name="tab_nav_chat">Чат</string>
+    <string name="tab_nav_canvas">Canvas</string>
+    <string name="tab_nav_settings">Настройки</string>
 </resources>

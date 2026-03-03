@@ -458,4 +458,9 @@
     <string name="voicevox_other_chars">其他 %1$d 字符</string>
     <string name="voicevox_size_approx_mb">约%1$d MB</string>
     <string name="voicevox_size_unknown">未知</string>
+    <!-- Bottom Navigation Tabs -->
+    <string name="tab_nav_home">主页</string>
+    <string name="tab_nav_chat">聊天</string>
+    <string name="tab_nav_canvas">Canvas</string>
+    <string name="tab_nav_settings">设置</string>
 </resources>
