@@ -32,6 +32,9 @@ class CanvasController {
   @Volatile private var debugStatusTitle: String? = null
   @Volatile private var debugStatusSubtitle: String? = null
 
+  @Volatile var gatewayToken: String? = null
+  @Volatile var gatewayOrigin: String? = null
+
   private val scaffoldAssetUrl = "file:///android_asset/CanvasScaffold/scaffold.html"
 
   private fun clampJpegQuality(quality: Double?): Int {
@@ -39,10 +42,19 @@ class CanvasController {
     return (q * 100.0).toInt().coerceIn(1, 100)
   }
 
+  fun setGatewayAuth(origin: String?, token: String?) {
+    gatewayOrigin = origin
+    gatewayToken = token
+  }
+
   fun attach(webView: WebView) {
     this.webView = webView
     reload()
     applyDebugStatus()
+  }
+
+  fun detach() {
+    webView = null
   }
 
   fun navigate(url: String) {
@@ -79,6 +91,11 @@ class CanvasController {
     }
   }
 
+  private fun authHeaders(): Map<String, String> {
+    val t = gatewayToken?.takeIf { it.isNotBlank() } ?: return emptyMap()
+    return mapOf("Authorization" to "Bearer $t")
+  }
+
   private fun reload() {
     val currentUrl = url
     withWebViewOnMain { wv ->
@@ -91,7 +108,7 @@ class CanvasController {
         if (BuildConfig.DEBUG) {
           Log.d("OpenClawCanvas", "load url: $currentUrl")
         }
-        wv.loadUrl(currentUrl)
+        wv.loadUrl(currentUrl, authHeaders())
       }
     }
   }

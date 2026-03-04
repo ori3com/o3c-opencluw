@@ -495,7 +495,16 @@ fun MainNavHost(
                         onRenameSession     = { id, nm, gw -> sessionListViewModel.renameSession(id, nm, gw) }
                     )
                 }
-                AppTab.Canvas -> com.openclaw.assistant.ui.CanvasScreen()
+                AppTab.Canvas -> {
+                    val context = LocalContext.current
+                    val canvasController = remember(context.applicationContext) {
+                        (context.applicationContext as OpenClawApplication).nodeRuntime.canvas
+                    }
+                    com.openclaw.assistant.ui.CanvasScreen(
+                        canvasController = canvasController,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
                 AppTab.Settings -> {
                     if (showSettingsCredits) {
                         com.openclaw.assistant.ui.settings.CreditsScreen(
