@@ -58,7 +58,8 @@ data class ChatUiState(
     val isNodeChatMode: Boolean = false,
     val pendingGatewayTrust: com.openclaw.assistant.node.NodeRuntime.GatewayTrustPrompt? = null,
     val displayName: String = "",
-    val attachments: List<PendingFileAttachment> = emptyList()
+    val attachments: List<PendingFileAttachment> = emptyList(),
+    val isScreenRecording: Boolean = false
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -218,6 +219,11 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
             viewModelScope.launch {
                 nodeRuntime.displayName.collect { name ->
                     _uiState.update { it.copy(displayName = name) }
+                }
+            }
+            viewModelScope.launch {
+                nodeRuntime.screenRecordActive.collect { active ->
+                    _uiState.update { it.copy(isScreenRecording = active) }
                 }
             }
             viewModelScope.launch {
@@ -424,6 +430,12 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
 
     fun declineGatewayTrust() {
         nodeRuntime.declineGatewayTrustPrompt()
+    }
+
+    fun stopScreenRecording() {
+        if (useNodeChat) {
+            nodeRuntime.stopScreenRecording()
+        }
     }
 
     fun setAgent(agentId: String?) {

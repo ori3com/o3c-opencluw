@@ -176,7 +176,8 @@ class ChatActivity : ComponentActivity() {
                     onAcceptGatewayTrust = { viewModel.acceptGatewayTrust() },
                     onDeclineGatewayTrust = { viewModel.declineGatewayTrust() },
                     onAttachFiles = { viewModel.addAttachments(it) },
-                    onRemoveAttachment = { viewModel.removeAttachment(it) }
+                    onRemoveAttachment = { viewModel.removeAttachment(it) },
+                    onStopScreenRecording = { viewModel.stopScreenRecording() }
                 )
             }
         }
@@ -289,7 +290,8 @@ fun ChatScreen(
     onAcceptGatewayTrust: () -> Unit = {},
     onDeclineGatewayTrust: () -> Unit = {},
     onAttachFiles: (List<PendingFileAttachment>) -> Unit = {},
-    onRemoveAttachment: (String) -> Unit = {}
+    onRemoveAttachment: (String) -> Unit = {},
+    onStopScreenRecording: () -> Unit = {}
 ) {
     var inputText by rememberSaveable { mutableStateOf(initialText) }
     val listState = rememberLazyListState()
@@ -506,6 +508,9 @@ fun ChatScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         contentPadding = PaddingValues(bottom = 16.dp, top = 8.dp)
                     ) {
+                        if (uiState.isScreenRecording) {
+                            item { ScreenRecordingIndicator(onStop = onStopScreenRecording) }
+                        }
                         if (uiState.pendingToolCalls.isNotEmpty()) {
                             item { PendingToolsIndicator(uiState.pendingToolCalls) }
                         }
@@ -804,6 +809,35 @@ fun PreparingSpeechIndicator() {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
             )
+        }
+    }
+}
+
+@Composable
+fun ScreenRecordingIndicator(onStop: () -> Unit) {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .background(MaterialTheme.colorScheme.errorContainer, RoundedCornerShape(16.dp))
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(Icons.Default.Stop, contentDescription = null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onErrorContainer)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                "Screen Recording...",
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onErrorContainer,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            IconButton(onClick = onStop, modifier = Modifier.size(24.dp)) {
+                Icon(Icons.Default.Stop, contentDescription = "Stop Recording", tint = MaterialTheme.colorScheme.onErrorContainer)
+            }
         }
     }
 }
