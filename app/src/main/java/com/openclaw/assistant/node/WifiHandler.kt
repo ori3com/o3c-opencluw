@@ -1,5 +1,6 @@
 package com.openclaw.assistant.node
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.wifi.WifiManager
 import com.openclaw.assistant.gateway.GatewaySession
@@ -8,6 +9,7 @@ import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
+@SuppressLint("MissingPermission")
 class WifiHandler(
   private val context: Context,
   private val json: Json,
