@@ -87,7 +87,7 @@ sealed class AppTab(val route: String, val labelResId: Int, val icon: androidx.c
     object Chat     : AppTab("chat",     R.string.tab_nav_chat,     Icons.AutoMirrored.Filled.Chat)
     object Canvas   : AppTab("canvas",   R.string.tab_nav_canvas,   Icons.Default.Brush)
     object Settings : AppTab("settings", R.string.tab_nav_settings, Icons.Default.Settings)
-    companion object { val ALL = listOf(Home, Chat, Canvas, Settings) }
+    companion object { val ALL by lazy { listOf(Home, Chat, Canvas, Settings) } }
 }
 
 class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
@@ -420,7 +420,14 @@ fun MainNavHost(
     var selectedTab by androidx.compose.runtime.saveable.rememberSaveable(
         stateSaver = androidx.compose.runtime.saveable.Saver(
             save    = { it.route },
-            restore = { route -> AppTab.ALL.find { it.route == route } ?: AppTab.Home }
+            restore = { route ->
+                when (route) {
+                    AppTab.Chat.route     -> AppTab.Chat
+                    AppTab.Canvas.route   -> AppTab.Canvas
+                    AppTab.Settings.route -> AppTab.Settings
+                    else                  -> AppTab.Home
+                }
+            }
         )
     ) { mutableStateOf<AppTab>(AppTab.Home) }
     var showSettingsCredits by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
