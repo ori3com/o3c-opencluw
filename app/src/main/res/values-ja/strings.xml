@@ -463,4 +463,13 @@
     <string name="tab_nav_chat">チャット</string>
     <string name="tab_nav_canvas">Canvas</string>
     <string name="tab_nav_settings">設定</string>
+    <string name="canvas_placeholder_title">Canvas</string>
+    <string name="canvas_placeholder_body">Canvas は AI アシスタントが操作する表示エリアです。チャットでアシスタントに「Canvas に表示して」と依頼してみてください。</string>
+    <string name="canvas_go_to_chat">チャットへ</string>
+    <string name="canvas_chat_hint">Canvas を使ってみよう</string>
+    <string name="canvas_chat_not_connected">Gateway に接続してください</string>
+    <string name="canvas_chat_send">送信</string>
+    <string name="canvas_status_sending">送信中...</string>
+    <string name="canvas_status_thinking">考え中...</string>
+    <string name="canvas_status_tool">ツール使用中...</string>
 </resources>

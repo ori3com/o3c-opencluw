@@ -463,4 +463,13 @@
     <string name="tab_nav_chat">Чат</string>
     <string name="tab_nav_canvas">Canvas</string>
     <string name="tab_nav_settings">Настройки</string>
+    <string name="canvas_placeholder_title">Canvas</string>
+    <string name="canvas_placeholder_body">Canvas — это область отображения, управляемая ИИ-ассистентом. Попросите ассистента в чате показать что-нибудь здесь.</string>
+    <string name="canvas_go_to_chat">Перейти в чат</string>
+    <string name="canvas_chat_hint">Что показать на Canvas?</string>
+    <string name="canvas_chat_not_connected">Подключитесь к Gateway для чата</string>
+    <string name="canvas_chat_send">Отправить</string>
+    <string name="canvas_status_sending">Отправка...</string>
+    <string name="canvas_status_thinking">Размышление...</string>
+    <string name="canvas_status_tool">Использование инструментов...</string>
 </resources>

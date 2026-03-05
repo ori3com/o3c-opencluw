@@ -463,4 +463,13 @@
     <string name="tab_nav_chat">चैट</string>
     <string name="tab_nav_canvas">Canvas</string>
     <string name="tab_nav_settings">सेटिंग्स</string>
+    <string name="canvas_placeholder_title">Canvas</string>
+    <string name="canvas_placeholder_body">Canvas AI असिस्टेंट द्वारा नियंत्रित एक डिस्प्ले क्षेत्र है। Chat में असिस्टेंट से यहाँ कुछ दिखाने के लिए कहें।</string>
+    <string name="canvas_go_to_chat">Chat पर जाएं</string>
+    <string name="canvas_chat_hint">Canvas पर क्या दिखाएं?</string>
+    <string name="canvas_chat_not_connected">चैट करने के लिए Gateway से जुड़ें</string>
+    <string name="canvas_chat_send">भेजें</string>
+    <string name="canvas_status_sending">भेज रहे हैं...</string>
+    <string name="canvas_status_thinking">सोच रहे हैं...</string>
+    <string name="canvas_status_tool">टूल का उपयोग...</string>
 </resources>

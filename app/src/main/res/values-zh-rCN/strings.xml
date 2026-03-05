@@ -463,4 +463,13 @@
     <string name="tab_nav_chat">聊天</string>
     <string name="tab_nav_canvas">Canvas</string>
     <string name="tab_nav_settings">设置</string>
+    <string name="canvas_placeholder_title">Canvas</string>
+    <string name="canvas_placeholder_body">Canvas 是由 AI 助手控制的显示区域。请在聊天中让助手在这里显示一些内容。</string>
+    <string name="canvas_go_to_chat">前往聊天</string>
+    <string name="canvas_chat_hint">在 Canvas 上显示什么？</string>
+    <string name="canvas_chat_not_connected">连接 Gateway 以开始聊天</string>
+    <string name="canvas_chat_send">发送</string>
+    <string name="canvas_status_sending">发送中...</string>
+    <string name="canvas_status_thinking">思考中...</string>
+    <string name="canvas_status_tool">使用工具中...</string>
 </resources>

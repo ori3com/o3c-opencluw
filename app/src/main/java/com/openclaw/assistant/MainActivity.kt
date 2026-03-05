@@ -504,11 +504,13 @@ fun MainNavHost(
                 }
                 AppTab.Canvas -> {
                     val context = LocalContext.current
-                    val canvasController = remember(context.applicationContext) {
-                        (context.applicationContext as OpenClawApplication).nodeRuntime.canvas
+                    val (canvasController, nodeRuntime) = remember(context.applicationContext) {
+                        val nr = (context.applicationContext as OpenClawApplication).nodeRuntime
+                        nr.canvas to nr
                     }
                     com.openclaw.assistant.ui.CanvasScreen(
                         canvasController = canvasController,
+                        nodeRuntime = nodeRuntime,
                         modifier = Modifier.fillMaxSize()
                     )
                 }

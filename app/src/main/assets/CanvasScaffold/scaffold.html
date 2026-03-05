@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw Canvas</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 { margin-bottom: 0.5rem; }
+        p { color: #65676b; }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            background: #e4e6eb;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Canvas</h1>
+        <p>No content loaded</p>
+        <div id="status" class="status-badge">Offline</div>
+    </div>
+    <script>
+        window.__openclaw = {
+            setDebugStatusEnabled: (enabled) => {
+                console.log("Debug Status Enabled:", enabled);
+            },
+            setStatus: (title, subtitle) => {
+                const statusEl = document.getElementById('status');
+                if (statusEl) {
+                    statusEl.textContent = title + (subtitle ? ' - ' + subtitle : '');
+                }
+            }
+        };
+    </script>
+</body>
+</html>

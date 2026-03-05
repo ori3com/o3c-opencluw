@@ -463,4 +463,13 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="tab_nav_chat">Chat</string>
     <string name="tab_nav_canvas">Canvas</string>
     <string name="tab_nav_settings">Ajustes</string>
+    <string name="canvas_placeholder_title">Canvas</string>
+    <string name="canvas_placeholder_body">Canvas es un área de visualización controlada por el asistente de IA. Pide al asistente en el Chat que muestre algo aquí.</string>
+    <string name="canvas_go_to_chat">Ir al Chat</string>
+    <string name="canvas_chat_hint">¿Qué mostrar en Canvas?</string>
+    <string name="canvas_chat_not_connected">Conéctate al Gateway para chatear</string>
+    <string name="canvas_chat_send">Enviar</string>
+    <string name="canvas_status_sending">Enviando...</string>
+    <string name="canvas_status_thinking">Pensando...</string>
+    <string name="canvas_status_tool">Usando herramientas...</string>
 </resources>

@@ -8,6 +8,9 @@ import android.webkit.WebView
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
@@ -35,6 +38,9 @@ class CanvasController {
   @Volatile var gatewayToken: String? = null
   @Volatile var gatewayOrigin: String? = null
 
+  private val _isDefaultState = MutableStateFlow(true)
+  val isDefaultFlow: StateFlow<Boolean> = _isDefaultState.asStateFlow()
+
   private val scaffoldAssetUrl = "file:///android_asset/CanvasScaffold/scaffold.html"
 
   private fun clampJpegQuality(quality: Double?): Int {
@@ -49,6 +55,7 @@ class CanvasController {
 
   fun attach(webView: WebView) {
     this.webView = webView
+    _isDefaultState.value = url == null
     reload()
     applyDebugStatus()
   }
@@ -60,6 +67,7 @@ class CanvasController {
   fun navigate(url: String) {
     val trimmed = url.trim()
     this.url = if (trimmed.isBlank() || trimmed == "/") null else trimmed
+    _isDefaultState.value = this.url == null
     reload()
   }
 
