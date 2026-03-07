@@ -268,8 +268,7 @@ fun SetupGuideScreen(
                 .padding(16.dp)
                 .background(OnboardingSurface, RoundedCornerShape(24.dp))
                 .border(1.dp, OnboardingBorder, RoundedCornerShape(24.dp))
-                .padding(24.dp)
-                .verticalScroll(rememberScrollState()),
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -352,31 +351,35 @@ fun SetupGuideScreen(
 
 @Composable
 private fun WelcomeStep(onNext: () -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Icon(
-            imageVector = Icons.Default.Launch,
-            contentDescription = null,
-            modifier = Modifier.size(80.dp),
-            tint = OnboardingGradientMid
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = stringResource(R.string.setup_guide_title),
-            style = MaterialTheme.typography.headlineMedium,
-            color = OnboardingTextPrimary,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            lineHeight = 40.sp
-        )
-        Spacer(modifier = Modifier.height(32.dp))
+    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                imageVector = Icons.Default.Launch,
+                contentDescription = null,
+                modifier = Modifier.size(80.dp),
+                tint = OnboardingGradientMid
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = stringResource(R.string.setup_guide_title),
+                style = MaterialTheme.typography.headlineMedium,
+                color = OnboardingTextPrimary,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                lineHeight = 40.sp
+            )
+            Spacer(modifier = Modifier.height(32.dp))
 
-        BulletPoint(stringResource(R.string.setup_guide_welcome_bullet_1))
-        BulletPoint(stringResource(R.string.setup_guide_welcome_bullet_2))
-        BulletPoint(stringResource(R.string.setup_guide_welcome_bullet_3))
-        BulletPoint(stringResource(R.string.setup_guide_welcome_bullet_4))
+            BulletPoint(stringResource(R.string.setup_guide_welcome_bullet_1))
+            BulletPoint(stringResource(R.string.setup_guide_welcome_bullet_2))
+            BulletPoint(stringResource(R.string.setup_guide_welcome_bullet_3))
+            BulletPoint(stringResource(R.string.setup_guide_welcome_bullet_4))
 
-        Spacer(modifier = Modifier.weight(1f))
-        Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(32.dp))
+        }
 
         Button(
             onClick = onNext,
@@ -430,7 +433,13 @@ private fun ConnectionStep(
         }
     }
 
-    Column {
+    Column(modifier = Modifier.fillMaxSize()) {
+        // スクロール可能なコンテンツ部分
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+        ) {
         Text(
             text = stringResource(R.string.setup_guide_connection_title),
             style = MaterialTheme.typography.headlineSmall,
@@ -650,16 +659,17 @@ private fun ConnectionStep(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 colors = manualFieldColors
             )
-        }
+        } // end of if/else (SetupCode / Manual)
+        } // end of scrollable Column
 
-        Spacer(modifier = Modifier.height(32.dp))
-
+        // --- 次へボタン・画面下部に固定 ---
         val canContinue = if (mode == ConnectionMode.SetupCode) {
             GatewayConfigUtils.decodeGatewaySetupCode(setupCode) != null
         } else {
             manualHost.isNotBlank() && manualPort.toIntOrNull() != null
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = onNext,
             enabled = canContinue,
@@ -668,7 +678,7 @@ private fun ConnectionStep(
         ) {
             Text(stringResource(R.string.setup_guide_next), fontSize = 18.sp)
         }
-    }
+    } // end of Column(fillMaxSize)
 }
 
 @Composable
@@ -734,7 +744,8 @@ private fun PermissionsStep(onNext: () -> Unit) {
         }
     }
 
-    Column {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())) {
         Text(
             text = stringResource(R.string.setup_guide_permissions_title),
             style = MaterialTheme.typography.headlineSmall,
@@ -800,8 +811,10 @@ private fun PermissionsStep(onNext: () -> Unit) {
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        } // end scrollable Column
 
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = onNext,
             modifier = Modifier.fillMaxWidth().height(56.dp),
@@ -930,7 +943,11 @@ private fun FinalCheckStep(
         }
     }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
         Text(
             text = stringResource(R.string.setup_guide_final_check_title),
             style = MaterialTheme.typography.headlineSmall,
@@ -1043,7 +1060,10 @@ private fun FinalCheckStep(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        } // end of scrollable Column
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         if (isConnected) {
             Button(
@@ -1086,7 +1106,7 @@ private fun FinalCheckStep(
                 }
             }
         }
-    }
+    } // end of Column(fillMaxSize)
 }
 
 @Composable

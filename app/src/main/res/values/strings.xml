@@ -572,10 +572,7 @@
     <string name="permission_summary_format">%1 standard permissions, %2 special access granted</string>
 
     <string name="qr_scan_prompt">Scan QR Code</string>
-<<<<<<< HEAD
-    <string name="qr_scan_desc">Align the QR code within the frame to scan it</string>
-=======
-    <string name="qr_scan_desc">Scan QR</string>
+<string name="qr_scan_desc">Align the QR code within the frame to scan it</string>
     <string name="setup_guide_qr_scan_title">Option 1: Scan QR Code</string>
     <string name="setup_guide_qr_scan_cmd_label">Run this on the gateway host to display a QR code:</string>
     <string name="setup_guide_code_input_title">Option 2: Enter Setup Code</string>
@@ -596,5 +593,4 @@
     <string name="canvas_status_loading">Loading Canvas...</string>
     <string name="canvas_diag_no_canvas">AI did not use Canvas — text response shown below.\nCanvas tools may not be available or enabled.</string>
     <string name="canvas_diag_not_connected">Not connected to Gateway. Connect to allow AI to operate Canvas.</string>
->>>>>>> 9669510 (feat: setup code supports both QR scan and text input with dark-bg visibility fix + i18n for all 8 languages)
 </resources>

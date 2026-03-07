@@ -461,7 +461,6 @@
 
 
     <!-- Onboarding / Permissions Toggles -->
-<<<<<<< HEAD
 <string name="permission_discovery">ディスカバリー</string>
 <string name="permission_discovery_desc">ローカルネットワーク上のデバイスを検索して接続します</string>
 <string name="permission_contacts">連絡先</string>
@@ -477,13 +476,11 @@
 <string name="permission_install_unknown_apps_desc">AIがアプリのアップデートをインストールすることを許可します</string>
 <string name="permission_summary_title">権限の概要</string>
 <string name="permission_summary_format">%1 個の標準権限、%2 個の特別なアクセスが許可されました</string>
-=======
-    <string name="qr_scan_prompt">QRコードをスキャンしてください</string>
+<string name="qr_scan_prompt">QRコードをスキャンしてください</string>
     <string name="setup_guide_qr_scan_title">方法1：QRコードをスキャン</string>
     <string name="setup_guide_qr_scan_cmd_label">QRコードを表示するには、ゲートウェイホストでこれを実行してください:</string>
     <string name="setup_guide_code_input_title">方法2：セットアップコードを入力</string>
     <string name="qr_scan_desc">QRスキャン</string>
->>>>>>> 9669510 (feat: setup code supports both QR scan and text input with dark-bg visibility fix + i18n for all 8 languages)
 
     <!-- Missing translations -->
     <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
@@ -491,7 +488,5 @@
     <string name="credits_support_kofi_button">Support the Developer</string>
     <string name="credits_support_title">開発をサポートする</string>
     <string name="operator_offline_command">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
-    <string name="qr_scan_desc">Align the QR code within the frame to scan it</string>
-    <string name="qr_scan_prompt">Scan QR Code</string>
     <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
 </resources>

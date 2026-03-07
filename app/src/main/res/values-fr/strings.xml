@@ -464,7 +464,6 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 
 
     <!-- Onboarding / Permissions Toggles -->
-<<<<<<< HEAD
 <string name="permission_discovery">Découverte</string>
 <string name="permission_discovery_desc">Trouver et se connecter aux appareils sur votre réseau local</string>
 <string name="permission_contacts">Contacts</string>
@@ -480,7 +479,6 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="permission_install_unknown_apps_desc">Autoriser l\'IA à installer des mises à jour d\'applications</string>
 <string name="permission_summary_title">Résumé des autorisations</string>
 <string name="permission_summary_format">%1 autorisations standard, %2 accès spéciaux accordés</string>
-
     <!-- Missing translations -->
     <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
     <string name="credits_support_description">このアプリが役に立った場合は、Ko-fiでの支援をご検討ください。</string>
@@ -490,17 +488,9 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="qr_scan_desc">Align the QR code within the frame to scan it</string>
     <string name="qr_scan_prompt">Scan QR Code</string>
     <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
-=======
-    <string name="permission_discovery">Découverte</string>
-    <string name="permission_discovery_desc">Trouver et se connecter aux appareils sur votre réseau local</string>
-    <string name="permission_contacts">Contacts</string>
-    <string name="permission_contacts_desc">Autoriser l\'IA à accéder et gérer vos contacts</string>
-    <string name="permission_calendar">Calendrier</string>
-    <string name="qr_scan_prompt">Scanner le code QR</string>
     <string name="setup_guide_qr_scan_title">Option 1 : Scanner le QR code</string>
     <string name="setup_guide_qr_scan_cmd_label">Exécutez ceci sur l\'hôte de la passerelle pour afficher un QR code :</string>
     <string name="setup_guide_code_input_title">Option 2 : Saisir le code de configuration</string>
-    <string name="qr_scan_desc">Scanner QR</string>
     <!-- Bottom Navigation Tabs -->
     <string name="tab_nav_home">Accueil</string>
     <string name="tab_nav_chat">Chat</string>
@@ -521,15 +511,4 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <!-- Capabilities -->
     <string name="none">Aucun</string>
     <string name="capability_motion">Mouvement</string>
-    <string name="permission_calendar_desc">Autoriser l\'IA à voir et gérer vos événements de calendrier</string>
-    <string name="permission_motion">Mouvement et fitness</string>
-    <string name="permission_motion_desc">Requis pour le comptage des pas et la détection d\'activité</string>
-    <string name="permission_special_access">Accès spécial</string>
-    <string name="permission_notification_listener">Écouteur de notifications</string>
-    <string name="permission_notification_listener_desc">Requis pour que l\'IA puisse lire et gérer les notifications</string>
-    <string name="permission_install_unknown_apps">Installer des applications inconnues</string>
-    <string name="permission_install_unknown_apps_desc">Autoriser l\'IA à installer des mises à jour d\'applications</string>
-    <string name="permission_summary_title">Résumé des autorisations</string>
-    <string name="permission_summary_format">%1$d autorisations standard, %2$d accès spéciaux accordés</string>
->>>>>>> 9669510 (feat: setup code supports both QR scan and text input with dark-bg visibility fix + i18n for all 8 languages)
 </resources>

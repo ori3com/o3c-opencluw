@@ -464,7 +464,6 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
 
 
     <!-- Onboarding / Permissions Toggles -->
-<<<<<<< HEAD
 <string name="permission_discovery">Discovery</string>
 <string name="permission_discovery_desc">Find and connect to devices on your local network</string>
 <string name="permission_contacts">Contacts</string>
@@ -480,7 +479,6 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
 <string name="permission_install_unknown_apps_desc">Allow AI to install app updates</string>
 <string name="permission_summary_title">Permissions Summary</string>
 <string name="permission_summary_format">%1 standard permissions, %2 special access granted</string>
-
     <!-- Missing translations -->
     <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
     <string name="credits_support_description">このアプリが役に立った場合は、Ko-fiでの支援をご検討ください。</string>
@@ -490,12 +488,9 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="qr_scan_desc">Align the QR code within the frame to scan it</string>
     <string name="qr_scan_prompt">Scan QR Code</string>
     <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
-=======
-    <string name="qr_scan_prompt">Escanear código QR</string>
     <string name="setup_guide_qr_scan_title">Opción 1: Escanear código QR</string>
     <string name="setup_guide_qr_scan_cmd_label">Ejecuta esto en el host del gateway para mostrar un código QR:</string>
     <string name="setup_guide_code_input_title">Opción 2: Introducir código de configuración</string>
-    <string name="qr_scan_desc">Escanear QR</string>
     <!-- Bottom Navigation Tabs -->
     <string name="tab_nav_home">Inicio</string>
     <string name="tab_nav_chat">Chat</string>
@@ -516,20 +511,4 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <!-- Capabilities -->
     <string name="none">Ninguno</string>
     <string name="capability_motion">Movimiento</string>
-    <string name="permission_discovery">Discovery</string>
-    <string name="permission_discovery_desc">Find and connect to devices on your local network</string>
-    <string name="permission_contacts">Contacts</string>
-    <string name="permission_contacts_desc">Allow AI to access and manage your contacts</string>
-    <string name="permission_calendar">Calendar</string>
-    <string name="permission_calendar_desc">Allow AI to see and manage your calendar events</string>
-    <string name="permission_motion">Motion &amp; Fitness</string>
-    <string name="permission_motion_desc">Required for step counting and activity detection</string>
-    <string name="permission_special_access">Special Access</string>
-    <string name="permission_notification_listener">Notification Listener</string>
-    <string name="permission_notification_listener_desc">Required for AI to read and manage notifications</string>
-    <string name="permission_install_unknown_apps">Install Unknown Apps</string>
-    <string name="permission_install_unknown_apps_desc">Allow AI to install app updates</string>
-    <string name="permission_summary_title">Permissions Summary</string>
-    <string name="permission_summary_format">%1$d standard permissions, %2$d special access granted</string>
->>>>>>> 9669510 (feat: setup code supports both QR scan and text input with dark-bg visibility fix + i18n for all 8 languages)
 </resources>
