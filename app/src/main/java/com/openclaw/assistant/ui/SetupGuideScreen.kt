@@ -502,10 +502,11 @@ private fun ConnectionStep(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 trailingIcon = {
+                    val qrPrompt = stringResource(R.string.qr_scan_prompt)
                     IconButton(onClick = {
                         val options = ScanOptions().apply {
                             setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-                            setPrompt(setupCode) // Show current code as prompt or similar
+                            setPrompt(qrPrompt)
                             setBeepEnabled(false)
                             setOrientationLocked(false)
                         }

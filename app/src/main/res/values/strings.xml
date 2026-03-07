@@ -570,4 +570,8 @@
     <string name="voicevox_other_chars">他%1$dキャラ</string>
     <string name="voicevox_size_approx_mb">約%1$dMB</string>
     <string name="voicevox_size_unknown">不明</string>
+
+    <!-- QR Scanner -->
+    <string name="qr_scan_prompt">Scan QR Code</string>
+    <string name="qr_scan_desc">Scan QR</string>
 </resources>
