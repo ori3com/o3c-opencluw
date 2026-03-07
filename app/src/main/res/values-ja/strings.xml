@@ -267,9 +267,11 @@
 <string name="report_issue_desc">バグの報告や機能のリクエストはこちらから（GitHub）</string>
 <string name="permissions_for_openclaw_title">OpenClawに渡す権限</string>
 <string name="capabilities_title">デバイス機能</string>
+<string name="none">なし</string>
 <string name="capability_camera">カメラ</string>
 <string name="capability_talk">会話</string>
 <string name="capability_location">位置情報</string>
+<string name="capability_motion">モーション</string>
 <string name="diagnostics_title">診断</string>
 <string name="setup_required_hint">設定画面で接続設定を行ってください</string>
 <string name="settings_gateway_title">Gateway接続</string>

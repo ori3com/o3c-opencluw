@@ -311,9 +311,11 @@
     <!-- Device Node & Capabilities -->
     <string name="permissions_for_openclaw_title">Permissions for OpenClaw</string>
     <string name="capabilities_title">Capabilities</string>
+    <string name="none">None</string>
     <string name="capability_camera">Camera</string>
     <string name="capability_talk">Talk</string>
     <string name="capability_location">Location</string>
+    <string name="capability_motion">Motion</string>
     <string name="diagnostics_title">Diagnostics</string>
     <string name="setup_required_hint">Please configure connection in Settings</string>
 
