@@ -412,7 +412,6 @@
     <string name="permission_calendar">カレンダー</string>
     <string name="permission_calendar_desc">AIがカレンダーの予定を確認・管理することを許可します</string>
     <string name="permission_motion">モーションとフィットネス</string>
-    <string name="permission_motion_desc">歩数カウントやアクティビティ検出に必要です</string>
     <string name="permission_special_access">特別なアクセス</string>
     <string name="permission_notification_listener">通知へのアクセス</string>
     <string name="permission_notification_listener_desc">AIが通知を読み取り、管理するために必要です</string>
@@ -476,4 +475,8 @@
     <string name="voicevox_other_chars">他%1$dキャラ</string>
     <string name="voicevox_size_approx_mb">%1$dMBについて</string>
     <string name="voicevox_size_unknown">不明</string>
+    <!-- Capabilities -->
+    <string name="none">なし</string>
+    <string name="capability_motion">モーション</string>
+    <string name="permission_motion_desc">歩数カウントとモーション検知に必要</string>
 </resources>

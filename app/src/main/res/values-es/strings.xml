@@ -467,7 +467,6 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="permission_calendar">Calendario</string>
     <string name="permission_calendar_desc">Permitir a la IA acceder al calendario</string>
     <string name="permission_motion">Movimiento y Fitness</string>
-    <string name="permission_motion_desc">Requerido para podómetro y detección de actividad</string>
     <string name="permission_special_access">Acceso Especial</string>
     <string name="permission_notification_listener">Acceso a Notificaciones</string>
     <string name="permission_notification_listener_desc">Requerido para leer y gestionar notificaciones</string>
@@ -477,4 +476,8 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="permission_summary_format">%1$d estándar, %2$d especial concedidos</string>
     <string name="qr_scan_prompt">Escanear código QR</string>
     <string name="qr_scan_desc">Escanear QR</string>
+    <!-- Capabilities -->
+    <string name="none">Ninguno</string>
+    <string name="capability_motion">Movimiento</string>
+    <string name="permission_motion_desc">Necesario para el conteo de pasos y la detección de movimiento</string>
 </resources>

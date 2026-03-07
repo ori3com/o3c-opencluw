@@ -467,7 +467,6 @@
     <string name="permission_calendar">कैलेंडर</string>
     <string name="permission_calendar_desc">AI को कैलेंडर ईवेंट देखने दें</string>
     <string name="permission_motion">गति और स्वास्थ्य</string>
-    <string name="permission_motion_desc">स्टेप काउंटिंग और एक्टिविटी के लिए आवश्यक</string>
     <string name="permission_special_access">विशेष पहुँच</string>
     <string name="permission_notification_listener">अधिसूचना सुनने वाला</string>
     <string name="permission_notification_listener_desc">AI को सूचनाएं पढ़ने और प्रबंधित करने के लिए आवश्यक</string>
@@ -477,4 +476,8 @@
     <string name="permission_summary_format">%1$d मानक, %2$d विशेष अनुमतियाँ दी गईं</string>
     <string name="qr_scan_prompt">क्यूआर कोड स्कैन करें</string>
     <string name="qr_scan_desc">क्यूआर स्कैन करें</string>
+    <!-- Capabilities -->
+    <string name="none">कोई नहीं</string>
+    <string name="capability_motion">गति</string>
+    <string name="permission_motion_desc">कदम गिनने और गति का पता लगाने के लिए आवश्यक</string>
 </resources>

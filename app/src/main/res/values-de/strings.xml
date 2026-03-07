@@ -466,7 +466,6 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="permission_calendar">Kalender</string>
     <string name="permission_calendar_desc">KI Kalenderzugriff erlauben</string>
     <string name="permission_motion">Bewegung &amp; Fitness</string>
-    <string name="permission_motion_desc">Erforderlich für Schrittzähler und Aktivitäten</string>
     <string name="permission_special_access">Spezieller Zugriff</string>
     <string name="permission_notification_listener">Benachrichtigungszugriff</string>
     <string name="permission_notification_listener_desc">Erforderlich für KI um Benachrichtigungen zu lesen</string>
@@ -476,4 +475,8 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="permission_summary_format">%1$d Standard, %2$d Spezial gewährt</string>
     <string name="qr_scan_prompt">QR-Code scannen</string>
     <string name="qr_scan_desc">QR scannen</string>
+    <!-- Capabilities -->
+    <string name="none">Keine</string>
+    <string name="capability_motion">Bewegung</string>
+    <string name="permission_motion_desc">Erforderlich für Schrittzählung und Bewegungserkennung</string>
 </resources>

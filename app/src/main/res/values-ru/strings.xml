@@ -467,7 +467,6 @@
     <string name="permission_calendar">Календарь</string>
     <string name="permission_calendar_desc">Разрешить ИИ доступ к календарю</string>
     <string name="permission_motion">Движение и фитнес</string>
-    <string name="permission_motion_desc">Требуется для шагомера и активности</string>
     <string name="permission_special_access">Специальный доступ</string>
     <string name="permission_notification_listener">Доступ к уведомлениям</string>
     <string name="permission_notification_listener_desc">Требуется ИИ для чтения уведомлений</string>
@@ -477,4 +476,8 @@
     <string name="permission_summary_format">Обычных: %1$d, Специальных: %2$d</string>
     <string name="qr_scan_prompt">Отсканируйте QR-код</string>
     <string name="qr_scan_desc">Сканировать QR</string>
+    <!-- Capabilities -->
+    <string name="none">Нет</string>
+    <string name="capability_motion">Движение</string>
+    <string name="permission_motion_desc">Требуется для подсчета шагов и обнаружения движения</string>
 </resources>

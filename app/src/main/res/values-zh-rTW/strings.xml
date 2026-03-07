@@ -466,7 +466,6 @@
     <string name="permission_calendar">日曆</string>
     <string name="permission_calendar_desc">允許 AI 檢視和管理您的日曆</string>
     <string name="permission_motion">運動與健身</string>
-    <string name="permission_motion_desc">計步與活動偵測所需</string>
     <string name="permission_special_access">特殊存取權限</string>
     <string name="permission_notification_listener">通知讀取權限</string>
     <string name="permission_notification_listener_desc">AI 讀取和管理通知所需</string>
@@ -476,4 +475,8 @@
     <string name="permission_summary_format">已授予 %1$d 項標準權限，%2$d 項特殊權限</string>
     <string name="qr_scan_prompt">掃描行動條碼</string>
     <string name="qr_scan_desc">掃描 QR</string>
+    <!-- Capabilities -->
+    <string name="none">無</string>
+    <string name="capability_motion">運動</string>
+    <string name="permission_motion_desc">用於計步和運動檢測</string>
 </resources>
