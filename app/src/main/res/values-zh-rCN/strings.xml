@@ -458,4 +458,23 @@
     <string name="voicevox_other_chars">其他 %1$d 字符</string>
     <string name="voicevox_size_approx_mb">约%1$d MB</string>
     <string name="voicevox_size_unknown">未知</string>
+
+    <!-- Onboarding / Permissions Toggles -->
+    <string name="permission_discovery">设备发现</string>
+    <string name="permission_discovery_desc">在本地网络上查找并连接设备</string>
+    <string name="permission_contacts">通讯录</string>
+    <string name="permission_contacts_desc">允许 AI 访问并管理您的联系人</string>
+    <string name="permission_calendar">日历</string>
+    <string name="permission_calendar_desc">允许 AI 查看和管理您的日历</string>
+    <string name="permission_motion">运动与体能</string>
+    <string name="permission_motion_desc">计步和活动检测所需</string>
+    <string name="permission_special_access">特殊访问权限</string>
+    <string name="permission_notification_listener">通知读取权限</string>
+    <string name="permission_notification_listener_desc">AI 读取和管理通知所需</string>
+    <string name="permission_install_unknown_apps">安装未知应用</string>
+    <string name="permission_install_unknown_apps_desc">允许 AI 安装应用更新</string>
+    <string name="permission_summary_title">权限摘要</string>
+    <string name="permission_summary_format">已授予 %1$d 项标准权限，%2$d 项特殊权限</string>
+    <string name="qr_scan_prompt">扫描二维码</string>
+    <string name="qr_scan_desc">扫描二维码</string>
 </resources>

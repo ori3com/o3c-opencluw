@@ -458,4 +458,23 @@
     <string name="voicevox_other_chars">Ещё %1$d персонаж(ей)</string>
     <string name="voicevox_size_approx_mb">Прибл. %1$d МБ</string>
     <string name="voicevox_size_unknown">Неизвестно</string>
+
+    <!-- Onboarding / Permissions Toggles -->
+    <string name="permission_discovery">Обнаружение</string>
+    <string name="permission_discovery_desc">Поиск и подключение к устройствам в локальной сети</string>
+    <string name="permission_contacts">Контакты</string>
+    <string name="permission_contacts_desc">Разрешить ИИ доступ к контактам</string>
+    <string name="permission_calendar">Календарь</string>
+    <string name="permission_calendar_desc">Разрешить ИИ доступ к календарю</string>
+    <string name="permission_motion">Движение и фитнес</string>
+    <string name="permission_motion_desc">Требуется для шагомера и активности</string>
+    <string name="permission_special_access">Специальный доступ</string>
+    <string name="permission_notification_listener">Доступ к уведомлениям</string>
+    <string name="permission_notification_listener_desc">Требуется ИИ для чтения уведомлений</string>
+    <string name="permission_install_unknown_apps">Установка неизвестных приложений</string>
+    <string name="permission_install_unknown_apps_desc">Разрешить ИИ устанавливать обновления</string>
+    <string name="permission_summary_title">Сводка разрешений</string>
+    <string name="permission_summary_format">Обычных: %1$d, Специальных: %2$d</string>
+    <string name="qr_scan_prompt">Отсканируйте QR-код</string>
+    <string name="qr_scan_desc">Сканировать QR</string>
 </resources>

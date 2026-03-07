@@ -457,4 +457,23 @@
     <string name="voicevox_other_chars">其他 %1$d 字符</string>
     <string name="voicevox_size_approx_mb">約%1$dMB</string>
     <string name="voicevox_size_unknown">不清楚</string>
+
+    <!-- Onboarding / Permissions Toggles -->
+    <string name="permission_discovery">裝置發現</string>
+    <string name="permission_discovery_desc">在區域網路尋找並連接裝置</string>
+    <string name="permission_contacts">聯絡人</string>
+    <string name="permission_contacts_desc">允許 AI 存取及管理您的聯絡人</string>
+    <string name="permission_calendar">日曆</string>
+    <string name="permission_calendar_desc">允許 AI 檢視和管理您的日曆</string>
+    <string name="permission_motion">運動與健身</string>
+    <string name="permission_motion_desc">計步與活動偵測所需</string>
+    <string name="permission_special_access">特殊存取權限</string>
+    <string name="permission_notification_listener">通知讀取權限</string>
+    <string name="permission_notification_listener_desc">AI 讀取和管理通知所需</string>
+    <string name="permission_install_unknown_apps">安裝未知的應用程式</string>
+    <string name="permission_install_unknown_apps_desc">允許 AI 安裝應用程式更新</string>
+    <string name="permission_summary_title">權限摘要</string>
+    <string name="permission_summary_format">已授予 %1$d 項標準權限，%2$d 項特殊權限</string>
+    <string name="qr_scan_prompt">掃描行動條碼</string>
+    <string name="qr_scan_desc">掃描 QR</string>
 </resources>

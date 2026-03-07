@@ -457,4 +457,23 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="voicevox_other_chars">Andere %1$d-Zeichen</string>
     <string name="voicevox_size_approx_mb">ca. %1$d MB</string>
     <string name="voicevox_size_unknown">nicht klar</string>
+
+    <!-- Onboarding / Permissions Toggles -->
+    <string name="permission_discovery">Entdeckung</string>
+    <string name="permission_discovery_desc">Lokale Netzwerkgeräte finden und verbinden</string>
+    <string name="permission_contacts">Kontakte</string>
+    <string name="permission_contacts_desc">KI Zugriff auf Kontakte erlauben</string>
+    <string name="permission_calendar">Kalender</string>
+    <string name="permission_calendar_desc">KI Kalenderzugriff erlauben</string>
+    <string name="permission_motion">Bewegung &amp; Fitness</string>
+    <string name="permission_motion_desc">Erforderlich für Schrittzähler und Aktivitäten</string>
+    <string name="permission_special_access">Spezieller Zugriff</string>
+    <string name="permission_notification_listener">Benachrichtigungszugriff</string>
+    <string name="permission_notification_listener_desc">Erforderlich für KI um Benachrichtigungen zu lesen</string>
+    <string name="permission_install_unknown_apps">Unbekannte Apps installieren</string>
+    <string name="permission_install_unknown_apps_desc">KI erlauben App-Updates zu installieren</string>
+    <string name="permission_summary_title">Berechtigungsübersicht</string>
+    <string name="permission_summary_format">%1$d Standard, %2$d Spezial gewährt</string>
+    <string name="qr_scan_prompt">QR-Code scannen</string>
+    <string name="qr_scan_desc">QR scannen</string>
 </resources>

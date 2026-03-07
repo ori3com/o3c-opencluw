@@ -458,4 +458,23 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="voicevox_other_chars">%1$d personaje(s) más</string>
     <string name="voicevox_size_approx_mb">Aprox. %1$d MB</string>
     <string name="voicevox_size_unknown">Desconocido</string>
+
+    <!-- Onboarding / Permissions Toggles -->
+    <string name="permission_discovery">Descubrimiento</string>
+    <string name="permission_discovery_desc">Buscar y conectar dispositivos en la red local</string>
+    <string name="permission_contacts">Contactos</string>
+    <string name="permission_contacts_desc">Permitir a la IA acceder a los contactos</string>
+    <string name="permission_calendar">Calendario</string>
+    <string name="permission_calendar_desc">Permitir a la IA acceder al calendario</string>
+    <string name="permission_motion">Movimiento y Fitness</string>
+    <string name="permission_motion_desc">Requerido para podómetro y detección de actividad</string>
+    <string name="permission_special_access">Acceso Especial</string>
+    <string name="permission_notification_listener">Acceso a Notificaciones</string>
+    <string name="permission_notification_listener_desc">Requerido para leer y gestionar notificaciones</string>
+    <string name="permission_install_unknown_apps">Instalar aplicaciones desconocidas</string>
+    <string name="permission_install_unknown_apps_desc">Permitir a la IA instalar actualizaciones</string>
+    <string name="permission_summary_title">Resumen de Permisos</string>
+    <string name="permission_summary_format">%1$d estándar, %2$d especial concedidos</string>
+    <string name="qr_scan_prompt">Escanear código QR</string>
+    <string name="qr_scan_desc">Escanear QR</string>
 </resources>
