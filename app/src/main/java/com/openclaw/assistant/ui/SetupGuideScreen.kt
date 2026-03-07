@@ -3,10 +3,18 @@ package com.openclaw.assistant.ui
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.os.Build
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -43,7 +51,9 @@ import com.openclaw.assistant.data.SettingsRepository
 import com.openclaw.assistant.ui.components.ConnectionState
 import com.openclaw.assistant.ui.components.StatusIndicator
 import com.openclaw.assistant.ui.GatewayTrustDialog
+import com.openclaw.assistant.ui.theme.*
 import com.openclaw.assistant.utils.GatewayConfigUtils
+import androidx.compose.ui.graphics.Brush
 import kotlinx.coroutines.launch
 
 private enum class SetupStep(val index: Int) {
@@ -56,6 +66,126 @@ private enum class SetupStep(val index: Int) {
 private enum class ConnectionMode {
     SetupCode,
     Manual
+}
+
+private enum class PermissionToggle(
+    val titleRes: Int,
+    val descRes: Int,
+    val icon: ImageVector,
+    val permissions: List<String>
+) {
+    Discovery(
+        R.string.permission_discovery,
+        R.string.permission_discovery_desc,
+        Icons.Default.Wifi,
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listOf(Manifest.permission.NEARBY_WIFI_DEVICES, Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+            listOf(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    ),
+    Location(
+        R.string.capability_location,
+        R.string.permission_location_desc,
+        Icons.Default.LocationOn,
+        listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+    ),
+    Notifications(
+        R.string.permission_notifications,
+        R.string.permission_post_notifications_desc,
+        Icons.Default.Notifications,
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listOf(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            emptyList()
+        }
+    ),
+    Microphone(
+        R.string.permission_record_audio,
+        R.string.permission_record_audio_desc,
+        Icons.Default.Mic,
+        listOf(Manifest.permission.RECORD_AUDIO)
+    ),
+    Camera(
+        R.string.capability_camera,
+        R.string.permission_camera_desc,
+        Icons.Default.PhotoCamera,
+        listOf(Manifest.permission.CAMERA)
+    ),
+    Photos(
+        R.string.capability_screen,
+        R.string.permission_camera_desc, // Placeholder desc: Screen Capture
+        Icons.Default.Photo,
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listOf(Manifest.permission.READ_MEDIA_IMAGES)
+        } else {
+            listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+    ),
+    Contacts(
+        R.string.permission_contacts,
+        R.string.permission_contacts_desc,
+        Icons.Default.Contacts,
+        listOf(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)
+    ),
+    Calendar(
+        R.string.permission_calendar,
+        R.string.permission_calendar_desc,
+        Icons.Default.CalendarMonth,
+        listOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR)
+    ),
+    Motion(
+        R.string.permission_motion,
+        R.string.permission_motion_desc,
+        Icons.Default.DirectionsRun,
+        listOf(Manifest.permission.ACTIVITY_RECOGNITION)
+    ),
+    SMS(
+        R.string.capability_sms,
+        R.string.permission_send_sms_desc,
+        Icons.Default.Sms,
+        listOf(Manifest.permission.SEND_SMS)
+    )
+}
+
+private enum class SpecialAccessToggle(
+    val titleRes: Int,
+    val descRes: Int,
+    val icon: ImageVector
+) {
+    NotificationListener(
+        R.string.permission_notification_listener,
+        R.string.permission_notification_listener_desc,
+        Icons.Default.NotificationsActive
+    ),
+    AppUpdates(
+        R.string.permission_install_unknown_apps,
+        R.string.permission_install_unknown_apps_desc,
+        Icons.Default.SystemUpdate
+    )
+}
+
+private fun hasMotionCapabilities(context: Context): Boolean {
+    val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    return sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null ||
+            sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION) != null
+}
+
+private fun isNotificationListenerEnabled(context: Context): Boolean {
+    val enabledListeners = Settings.Secure.getString(
+        context.contentResolver,
+        "enabled_notification_listeners"
+    )
+    val componentName = "${context.packageName}/com.openclaw.assistant.service.OpenClawNotificationListenerService"
+    return enabledListeners?.contains(componentName) == true
+}
+
+private fun canInstallUnknownApps(context: Context): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        context.packageManager.canRequestPackageInstalls()
+    } else {
+        true
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,15 +212,26 @@ fun SetupGuideScreen(
 
     val totalSteps = SetupStep.entries.size
 
+    val onboardingGradient = Brush.verticalGradient(
+        colors = listOf(OnboardingGradientStart, OnboardingGradientMid, OnboardingGradientEnd)
+    )
+
     Scaffold(
+        modifier = Modifier.background(onboardingGradient),
+        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = OnboardingTextPrimary,
+                    navigationIconContentColor = OnboardingTextPrimary
+                ),
                 title = {
                     Column {
                         Text(
                             text = stringResource(R.string.setup_guide_first_run),
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary
+                            color = OnboardingGradientMid
                         )
                         Text(
                             text = stringResource(R.string.setup_guide_step_format, currentStep.index, totalSteps),
@@ -125,6 +266,9 @@ fun SetupGuideScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
+                .background(OnboardingSurface, RoundedCornerShape(24.dp))
+                .border(1.dp, OnboardingBorder, RoundedCornerShape(24.dp))
+                .padding(24.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -213,12 +357,13 @@ private fun WelcomeStep(onNext: () -> Unit) {
             imageVector = Icons.Default.Launch,
             contentDescription = null,
             modifier = Modifier.size(80.dp),
-            tint = MaterialTheme.colorScheme.primary
+            tint = OnboardingGradientMid
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = stringResource(R.string.setup_guide_title),
             style = MaterialTheme.typography.headlineMedium,
+            color = OnboardingTextPrimary,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             lineHeight = 40.sp
@@ -253,10 +398,10 @@ private fun BulletPoint(text: String) {
             Icons.Default.Check,
             contentDescription = null,
             modifier = Modifier.size(24.dp).padding(top = 2.dp),
-            tint = MaterialTheme.colorScheme.secondary
+            tint = OnboardingGradientMid
         )
         Spacer(modifier = Modifier.width(12.dp))
-        Text(text = text, style = MaterialTheme.typography.bodyLarge)
+        Text(text = text, style = MaterialTheme.typography.bodyLarge, color = OnboardingTextPrimary)
     }
 }
 
@@ -279,10 +424,17 @@ private fun ConnectionStep(
     onManualPasswordChange: (String) -> Unit,
     onNext: () -> Unit
 ) {
+    val scanLauncher = rememberLauncherForActivityResult(ScanContract()) { result ->
+        if (result.contents != null) {
+            onSetupCodeChange(result.contents)
+        }
+    }
+
     Column {
         Text(
             text = stringResource(R.string.setup_guide_connection_title),
             style = MaterialTheme.typography.headlineSmall,
+            color = OnboardingTextPrimary,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -291,17 +443,18 @@ private fun ConnectionStep(
         TabRow(
             selectedTabIndex = if (mode == ConnectionMode.SetupCode) 0 else 1,
             containerColor = Color.Transparent,
+            contentColor = OnboardingGradientMid,
             divider = {}
         ) {
             Tab(
                 selected = mode == ConnectionMode.SetupCode,
                 onClick = { onModeChange(ConnectionMode.SetupCode) },
-                text = { Text(stringResource(R.string.setup_guide_mode_setup_code)) }
+                text = { Text(stringResource(R.string.setup_guide_mode_setup_code), color = if (mode == ConnectionMode.SetupCode) OnboardingGradientMid else OnboardingTextSecondary) }
             )
             Tab(
                 selected = mode == ConnectionMode.Manual,
                 onClick = { onModeChange(ConnectionMode.Manual) },
-                text = { Text(stringResource(R.string.setup_guide_mode_manual)) }
+                text = { Text(stringResource(R.string.setup_guide_mode_manual), color = if (mode == ConnectionMode.Manual) OnboardingGradientMid else OnboardingTextSecondary) }
             )
         }
 
@@ -311,12 +464,13 @@ private fun ConnectionStep(
             Text(
                 text = stringResource(R.string.setup_guide_connection_guide_title),
                 style = MaterialTheme.typography.titleMedium,
+                color = OnboardingTextPrimary,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = stringResource(R.string.setup_guide_connection_guide_cmd_1),
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = OnboardingTextSecondary
             )
             Box(
                 modifier = Modifier
@@ -335,7 +489,7 @@ private fun ConnectionStep(
             Text(
                 text = stringResource(R.string.setup_guide_connection_guide_json_desc),
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = OnboardingTextSecondary
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -346,7 +500,20 @@ private fun ConnectionStep(
                 label = { Text(stringResource(R.string.setup_guide_setup_code_label)) },
                 placeholder = { Text(stringResource(R.string.setup_guide_setup_code_hint)) },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                trailingIcon = {
+                    IconButton(onClick = {
+                        val options = ScanOptions().apply {
+                            setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                            setPrompt(setupCode) // Show current code as prompt or similar
+                            setBeepEnabled(false)
+                            setOrientationLocked(false)
+                        }
+                        scanLauncher.launch(options)
+                    }) {
+                        Icon(Icons.Default.QrCodeScanner, contentDescription = "Scan QR")
+                    }
+                }
             )
 
             val isCodeValid = GatewayConfigUtils.decodeGatewaySetupCode(setupCode) != null
@@ -430,112 +597,165 @@ private fun ConnectionStep(
 @Composable
 private fun PermissionsStep(onNext: () -> Unit) {
     val context = LocalContext.current
-    val permissions = remember {
-        mutableListOf(
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.CAMERA,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.SEND_SMS
-        ).apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                add(Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
+
+    val smsAvailable = remember(context) {
+        context.packageManager?.hasSystemFeature(PackageManager.FEATURE_TELEPHONY) == true
+    }
+    val motionAvailable = remember(context) {
+        hasMotionCapabilities(context)
     }
 
     var permissionsStatus by remember {
-        mutableStateOf(permissions.associateWith {
-            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        mutableStateOf(PermissionToggle.entries.associateWith { toggle ->
+            toggle.permissions.all {
+                ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+            }
+        })
+    }
+
+    var specialAccessStatus by remember {
+        mutableStateOf(SpecialAccessToggle.entries.associateWith { toggle ->
+            when (toggle) {
+                SpecialAccessToggle.NotificationListener -> isNotificationListenerEnabled(context)
+                SpecialAccessToggle.AppUpdates -> canInstallUnknownApps(context)
+            }
         })
     }
 
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { results ->
-        permissionsStatus = results.mapValues { it.value }
+        permissionsStatus = PermissionToggle.entries.associateWith { toggle ->
+            toggle.permissions.all { perm ->
+                results[perm] ?: (ContextCompat.checkSelfPermission(context, perm) == PackageManager.PERMISSION_GRANTED)
+            }
+        }
+    }
+
+    // We can use a LifecycleEventObserver to refresh special access when returning from settings
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                specialAccessStatus = SpecialAccessToggle.entries.associateWith { toggle ->
+                    when (toggle) {
+                        SpecialAccessToggle.NotificationListener -> isNotificationListenerEnabled(context)
+                        SpecialAccessToggle.AppUpdates -> canInstallUnknownApps(context)
+                    }
+                }
+                // Also refresh normal permissions in case they were changed in settings
+                permissionsStatus = PermissionToggle.entries.associateWith { toggle ->
+                    toggle.permissions.all {
+                        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+                    }
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
     Column {
         Text(
             text = stringResource(R.string.setup_guide_permissions_title),
             style = MaterialTheme.typography.headlineSmall,
+            color = OnboardingTextPrimary,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(R.string.setup_guide_permissions_desc),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = OnboardingTextSecondary
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        PermissionItem(
-            icon = Icons.Default.Mic,
-            name = stringResource(R.string.permission_record_audio),
-            desc = stringResource(R.string.permission_record_audio_desc),
-            isGranted = permissionsStatus[Manifest.permission.RECORD_AUDIO] == true
-        )
-        PermissionItem(
-            icon = Icons.Default.PhotoCamera,
-            name = stringResource(R.string.capability_camera),
-            desc = stringResource(R.string.permission_camera_desc),
-            isGranted = permissionsStatus[Manifest.permission.CAMERA] == true
-        )
-        PermissionItem(
-            icon = Icons.Default.LocationOn,
-            name = stringResource(R.string.capability_location),
-            desc = stringResource(R.string.permission_location_desc),
-            isGranted = permissionsStatus[Manifest.permission.ACCESS_FINE_LOCATION] == true || permissionsStatus[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-        )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        PermissionToggle.entries.forEach { toggle ->
+            if (toggle == PermissionToggle.SMS && !smsAvailable) return@forEach
+            if (toggle == PermissionToggle.Motion && !motionAvailable) return@forEach
+            if (toggle == PermissionToggle.Notifications && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return@forEach
+
             PermissionItem(
-                icon = Icons.Default.Notifications,
-                name = stringResource(R.string.permission_notifications),
-                desc = stringResource(R.string.permission_post_notifications_desc),
-                isGranted = permissionsStatus[Manifest.permission.POST_NOTIFICATIONS] == true
+                icon = toggle.icon,
+                name = stringResource(toggle.titleRes),
+                desc = stringResource(toggle.descRes),
+                isGranted = permissionsStatus[toggle] == true,
+                onClick = {
+                    launcher.launch(toggle.permissions.toTypedArray())
+                }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.permission_special_access),
+            style = MaterialTheme.typography.titleMedium,
+            color = OnboardingTextPrimary,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        SpecialAccessToggle.entries.forEach { toggle ->
+            PermissionItem(
+                icon = toggle.icon,
+                name = stringResource(toggle.titleRes),
+                desc = stringResource(toggle.descRes),
+                isGranted = specialAccessStatus[toggle] == true,
+                onClick = {
+                    when (toggle) {
+                        SpecialAccessToggle.NotificationListener -> {
+                            val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+                            context.startActivity(intent)
+                        }
+                        SpecialAccessToggle.AppUpdates -> {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                                    data = Uri.parse("package:${context.packageName}")
+                                }
+                                context.startActivity(intent)
+                            }
+                        }
+                    }
+                }
             )
         }
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { launcher.launch(permissions.toTypedArray()) },
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-        ) {
-            Text(stringResource(R.string.grant_permission), fontSize = 18.sp)
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        TextButton(
             onClick = onNext,
-            modifier = Modifier.fillMaxWidth().height(56.dp)
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(16.dp)
         ) {
             Text(stringResource(R.string.setup_guide_next), fontSize = 18.sp)
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PermissionItem(
     icon: ImageVector,
     name: String,
     desc: String,
-    isGranted: Boolean
+    isGranted: Boolean,
+    onClick: () -> Unit = {}
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .combinedClickable(onClick = onClick)
+            .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
                 .size(48.dp)
                 .background(
-                    if (isGranted) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                    if (isGranted) OnboardingGradientMid.copy(alpha = 0.2f) else OnboardingBorder,
                     CircleShape
                 ),
             contentAlignment = Alignment.Center
@@ -543,13 +763,13 @@ private fun PermissionItem(
             Icon(
                 icon,
                 contentDescription = null,
-                tint = if (isGranted) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+                tint = if (isGranted) OnboardingGradientMid else OnboardingTextSecondary
             )
         }
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = name, fontWeight = FontWeight.Bold)
-            Text(text = desc, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(text = name, fontWeight = FontWeight.Bold, color = OnboardingTextPrimary)
+            Text(text = desc, style = MaterialTheme.typography.bodySmall, color = OnboardingTextSecondary)
         }
         if (isGranted) {
             Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Green)
@@ -617,16 +837,34 @@ private fun FinalCheckStep(
         else -> stringResource(R.string.setup_guide_auth_none)
     }
 
+    val grantedCount = remember(context) {
+        PermissionToggle.entries.count { toggle ->
+            toggle.permissions.all {
+                ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+            }
+        }
+    }
+    val specialCount = remember(context) {
+        SpecialAccessToggle.entries.count { toggle ->
+            when (toggle) {
+                SpecialAccessToggle.NotificationListener -> isNotificationListenerEnabled(context)
+                SpecialAccessToggle.AppUpdates -> canInstallUnknownApps(context)
+            }
+        }
+    }
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = stringResource(R.string.setup_guide_final_check_title),
             style = MaterialTheme.typography.headlineSmall,
+            color = OnboardingTextPrimary,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(R.string.setup_guide_final_check_desc),
             style = MaterialTheme.typography.bodyLarge,
+            color = OnboardingTextPrimary,
             textAlign = TextAlign.Center
         )
 
@@ -665,6 +903,34 @@ private fun FinalCheckStep(
                     text = authLabel,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Permissions Summary
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(OnboardingGradientMid.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
+                .border(1.dp, OnboardingGradientMid.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(Icons.Default.Shield, contentDescription = null, tint = OnboardingGradientMid)
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Text(
+                    text = stringResource(R.string.permission_summary_title),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = OnboardingTextPrimary,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = stringResource(R.string.permission_summary_format, grantedCount, specialCount),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = OnboardingTextSecondary
                 )
             }
         }

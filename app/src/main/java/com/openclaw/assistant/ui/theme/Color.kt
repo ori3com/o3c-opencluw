@@ -11,3 +11,12 @@ val OpenClawBlue = Color(0xFF283593) // Deprecated: Kept for compat but should b
 val OpenClawTextPrimary = Color(0xFFEEEEEE)
 val OpenClawTextSecondary = Color(0xFFB0B0B0)
 val OpenClawError = Color(0xFFD32F2F)
+
+// Onboarding Design Tokens
+val OnboardingGradientStart = Color(0xFFFF5722)
+val OnboardingGradientMid = Color(0xFFFF9100)
+val OnboardingGradientEnd = Color(0xFFFFD600)
+val OnboardingSurface = Color(0xFF1E1E1E)
+val OnboardingBorder = Color(0xFF333333)
+val OnboardingTextPrimary = Color(0xFFFFFFFF)
+val OnboardingTextSecondary = Color(0xFFB0B0B0)

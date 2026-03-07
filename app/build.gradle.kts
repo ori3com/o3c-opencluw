@@ -255,6 +255,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")
+
+    // QR Code Scanning
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }
 
 tasks.withType<Test>().configureEach {

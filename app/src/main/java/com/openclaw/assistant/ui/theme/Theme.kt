@@ -3,6 +3,10 @@ package com.openclaw.assistant.ui.theme
 import android.app.Activity
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import com.openclaw.assistant.R
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -21,6 +25,28 @@ private val OpenClawColorScheme = darkColorScheme(
     onBackground = OpenClawTextPrimary,
     onSurface = OpenClawTextPrimary,
     error = OpenClawError
+)
+
+val Manrope = FontFamily(
+    Font(R.font.manrope, FontWeight.Normal),
+    Font(R.font.manrope, FontWeight.Medium),
+    Font(R.font.manrope, FontWeight.Bold),
+    Font(R.font.manrope, FontWeight.SemiBold)
+)
+
+private val AppTypography = Typography(
+    headlineLarge = Typography().headlineLarge.copy(fontFamily = Manrope),
+    headlineMedium = Typography().headlineMedium.copy(fontFamily = Manrope),
+    headlineSmall = Typography().headlineSmall.copy(fontFamily = Manrope),
+    titleLarge = Typography().titleLarge.copy(fontFamily = Manrope),
+    titleMedium = Typography().titleMedium.copy(fontFamily = Manrope),
+    titleSmall = Typography().titleSmall.copy(fontFamily = Manrope),
+    bodyLarge = Typography().bodyLarge.copy(fontFamily = Manrope),
+    bodyMedium = Typography().bodyMedium.copy(fontFamily = Manrope),
+    bodySmall = Typography().bodySmall.copy(fontFamily = Manrope),
+    labelLarge = Typography().labelLarge.copy(fontFamily = Manrope),
+    labelMedium = Typography().labelMedium.copy(fontFamily = Manrope),
+    labelSmall = Typography().labelSmall.copy(fontFamily = Manrope)
 )
 
 @Composable
@@ -44,7 +70,7 @@ fun OpenClawAssistantTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography(),
+        typography = AppTypography,
         content = content
     )
 }
