@@ -471,6 +471,9 @@
     <string name="canvas_status_sending">傳送中...</string>
     <string name="canvas_status_thinking">思考中...</string>
     <string name="canvas_status_tool">使用工具中...</string>
+    <string name="canvas_status_loading">Canvas 載入中...</string>
+    <string name="canvas_diag_no_canvas">AI 未使用 Canvas — 文字回覆顯示如下。\nCanvas 工具可能不可用或未啟用。</string>
+    <string name="canvas_diag_not_connected">未連接至 Gateway。連接後 AI 可操作 Canvas。</string>
     <!-- Capabilities -->
     <string name="none">無</string>
     <string name="capability_motion">運動</string>

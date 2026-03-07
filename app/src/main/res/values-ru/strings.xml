@@ -472,6 +472,9 @@
     <string name="canvas_status_sending">Отправка...</string>
     <string name="canvas_status_thinking">Размышление...</string>
     <string name="canvas_status_tool">Использование инструментов...</string>
+    <string name="canvas_status_loading">Загрузка Canvas...</string>
+    <string name="canvas_diag_no_canvas">ИИ не использовал Canvas — текстовый ответ показан ниже.\nИнструменты Canvas могут быть недоступны или отключены.</string>
+    <string name="canvas_diag_not_connected">Нет подключения к Gateway. Подключитесь, чтобы ИИ мог управлять Canvas.</string>
     <!-- Capabilities -->
     <string name="none">Нет</string>
     <string name="capability_motion">Движение</string>

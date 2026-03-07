@@ -472,6 +472,9 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="canvas_status_sending">Enviando...</string>
     <string name="canvas_status_thinking">Pensando...</string>
     <string name="canvas_status_tool">Usando herramientas...</string>
+    <string name="canvas_status_loading">Cargando Canvas...</string>
+    <string name="canvas_diag_no_canvas">La IA no usó Canvas — respuesta de texto mostrada abajo.\nEs posible que las herramientas de Canvas no estén disponibles o activadas.</string>
+    <string name="canvas_diag_not_connected">No conectado al Gateway. Conéctate para que la IA pueda operar Canvas.</string>
     <!-- Capabilities -->
     <string name="none">Ninguno</string>
     <string name="capability_motion">Movimiento</string>
