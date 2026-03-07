@@ -31,6 +31,10 @@ class InvokeDispatcherTest {
   private val debugHandler = mockk<DebugHandler>()
   private val appUpdateHandler = mockk<AppUpdateHandler>()
   private val deviceHandler = mockk<DeviceHandler>()
+  private val wifiHandler = mockk<WifiHandler>()
+  private val clipboardHandler = mockk<ClipboardHandler>()
+  private val appHandler = mockk<AppHandler>()
+  private val voiceWakeHandler = mockk<VoiceWakeHandler>()
 
   private fun createDispatcher(
     isForeground: Boolean = true,
@@ -52,6 +56,10 @@ class InvokeDispatcherTest {
     debugHandler = debugHandler,
     appUpdateHandler = appUpdateHandler,
     deviceHandler = deviceHandler,
+    wifiHandler = wifiHandler,
+    clipboardHandler = clipboardHandler,
+    appHandler = appHandler,
+    voiceWakeHandler = voiceWakeHandler,
     isForeground = { isForeground },
     cameraEnabled = { cameraEnabled },
     locationEnabled = { locationEnabled }

@@ -1,38 +1,22 @@
-package com.openclaw.assistant
+package com.openclaw.assistant.ui.components
 
-import android.Manifest
-import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.provider.Settings
-import android.speech.tts.TextToSpeech
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.automirrored.filled.ScreenShare
-import androidx.compose.material.icons.automirrored.filled.StopScreenShare
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -44,508 +28,17 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import com.openclaw.assistant.data.SettingsRepository
-import com.openclaw.assistant.ui.ConnectTabScreen
-import com.openclaw.assistant.ui.VoiceTabScreen
-import com.openclaw.assistant.service.HotwordService
-import com.openclaw.assistant.service.NodeForegroundService
+import com.openclaw.assistant.ChatActivity
+import com.openclaw.assistant.PermissionInfo
+import com.openclaw.assistant.PermissionStatusInfo
+import com.openclaw.assistant.R
 import com.openclaw.assistant.service.OpenClawAssistantService
-import com.openclaw.assistant.ui.GatewayTrustDialog
-import com.openclaw.assistant.speech.TTSUtils
 import com.openclaw.assistant.speech.diagnostics.DiagnosticStatus
 import com.openclaw.assistant.speech.diagnostics.VoiceDiagnostic
-import com.openclaw.assistant.speech.diagnostics.VoiceDiagnostics
-import com.openclaw.assistant.ui.components.CollapsibleSection
-import com.openclaw.assistant.ui.components.ConnectionState
-import com.openclaw.assistant.ui.components.PairingRequiredCard
-import com.openclaw.assistant.ui.components.StatusIndicator
-import com.openclaw.assistant.ui.theme.OpenClawAssistantTheme
-import com.openclaw.assistant.ui.SetupGuideScreen
-
-data class PermissionStatusInfo(
-    val permissionName: String,
-    val isGranted: Boolean
-)
-
-data class PermissionInfo(
-    val permission: String,
-    val nameResId: Int,
-    val descResId: Int
-)
-
-class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
-
-    private lateinit var settings: SettingsRepository
-    private var tts: TextToSpeech? = null
-    private var voiceDiagnostic by mutableStateOf<VoiceDiagnostic?>(null)
-    private var missingPermissions by mutableStateOf<List<PermissionInfo>>(emptyList())
-    private var allPermissionsStatus by mutableStateOf<List<PermissionStatusInfo>>(emptyList())
-    private var pendingHotwordStart = false
-    
-    private lateinit var screenCaptureRequester: ScreenCaptureRequester
-    private lateinit var permissionRequester: PermissionRequester
-
-    private val permissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val recordAudioGranted = permissions[Manifest.permission.RECORD_AUDIO] ?: false
-        val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
-        val coarseGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
-        val fineGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
-        val smsGranted = permissions[Manifest.permission.SEND_SMS] ?: false
-
-        // Auto-enable capabilities when permission is newly granted
-        val runtime = (applicationContext as OpenClawApplication).nodeRuntime
-        if (cameraGranted) {
-            runtime.setCameraEnabled(true)
-        }
-        if (smsGranted) {
-            runtime.setSmsEnabled(true)
-        }
-        if (coarseGranted) {
-            runtime.setLocationMode(com.openclaw.assistant.LocationMode.WhileUsing)
-            runtime.setLocationPreciseEnabled(fineGranted)
-        } else if (fineGranted) {
-            runtime.setLocationPreciseEnabled(true)
-        }
-
-        if (pendingHotwordStart) {
-            pendingHotwordStart = false
-            if (recordAudioGranted) {
-                settings.hotwordEnabled = true
-                HotwordService.start(this)
-                Toast.makeText(this, getString(R.string.hotword_started), Toast.LENGTH_SHORT).show()
-            } else {
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
-                    showPermissionSettingsDialog()
-                } else {
-                    showPermissionDeniedDialog()
-                }
-            }
-        } else {
-            val allGranted = permissions.values.all { it }
-            if (!allGranted) {
-                // Toast.makeText(this, getString(R.string.permissions_required), Toast.LENGTH_SHORT).show()
-            }
-        }
-        refreshMissingPermissions()
-        refreshAllPermissionsStatus()
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        // ComponentActivity does not participate in AppCompat's locale delegation,
-        // so we must manually apply the saved locale here. This guarantees every
-        // new instance (whether created by recreate() or a system config change)
-        // immediately has the correct locale without relying on timing.
-        val tag = try {
-            SettingsRepository.getInstance(newBase).appLanguage.trim()
-        } catch (e: Exception) { "" }
-        if (tag.isNotBlank()) {
-            val locale = java.util.Locale.forLanguageTag(tag)
-            val config = android.content.res.Configuration(newBase.resources.configuration)
-            config.setLocale(locale)
-            super.attachBaseContext(newBase.createConfigurationContext(config))
-        } else {
-            super.attachBaseContext(newBase)
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        settings = SettingsRepository.getInstance(this)
-        
-        screenCaptureRequester = ScreenCaptureRequester(this)
-        permissionRequester = PermissionRequester(this)
-        
-        val runtime = (applicationContext as OpenClawApplication).nodeRuntime
-        runtime.screenRecorder.attachScreenCaptureRequester(screenCaptureRequester)
-        runtime.screenRecorder.attachPermissionRequester(permissionRequester)
-        runtime.attachPermissionRequester(permissionRequester)
-        
-        initializeTTS()
-        // Removed checkPermissions() from onCreate to allow SetupGuideScreen to handle it
-        refreshMissingPermissions()
-        refreshAllPermissionsStatus()
-
-        setContent {
-            OpenClawAssistantTheme {
-                val hasCompletedSetup by remember { mutableStateOf(settings.hasCompletedSetup) }
-                var showSetupGuide by remember { mutableStateOf(!hasCompletedSetup) }
-
-                if (showSetupGuide) {
-                    SetupGuideScreen(
-                        settings = settings,
-                        onComplete = {
-                            showSetupGuide = false
-                            // After setup, we might want to trigger permission refresh or other once
-                            refreshMissingPermissions()
-                            refreshAllPermissionsStatus()
-                        }
-                    )
-                } else {
-                    MainScreen(
-                        settings = settings,
-                        diagnostic = voiceDiagnostic,
-                        missingPermissions = missingPermissions,
-                        allPermissionsStatus = allPermissionsStatus,
-                        onOpenSettings = { startActivity(Intent(this, SettingsActivity::class.java)) },
-                        onOpenAssistantSettings = { openAssistantSettings() },
-                        onRefreshDiagnostics = {
-                            initializeTTS() // Re-init on manual refresh
-                            refreshAllPermissionsStatus()
-                        },
-                        onRequestPermissions = { permissions ->
-                            val ungranted = permissions.filter {
-                                ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
-                            }
-                            if (ungranted.isNotEmpty()) {
-                                permissionLauncher.launch(ungranted.toTypedArray())
-                            }
-                        },
-                        onOpenAppSettings = { openAppSettings() }
-                    )
-                }
-            }
-        }
-    }
-
-    private fun initializeTTS() {
-        tts?.shutdown()
-        Log.e("MainActivity", "Initializing TTS with Google Engine priority...")
-        tts = TextToSpeech(this, this, TTSUtils.GOOGLE_TTS_PACKAGE)
-    }
-
-    override fun onInit(status: Int) {
-        Log.e("MainActivity", "TTS onInit status=$status")
-        if (status == TextToSpeech.SUCCESS) {
-            runDiagnostics()
-        } else {
-            Log.e("MainActivity", "Google TTS failed, trying default...")
-            tts = TextToSpeech(this) { 
-                runDiagnostics()
-            }
-        }
-    }
-
-    private fun runDiagnostics() {
-        voiceDiagnostic = VoiceDiagnostics(this).performFullCheck(tts)
-    }
-
-    private fun checkPermissions() {
-        val permissions = mutableListOf<String>()
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.RECORD_AUDIO)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.POST_NOTIFICATIONS)
-        }
-        if (permissions.isNotEmpty()) permissionLauncher.launch(permissions.toTypedArray())
-    }
-
-    private fun refreshMissingPermissions() {
-        val missing = mutableListOf<PermissionInfo>()
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            missing.add(PermissionInfo(Manifest.permission.RECORD_AUDIO, R.string.permission_record_audio, R.string.permission_record_audio_desc))
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            missing.add(PermissionInfo(Manifest.permission.POST_NOTIFICATIONS, R.string.permission_post_notifications, R.string.permission_post_notifications_desc))
-        }
-        missingPermissions = missing
-    }
-
-    private fun refreshAllPermissionsStatus() {
-        val list = mutableListOf<PermissionStatusInfo>()
-        list.add(PermissionStatusInfo(getString(R.string.permission_record_audio), ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED))
-        list.add(PermissionStatusInfo(getString(R.string.permission_camera), ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED))
-        list.add(PermissionStatusInfo(getString(R.string.permission_location_fine), ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED))
-        list.add(PermissionStatusInfo(getString(R.string.permission_location_coarse), ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED))
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            list.add(PermissionStatusInfo(getString(R.string.permission_notifications), ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED))
-        }
-        allPermissionsStatus = list
-    }
-
-    private fun openAssistantSettings() {
-        try {
-            startActivity(Intent(Settings.ACTION_VOICE_INPUT_SETTINGS))
-        } catch (e: Exception) {
-            try {
-                startActivity(Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS))
-            } catch (e2: Exception) {
-                Toast.makeText(this, getString(R.string.could_not_open_settings), Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    fun toggleHotwordService(enabled: Boolean) {
-        if (enabled) {
-            // Check that a backend connection is configured before enabling wakeword.
-            // The voice interaction session requires gateway or HTTP to communicate with the AI.
-            val runtime = (applicationContext as OpenClawApplication).nodeRuntime
-            val isConnectionConfigured = if (settings.connectionType == SettingsRepository.CONNECTION_TYPE_GATEWAY) {
-                runtime.manualHost.value.isNotBlank()
-            } else {
-                settings.httpUrl.isNotBlank()
-            }
-            if (!isConnectionConfigured) {
-                Toast.makeText(this, getString(R.string.wakeword_requires_connection_error), Toast.LENGTH_LONG).show()
-                return
-            }
-
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                == PackageManager.PERMISSION_GRANTED) {
-                settings.hotwordEnabled = true
-                HotwordService.start(this)
-                Toast.makeText(this, getString(R.string.hotword_started), Toast.LENGTH_SHORT).show()
-            } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
-                // Show rationale dialog before requesting permission
-                showPermissionRationaleDialog()
-            } else {
-                // First-time request: launch directly
-                pendingHotwordStart = true
-                permissionLauncher.launch(arrayOf(Manifest.permission.RECORD_AUDIO))
-            }
-        } else {
-            settings.hotwordEnabled = false
-            HotwordService.stop(this)
-            Toast.makeText(this, getString(R.string.hotword_stopped), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun showPermissionRationaleDialog() {
-        android.app.AlertDialog.Builder(this)
-            .setTitle(getString(R.string.mic_permission_rationale_title))
-            .setMessage(getString(R.string.mic_permission_rationale_message))
-            .setPositiveButton(getString(R.string.grant_permission)) { _, _ ->
-                pendingHotwordStart = true
-                permissionLauncher.launch(arrayOf(Manifest.permission.RECORD_AUDIO))
-            }
-            .setNegativeButton(getString(R.string.cancel), null)
-            .show()
-    }
-
-    private fun showPermissionDeniedDialog() {
-        android.app.AlertDialog.Builder(this)
-            .setTitle(getString(R.string.mic_permission_denied_title))
-            .setMessage(getString(R.string.mic_permission_denied_message))
-            .setPositiveButton(getString(R.string.open_settings)) { _, _ -> openAppSettings() }
-            .setNegativeButton(getString(R.string.cancel), null)
-            .show()
-    }
-
-    private fun showPermissionSettingsDialog() {
-        android.app.AlertDialog.Builder(this)
-            .setTitle(getString(R.string.mic_permission_denied_title))
-            .setMessage(getString(R.string.mic_permission_denied_permanently))
-            .setPositiveButton(getString(R.string.open_settings)) { _, _ -> openAppSettings() }
-            .setNegativeButton(getString(R.string.cancel), null)
-            .show()
-    }
-
-    private fun openAppSettings() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = Uri.fromParts("package", packageName, null)
-        }
-        startActivity(intent)
-    }
-
-    fun isAssistantActive(): Boolean {
-        return try {
-            Settings.Secure.getString(contentResolver, "assistant")?.contains(packageName) == true
-        } catch (e: Exception) { false }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        refreshMissingPermissions()
-        refreshAllPermissionsStatus()
-
-        // Detect app language change made in SettingsActivity and recreate to apply it.
-        // attachBaseContext() ensures the new instance always gets the correct locale,
-        // so a single recreate() is always sufficient (no guard needed).
-        // When savedTag is blank (System Default), compare against Locale.getDefault()
-        // so that reverting from e.g. zh-CN back to system locale also triggers recreate.
-        val savedTag = SettingsRepository.getInstance(this).appLanguage.trim()
-        val displayedLanguage = resources.configuration.locales[0].language
-        val expectedLanguage = if (savedTag.isNotBlank()) {
-            java.util.Locale.forLanguageTag(savedTag).language
-        } else {
-            java.util.Locale.getDefault().language
-        }
-        if (displayedLanguage != expectedLanguage) {
-            recreate()
-            return
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        tts?.shutdown()
-    }
-}
-
-enum class HomeTab(
-    val label: String,
-    val icon: ImageVector,
-) {
-    Connect(label = "Connect", icon = Icons.Default.CheckCircle),
-    Chat(label = "Chat", icon = Icons.Default.ChatBubble),
-    Voice(label = "Voice", icon = Icons.Default.RecordVoiceOver),
-    Screen(label = "Screen", icon = Icons.AutoMirrored.Filled.ScreenShare),
-    Settings(label = "Settings", icon = Icons.Default.Settings),
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainScreen(
-    settings: SettingsRepository,
-    diagnostic: VoiceDiagnostic?,
-    missingPermissions: List<PermissionInfo> = emptyList(),
-    allPermissionsStatus: List<PermissionStatusInfo> = emptyList(),
-    onOpenSettings: () -> Unit,
-    onOpenAssistantSettings: () -> Unit,
-    onRefreshDiagnostics: () -> Unit,
-    onRequestPermissions: (List<String>) -> Unit = {},
-    onOpenAppSettings: () -> Unit = {}
-) {
-    val context = LocalContext.current
-    val runtime = remember(context.applicationContext) {
-        (context.applicationContext as OpenClawApplication).nodeRuntime
-    }
-    
-    var currentTab by rememberSaveable { mutableStateOf(HomeTab.Connect) }
-
-    val snackbarHostState = remember { SnackbarHostState() }
-    val lastCapabilityError by runtime.lastCapabilityError.collectAsState()
-    LaunchedEffect(lastCapabilityError) {
-        val err = lastCapabilityError ?: return@LaunchedEffect
-        snackbarHostState.showSnackbar(err)
-        runtime.clearCapabilityError()
-    }
-
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                onRefreshDiagnostics()
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
-    // Check for updates on startup
-    LaunchedEffect(Unit) {
-        try {
-            val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
-            val info = com.openclaw.assistant.utils.UpdateChecker.checkUpdate(versionName ?: "")
-            if (info != null && info.hasUpdate) {
-                val result = snackbarHostState.showSnackbar(
-                    message = context.getString(R.string.update_available, info.latestVersion),
-                    actionLabel = context.getString(R.string.update_action),
-                    duration = SnackbarDuration.Indefinite
-                )
-                if (result == SnackbarResult.ActionPerformed) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(info.downloadUrl))
-                    context.startActivity(intent)
-                }
-            }
-        } catch (e: Exception) {
-            // Ignore startup update check errors
-        }
-    }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(currentTab.label) },
-                actions = {
-                    val context = LocalContext.current
-                    IconButton(onClick = {
-                        try {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://ko-fi.com/R5R51S97C4"))
-                            context.startActivity(intent)
-                        } catch (e: ActivityNotFoundException) {
-                            // No browser available; ignore
-                        }
-                    }) {
-                        Icon(Icons.Default.VolunteerActivism, contentDescription = stringResource(R.string.credits_support_kofi_button))
-                    }
-                    if (currentTab == HomeTab.Connect) {
-                        IconButton(onClick = onOpenSettings) {
-                            Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings_title))
-                        }
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            NavigationBar {
-                HomeTab.values().forEach { tab ->
-                    NavigationBarItem(
-                        icon = { Icon(tab.icon, contentDescription = tab.label) },
-                        label = { Text(tab.label) },
-                        selected = currentTab == tab,
-                        onClick = { currentTab = tab }
-                    )
-                }
-            }
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
-            when (currentTab) {
-                HomeTab.Connect -> ConnectTabScreen(
-                    settings = settings,
-                    diagnostic = diagnostic,
-                    missingPermissions = missingPermissions,
-                    allPermissionsStatus = allPermissionsStatus,
-                    onRefreshDiagnostics = onRefreshDiagnostics,
-                    onRequestPermissions = onRequestPermissions,
-                    onOpenAppSettings = onOpenAppSettings,
-                    onOpenAssistantSettings = onOpenAssistantSettings,
-                    onOpenSettings = onOpenSettings
-                )
-                HomeTab.Voice -> VoiceTabScreen()
-                HomeTab.Chat -> {
-                    LaunchedEffect(Unit) {
-                        context.startActivity(Intent(context, SessionListActivity::class.java))
-                        currentTab = HomeTab.Connect
-                    }
-                }
-                HomeTab.Screen -> {
-                    // Placeholder or redirect to Screen related feature
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("Screen tab not implemented yet.")
-                    }
-                }
-                HomeTab.Settings -> {
-                    LaunchedEffect(Unit) {
-                        onOpenSettings()
-                        currentTab = HomeTab.Connect
-                    }
-                }
-            }
-        }
-    }
-
-}
 
 @Composable
 fun OperatorOfflineCard(deviceId: String) {
@@ -727,7 +220,6 @@ fun CapabilityCard(
 
 @Composable
 fun DiagnosticPanel(diagnostic: VoiceDiagnostic, onRefresh: () -> Unit) {
-
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -835,43 +327,43 @@ fun MissingScopeCard(error: String, onClick: () -> Unit) {
     val context = LocalContext.current
 
     Card(
-        modifier = Modifier.fillMaxWidth(), 
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer), 
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
         onClick = { expanded = !expanded }
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = Icons.Default.Error, 
-                    contentDescription = null, 
-                    tint = MaterialTheme.colorScheme.error, 
+                    imageVector = Icons.Default.Error,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(32.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = stringResource(R.string.permission_error_title), 
-                        fontWeight = FontWeight.Bold, 
+                        text = stringResource(R.string.permission_error_title),
+                        fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
                     Text(
-                        text = stringResource(R.string.permission_error_desc), 
-                        fontSize = 13.sp, 
+                        text = stringResource(R.string.permission_error_desc),
+                        fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.9f)
                     )
                     if (!expanded) {
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = stringResource(R.string.permission_error_action), 
-                            fontSize = 12.sp, 
+                            text = stringResource(R.string.permission_error_action),
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onErrorContainer
                         )
                     }
                 }
                 Icon(
-                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, 
-                    contentDescription = null, 
+                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.error
                 )
             }
@@ -948,13 +440,7 @@ fun MissingScopeCard(error: String, onClick: () -> Unit) {
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
-                        onClick = onClick, // This now just toggles via the card click, wait... user might want to open settings. 
-                        // The `onClick` passed to MissingScopeCard was originally to open settings?
-                        // Let's check where it's called.
-                        // In MainScreen: MissingScopeCard(error = it) { settingsIntent... }
-                        // So onClick DOES open settings.
-                        // My previous edit in step 284 changed the Card's onClick to expansion toggle.
-                        // So I need to make sure the "Open Settings" button calls the `onClick` param.
+                        onClick = onClick,
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                     ) {
                         Text(stringResource(R.string.action_open_settings))
@@ -1050,8 +536,6 @@ fun WarningCard(message: String, onClick: () -> Unit) {
     }
 }
 
-
-
 @Composable
 fun UsageStep(number: String, text: String) {
     Row(modifier = Modifier.padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -1065,10 +549,10 @@ fun UsageStep(number: String, text: String) {
 fun HowToUseDialog(displayWakeWord: String, onDismiss: () -> Unit) {
     val context = LocalContext.current
     AlertDialog(
-        onDismissRequest = onDismiss, 
-        title = { Text(stringResource(R.string.how_to_use)) }, 
-        text = { 
-            Column { 
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.how_to_use)) },
+        text = {
+            Column {
                 (1..4).forEach { i ->
                     val resId = context.resources.getIdentifier("step_$i", "string", context.packageName)
                     val text = if (i == 1) {
@@ -1076,10 +560,10 @@ fun HowToUseDialog(displayWakeWord: String, onDismiss: () -> Unit) {
                     } else {
                         stringResource(resId)
                     }
-                    UsageStep(i.toString(), text) 
-                } 
-            } 
-        }, 
+                    UsageStep(i.toString(), text)
+                }
+            }
+        },
         confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.got_it)) } }
     )
 }
@@ -1090,10 +574,10 @@ fun TroubleshootingDialog(onDismiss: () -> Unit) {
     AlertDialog(onDismissRequest = onDismiss, title = { Text(stringResource(R.string.assist_gesture_not_working)) }, text = {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.verticalScroll(rememberScrollState())) {
             Text(stringResource(R.string.troubleshooting_intro), fontSize = 14.sp)
-            listOf("circle_to_search", "gesture_navigation", "google_app_setting", "refresh_binding").forEach { key -> 
+            listOf("circle_to_search", "gesture_navigation", "google_app_setting", "refresh_binding").forEach { key ->
                 val titleId = context.resources.getIdentifier("${key}_title", "string", context.packageName)
                 val descId = context.resources.getIdentifier("${key}_desc", "string", context.packageName)
-                BulletPoint(stringResource(titleId), stringResource(descId)) 
+                BulletPoint(stringResource(titleId), stringResource(descId))
             }
             Spacer(modifier = Modifier.height(8.dp)); HorizontalDivider(); Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = { context.startService(Intent(context, OpenClawAssistantService::class.java).apply { action = OpenClawAssistantService.ACTION_SHOW_ASSISTANT }) }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)) { Text(stringResource(R.string.debug_force_start)) }
