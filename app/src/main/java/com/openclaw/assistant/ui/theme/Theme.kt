@@ -27,12 +27,8 @@ private val OpenClawColorScheme = darkColorScheme(
     error = OpenClawError
 )
 
-val Manrope = FontFamily(
-    Font(R.font.manrope, FontWeight.Normal),
-    Font(R.font.manrope, FontWeight.Medium),
-    Font(R.font.manrope, FontWeight.Bold),
-    Font(R.font.manrope, FontWeight.SemiBold)
-)
+// Manrope TTF not bundled — use system sans-serif to avoid FontNotFoundException
+val Manrope = FontFamily.SansSerif
 
 private val AppTypography = Typography(
     headlineLarge = Typography().headlineLarge.copy(fontFamily = Manrope),
