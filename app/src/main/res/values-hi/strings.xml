@@ -472,4 +472,8 @@
     <string name="canvas_status_sending">भेज रहे हैं...</string>
     <string name="canvas_status_thinking">सोच रहे हैं...</string>
     <string name="canvas_status_tool">टूल का उपयोग...</string>
+    <!-- Capabilities -->
+    <string name="none">कोई नहीं</string>
+    <string name="capability_motion">गति</string>
+    <string name="permission_motion_desc">कदम गिनने और गति का पता लगाने के लिए आवश्यक</string>
 </resources>

@@ -472,4 +472,8 @@
     <string name="canvas_status_sending">Отправка...</string>
     <string name="canvas_status_thinking">Размышление...</string>
     <string name="canvas_status_tool">Использование инструментов...</string>
+    <!-- Capabilities -->
+    <string name="none">Нет</string>
+    <string name="capability_motion">Движение</string>
+    <string name="permission_motion_desc">Требуется для подсчета шагов и обнаружения движения</string>
 </resources>

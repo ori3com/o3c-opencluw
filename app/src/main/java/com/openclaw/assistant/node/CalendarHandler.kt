@@ -71,9 +71,10 @@ class CalendarHandler(private val appContext: Context) {
 
     suspend fun handleEvents(paramsJson: String?): GatewaySession.InvokeResult {
         if (!ensureReadPermission()) {
+            val msg = if (permissionRequester != null) "CALENDAR_READ_PERMISSION_REQUIRED: grant Calendar read permission" else "CALENDAR_READ_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Calendar read permission in Settings"
             return GatewaySession.InvokeResult.error(
                 code = "CALENDAR_READ_PERMISSION_REQUIRED",
-                message = "CALENDAR_READ_PERMISSION_REQUIRED: grant Calendar read permission"
+                message = msg
             )
         }
 
@@ -143,9 +144,10 @@ class CalendarHandler(private val appContext: Context) {
 
     suspend fun handleAdd(paramsJson: String?): GatewaySession.InvokeResult {
         if (!ensureWritePermission()) {
+            val msg = if (permissionRequester != null) "CALENDAR_WRITE_PERMISSION_REQUIRED: grant Calendar write permission" else "CALENDAR_WRITE_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Calendar write permission in Settings"
             return GatewaySession.InvokeResult.error(
                 code = "CALENDAR_WRITE_PERMISSION_REQUIRED",
-                message = "CALENDAR_WRITE_PERMISSION_REQUIRED: grant Calendar write permission"
+                message = msg
             )
         }
 
@@ -184,6 +186,94 @@ class CalendarHandler(private val appContext: Context) {
             }
         } catch (e: Exception) {
             GatewaySession.InvokeResult.error("CALENDAR_ADD_FAILED", "CALENDAR_ADD_FAILED: ${e.message}")
+        }
+    }
+
+    suspend fun handleUpdate(paramsJson: String?): GatewaySession.InvokeResult {
+        if (!ensureWritePermission()) {
+            val msg = if (permissionRequester != null) "CALENDAR_WRITE_PERMISSION_REQUIRED: grant Calendar write permission" else "CALENDAR_WRITE_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Calendar write permission in Settings"
+            return GatewaySession.InvokeResult.error(
+                code = "CALENDAR_WRITE_PERMISSION_REQUIRED",
+                message = msg
+            )
+        }
+
+        val params = paramsJson?.let {
+            try {
+                json.parseToJsonElement(it).jsonObject
+            } catch (e: Exception) {
+                null
+            }
+        } ?: return GatewaySession.InvokeResult.error("INVALID_REQUEST", "Expected JSON object")
+
+        val id = (params["id"] as? JsonPrimitive)?.content?.toLongOrNull()
+        if (id == null) {
+            return GatewaySession.InvokeResult.error("INVALID_REQUEST", "Valid event ID is required")
+        }
+
+        val title = (params["title"] as? JsonPrimitive)?.content
+        val startTime = (params["startTime"] as? JsonPrimitive)?.content?.toLongOrNull()
+        val endTime = (params["endTime"] as? JsonPrimitive)?.content?.toLongOrNull()
+
+        if (title.isNullOrEmpty() && startTime == null && endTime == null) {
+             return GatewaySession.InvokeResult.error("INVALID_REQUEST", "At least one of title, startTime, or endTime is required for update")
+        }
+
+        val values = ContentValues().apply {
+            if (!title.isNullOrEmpty()) put(CalendarContract.Events.TITLE, title)
+            if (startTime != null) put(CalendarContract.Events.DTSTART, startTime)
+            if (endTime != null) put(CalendarContract.Events.DTEND, endTime)
+        }
+
+        val selection = "${CalendarContract.Events._ID}=?"
+        val selectionArgs = arrayOf(id.toString())
+
+        return try {
+            val rows = appContext.contentResolver.update(CalendarContract.Events.CONTENT_URI, values, selection, selectionArgs)
+            if (rows > 0) {
+                 GatewaySession.InvokeResult.ok("""{"ok":true}""")
+            } else {
+                 GatewaySession.InvokeResult.error("CALENDAR_UPDATE_FAILED", "Event not found or no changes made")
+            }
+        } catch (e: Exception) {
+            GatewaySession.InvokeResult.error("CALENDAR_UPDATE_FAILED", "CALENDAR_UPDATE_FAILED: ${e.message}")
+        }
+    }
+
+    suspend fun handleDelete(paramsJson: String?): GatewaySession.InvokeResult {
+        if (!ensureWritePermission()) {
+            val msg = if (permissionRequester != null) "CALENDAR_WRITE_PERMISSION_REQUIRED: grant Calendar write permission" else "CALENDAR_WRITE_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Calendar write permission in Settings"
+            return GatewaySession.InvokeResult.error(
+                code = "CALENDAR_WRITE_PERMISSION_REQUIRED",
+                message = msg
+            )
+        }
+
+        val params = paramsJson?.let {
+            try {
+                json.parseToJsonElement(it).jsonObject
+            } catch (e: Exception) {
+                null
+            }
+        } ?: return GatewaySession.InvokeResult.error("INVALID_REQUEST", "Expected JSON object")
+
+        val id = (params["id"] as? JsonPrimitive)?.content?.toLongOrNull()
+        if (id == null) {
+            return GatewaySession.InvokeResult.error("INVALID_REQUEST", "Valid event ID is required")
+        }
+
+        val selection = "${CalendarContract.Events._ID}=?"
+        val selectionArgs = arrayOf(id.toString())
+
+        return try {
+            val rows = appContext.contentResolver.delete(CalendarContract.Events.CONTENT_URI, selection, selectionArgs)
+             if (rows > 0) {
+                 GatewaySession.InvokeResult.ok("""{"ok":true}""")
+             } else {
+                 GatewaySession.InvokeResult.error("CALENDAR_DELETE_FAILED", "Event not found")
+             }
+        } catch (e: Exception) {
+            GatewaySession.InvokeResult.error("CALENDAR_DELETE_FAILED", "CALENDAR_DELETE_FAILED: ${e.message}")
         }
     }
 }

@@ -472,4 +472,8 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="canvas_status_sending">Enviando...</string>
     <string name="canvas_status_thinking">Pensando...</string>
     <string name="canvas_status_tool">Usando herramientas...</string>
+    <!-- Capabilities -->
+    <string name="none">Ninguno</string>
+    <string name="capability_motion">Movimiento</string>
+    <string name="permission_motion_desc">Necesario para el conteo de pasos y la detección de movimiento</string>
 </resources>
