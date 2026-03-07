@@ -3,10 +3,7 @@ package com.openclaw.assistant.ui.theme
 import android.app.Activity
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import com.openclaw.assistant.R
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -27,12 +24,7 @@ private val OpenClawColorScheme = darkColorScheme(
     error = OpenClawError
 )
 
-val Manrope = FontFamily(
-    Font(R.font.manrope, FontWeight.Normal),
-    Font(R.font.manrope, FontWeight.Medium),
-    Font(R.font.manrope, FontWeight.Bold),
-    Font(R.font.manrope, FontWeight.SemiBold)
-)
+val Manrope = FontFamily.SansSerif
 
 private val AppTypography = Typography(
     headlineLarge = Typography().headlineLarge.copy(fontFamily = Manrope),

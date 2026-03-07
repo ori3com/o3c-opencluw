@@ -477,8 +477,10 @@
     <string name="setup_guide_final_check_desc">Verify connection and settings.</string>
     <string name="setup_guide_finish">Finish</string>
     <string name="setup_guide_next">Next</string>
-    <string name="setup_guide_invalid_code">Invalid setup code.</string>
     <string name="setup_guide_invalid_url">Invalid gateway URL.</string>
+
+    <string name="qr_scan_prompt">Scan QR Code</string>
+    <string name="qr_scan_desc">Scan QR</string>
 
     <!-- Onboarding / Permissions Toggles -->
     <string name="permission_discovery">Discovery</string>

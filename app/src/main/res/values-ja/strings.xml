@@ -402,8 +402,27 @@
     <string name="setup_guide_final_check_desc">接続と設定内容を確認します。</string>
     <string name="setup_guide_finish">完了</string>
     <string name="setup_guide_next">次へ</string>
-    <string name="setup_guide_invalid_code">セットアップコードが無効です。</string>
     <string name="setup_guide_invalid_url">GatewayのURLが無効です。</string>
+
+    <!-- Onboarding / Permissions Toggles -->
+    <string name="permission_discovery">ネットワーク検索</string>
+    <string name="permission_discovery_desc">ローカルネットワーク上のデバイスを検索して接続します</string>
+    <string name="permission_contacts">連絡先</string>
+    <string name="permission_contacts_desc">AIが連絡先にアクセス・管理することを許可します</string>
+    <string name="permission_calendar">カレンダー</string>
+    <string name="permission_calendar_desc">AIがカレンダーの予定を確認・管理することを許可します</string>
+    <string name="permission_motion">モーションとフィットネス</string>
+    <string name="permission_motion_desc">歩数カウントやアクティビティ検出に必要です</string>
+    <string name="permission_special_access">特別なアクセス</string>
+    <string name="permission_notification_listener">通知へのアクセス</string>
+    <string name="permission_notification_listener_desc">AIが通知を読み取り、管理するために必要です</string>
+    <string name="permission_install_unknown_apps">不明なアプリのインストール</string>
+    <string name="permission_install_unknown_apps_desc">AIによるアプリの更新を許可します</string>
+    <string name="permission_summary_title">権限の概要</string>
+    <string name="permission_summary_format">通常の権限 %1$d個、特別なアクセス %2$d個が許可されています</string>
+    <string name="qr_scan_prompt">QRコードをスキャンしてください</string>
+    <string name="qr_scan_desc">QRスキャン</string>
+
     <string name="http_use_gateway_url">GatewayのURLを使用</string>
     <string name="setup_code_applied">設定を適用しました！</string>
     <string name="setup_code_invalid_code">セットアップコードが無効または不完全です。</string>
