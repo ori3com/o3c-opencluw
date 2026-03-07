@@ -154,6 +154,37 @@ class DeviceIdentity(context: Context) {
         return parts.joinToString("|")
     }
 
+    fun buildV3(
+        clientId: String,
+        clientMode: String,
+        role: String,
+        scopes: List<String>,
+        signedAtMs: Long,
+        token: String?,
+        nonce: String,
+        platform: String,
+        deviceFamily: String
+    ): String {
+        val scopesStr = scopes.joinToString(",")
+        return listOf(
+            "v3",
+            deviceId ?: "",
+            clientId,
+            clientMode,
+            role,
+            scopesStr,
+            signedAtMs.toString(),
+            token ?: "",
+            nonce,
+            normalizeMetadataField(platform),
+            normalizeMetadataField(deviceFamily)
+        ).joinToString("|")
+    }
+
+    private fun normalizeMetadataField(value: String): String {
+        return value.filter { it.code in 0x20..0x7E }.lowercase()
+    }
+
     private fun bytesToHex(bytes: ByteArray): String {
         return bytes.joinToString("") { "%02x".format(it) }
     }
