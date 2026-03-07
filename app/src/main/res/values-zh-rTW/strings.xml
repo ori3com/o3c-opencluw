@@ -461,6 +461,23 @@
     <!-- Onboarding / Permissions Toggles -->
     <string name="qr_scan_prompt">掃描行動條碼</string>
     <string name="qr_scan_desc">掃描 QR</string>
+    <!-- Bottom Navigation Tabs -->
+    <string name="tab_nav_home">首頁</string>
+    <string name="tab_nav_chat">聊天</string>
+    <string name="tab_nav_canvas">Canvas</string>
+    <string name="tab_nav_settings">設定</string>
+    <string name="canvas_placeholder_title">Canvas</string>
+    <string name="canvas_placeholder_body">Canvas 是由 AI 助手控制的顯示區域。請在聊天中請求助手在這裡顯示內容。</string>
+    <string name="canvas_go_to_chat">前往聊天</string>
+    <string name="canvas_chat_hint">在 Canvas 上顯示什麼？</string>
+    <string name="canvas_chat_not_connected">連接 Gateway 以開始聊天</string>
+    <string name="canvas_chat_send">傳送</string>
+    <string name="canvas_status_sending">傳送中...</string>
+    <string name="canvas_status_thinking">思考中...</string>
+    <string name="canvas_status_tool">使用工具中...</string>
+    <string name="canvas_status_loading">Canvas 載入中...</string>
+    <string name="canvas_diag_no_canvas">AI 未使用 Canvas — 文字回覆顯示如下。\nCanvas 工具可能不可用或未啟用。</string>
+    <string name="canvas_diag_not_connected">未連接至 Gateway。連接後 AI 可操作 Canvas。</string>
     <!-- Capabilities -->
     <string name="none">無</string>
     <string name="capability_motion">運動</string>

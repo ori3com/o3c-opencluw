@@ -467,6 +467,23 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="permission_calendar">Calendrier</string>
     <string name="qr_scan_prompt">Scanner le code QR</string>
     <string name="qr_scan_desc">Scanner QR</string>
+    <!-- Bottom Navigation Tabs -->
+    <string name="tab_nav_home">Accueil</string>
+    <string name="tab_nav_chat">Chat</string>
+    <string name="tab_nav_canvas">Canvas</string>
+    <string name="tab_nav_settings">Paramètres</string>
+    <string name="canvas_placeholder_title">Canvas</string>
+    <string name="canvas_placeholder_body">Canvas est une zone d\'affichage contrôlée par l\'assistant IA. Demandez à l\'assistant dans le Chat d\'afficher quelque chose ici.</string>
+    <string name="canvas_go_to_chat">Aller au Chat</string>
+    <string name="canvas_chat_hint">Que montrer sur Canvas ?</string>
+    <string name="canvas_chat_not_connected">Connectez-vous au Gateway pour chatter</string>
+    <string name="canvas_chat_send">Envoyer</string>
+    <string name="canvas_status_sending">Envoi...</string>
+    <string name="canvas_status_thinking">Réflexion...</string>
+    <string name="canvas_status_tool">Utilisation des outils...</string>
+    <string name="canvas_status_loading">Chargement de Canvas...</string>
+    <string name="canvas_diag_no_canvas">L\'IA n\'a pas utilisé Canvas — réponse textuelle ci-dessous.\nLes outils Canvas peuvent ne pas être disponibles ou activés.</string>
+    <string name="canvas_diag_not_connected">Non connecté au Gateway. Connectez-vous pour que l\'IA puisse opérer Canvas.</string>
     <!-- Capabilities -->
     <string name="none">Aucun</string>
     <string name="capability_motion">Mouvement</string>
