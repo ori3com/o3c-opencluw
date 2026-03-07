@@ -488,6 +488,8 @@
     <!-- Additional Setup Guide Strings -->
     <string name="permission_camera_desc">Required for the AI to see your camera stream</string>
     <string name="permission_location_desc">Required for the AI to know your location</string>
+    <string name="permission_activity_recognition">Motion</string>
+    <string name="permission_activity_recognition_desc">Required for the AI to detect your activity</string>
     <string name="setup_guide_auth_token_password">Token + Password</string>
     <string name="setup_guide_auth_token">Token</string>
     <string name="setup_guide_auth_password">Password</string>

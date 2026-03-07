@@ -9,6 +9,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -430,17 +432,28 @@ private fun ConnectionStep(
 @Composable
 private fun PermissionsStep(onNext: () -> Unit) {
     val context = LocalContext.current
+
+    val motionAvailable = remember(context) {
+        val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null ||
+        sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION) != null
+    }
+    val smsAvailable = remember(context) {
+        context.packageManager?.hasSystemFeature(PackageManager.FEATURE_TELEPHONY) == true
+    }
+
     val permissions = remember {
         mutableListOf(
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.SEND_SMS
+            Manifest.permission.ACCESS_COARSE_LOCATION
         ).apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 add(Manifest.permission.POST_NOTIFICATIONS)
             }
+            if (motionAvailable) add(Manifest.permission.ACTIVITY_RECOGNITION)
+            if (smsAvailable) add(Manifest.permission.SEND_SMS)
         }
     }
 
@@ -495,6 +508,22 @@ private fun PermissionsStep(onNext: () -> Unit) {
                 name = stringResource(R.string.permission_notifications),
                 desc = stringResource(R.string.permission_post_notifications_desc),
                 isGranted = permissionsStatus[Manifest.permission.POST_NOTIFICATIONS] == true
+            )
+        }
+        if (motionAvailable) {
+            PermissionItem(
+                icon = Icons.Default.DirectionsRun,
+                name = stringResource(R.string.permission_activity_recognition),
+                desc = stringResource(R.string.permission_activity_recognition_desc),
+                isGranted = permissionsStatus[Manifest.permission.ACTIVITY_RECOGNITION] == true
+            )
+        }
+        if (smsAvailable) {
+            PermissionItem(
+                icon = Icons.Default.Sms,
+                name = stringResource(R.string.permission_send_sms),
+                desc = stringResource(R.string.permission_send_sms_desc),
+                isGranted = permissionsStatus[Manifest.permission.SEND_SMS] == true
             )
         }
 
