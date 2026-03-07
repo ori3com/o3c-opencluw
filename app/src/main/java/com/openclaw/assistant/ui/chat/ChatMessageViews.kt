@@ -1,7 +1,5 @@
 package com.openclaw.assistant.ui.chat
 
-import android.graphics.BitmapFactory
-import android.util.Base64
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,17 +14,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.ui.platform.LocalConfiguration
@@ -37,8 +30,6 @@ import com.openclaw.assistant.chat.ChatMessage
 import com.openclaw.assistant.chat.ChatMessageContent
 import com.openclaw.assistant.chat.ChatPendingToolCall
 import com.openclaw.assistant.tools.ToolDisplayRegistry
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
@@ -200,32 +191,16 @@ private fun textColorOverBubble(isUser: Boolean): Color {
 
 @Composable
 private fun ChatBase64Image(base64: String, mimeType: String?) {
-  var image by remember(base64) { mutableStateOf<androidx.compose.ui.graphics.ImageBitmap?>(null) }
-  var failed by remember(base64) { mutableStateOf(false) }
+  val state = rememberBase64ImageState(base64)
 
-  LaunchedEffect(base64) {
-    failed = false
-    image =
-      withContext(Dispatchers.Default) {
-        try {
-          val bytes = Base64.decode(base64, Base64.DEFAULT)
-          val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: return@withContext null
-          bitmap.asImageBitmap()
-        } catch (_: Throwable) {
-          null
-        }
-      }
-    if (image == null) failed = true
-  }
-
-  if (image != null) {
+  if (state.image != null) {
     Image(
-      bitmap = image!!,
+      bitmap = state.image!!,
       contentDescription = mimeType ?: "attachment",
       contentScale = ContentScale.Fit,
       modifier = Modifier.fillMaxWidth(),
     )
-  } else if (failed) {
+  } else if (state.failed) {
     Text("Unsupported attachment", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
   }
 }
