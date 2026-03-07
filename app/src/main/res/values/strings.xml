@@ -564,4 +564,7 @@
     <string name="canvas_status_sending">Sending...</string>
     <string name="canvas_status_thinking">Thinking...</string>
     <string name="canvas_status_tool">Using tools...</string>
+    <string name="canvas_status_loading">Loading Canvas...</string>
+    <string name="canvas_diag_no_canvas">AI did not use Canvas — text response shown below.\nCanvas tools may not be available or enabled.</string>
+    <string name="canvas_diag_not_connected">Not connected to Gateway. Connect to allow AI to operate Canvas.</string>
 </resources>

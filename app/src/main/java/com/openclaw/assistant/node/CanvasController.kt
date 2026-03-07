@@ -4,6 +4,9 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Looper
 import android.util.Log
+import android.content.Context
+import android.webkit.WebChromeClient
+import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
@@ -38,8 +41,15 @@ class CanvasController {
   @Volatile var gatewayToken: String? = null
   @Volatile var gatewayOrigin: String? = null
 
+  // Persistent WebView: survives tab switches so canvas state is preserved
+  @Volatile private var cachedWebView: WebView? = null
+  private var initialLoadDone = false
+
   private val _isDefaultState = MutableStateFlow(true)
   val isDefaultFlow: StateFlow<Boolean> = _isDefaultState.asStateFlow()
+
+  private val _isPageLoading = MutableStateFlow(false)
+  val isPageLoadingFlow: StateFlow<Boolean> = _isPageLoading.asStateFlow()
 
   private val scaffoldAssetUrl = "file:///android_asset/CanvasScaffold/scaffold.html"
 
@@ -53,14 +63,39 @@ class CanvasController {
     gatewayToken = token
   }
 
+  /** Returns the persistent WebView, creating it on first call. */
+  fun getOrCreateWebView(context: Context): WebView {
+    return cachedWebView ?: WebView(context.applicationContext).also {
+      it.settings.apply {
+        javaScriptEnabled = true
+        domStorageEnabled = true
+        allowFileAccess = true
+        mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+      }
+      // Required so JavaScript interactions (dialogs, file choosers, etc.) work properly.
+      // Without this, alert()/confirm() calls silently fail and can halt button actions.
+      it.webChromeClient = WebChromeClient()
+      if (com.openclaw.assistant.BuildConfig.DEBUG) {
+        WebView.setWebContentsDebuggingEnabled(true)
+      }
+      cachedWebView = it
+    }
+  }
+
   fun attach(webView: WebView) {
     this.webView = webView
     _isDefaultState.value = url == null
-    reload()
+    // Only load on first attach; subsequent attaches (tab switch back) preserve canvas state
+    if (!initialLoadDone) {
+      initialLoadDone = true
+      reload()
+    }
     applyDebugStatus()
   }
 
   fun detach() {
+    // Remove from parent ViewGroup but keep cachedWebView alive
+    (webView?.parent as? android.view.ViewGroup)?.removeView(webView)
     webView = null
   }
 
@@ -68,6 +103,7 @@ class CanvasController {
     val trimmed = url.trim()
     this.url = if (trimmed.isBlank() || trimmed == "/") null else trimmed
     _isDefaultState.value = this.url == null
+    if (this.url != null) _isPageLoading.value = true
     reload()
   }
 
@@ -87,6 +123,7 @@ class CanvasController {
   }
 
   fun onPageFinished() {
+    _isPageLoading.value = false
     applyDebugStatus()
   }
 

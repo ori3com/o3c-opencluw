@@ -1,13 +1,12 @@
 package com.openclaw.assistant.ui
 
-import android.graphics.Color as AndroidColor
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.annotation.SuppressLint
+import android.view.MotionEvent
+import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
-import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.FrameLayout
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -16,23 +15,25 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -49,22 +50,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.openclaw.assistant.R
+import com.openclaw.assistant.chat.ChatMessageContent
 import com.openclaw.assistant.node.CanvasController
 import com.openclaw.assistant.node.NodeRuntime
 import kotlinx.coroutines.delay
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
 import java.net.HttpURLConnection
 import java.net.URL
 
+@SuppressLint("ClickableViewAccessibility")
 @Composable
 fun CanvasScreen(
     canvasController: CanvasController,
@@ -74,90 +74,94 @@ fun CanvasScreen(
     val nodeRuntimeRef = remember { mutableStateOf(nodeRuntime) }
     SideEffect { nodeRuntimeRef.value = nodeRuntime }
 
-    AndroidView(
-        modifier = modifier,
-        factory = { context ->
-            FrameLayout(context).also { frame ->
-                // 1. WebView — first child, rendered below
-                val webView = WebView(context).apply {
-                    settings.apply {
-                        javaScriptEnabled = true
-                        domStorageEnabled = true
-                        allowFileAccess = true
-                        mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
-                    }
-                    webViewClient = CanvasWebViewClient(canvasController)
-                }
-                canvasController.attach(webView)
-                frame.addView(webView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
-
-                // 2. ComposeView overlay — second child, always on top of WebView.
-                //    Explicit transparent background so WebView shows through when Canvas is active.
-                val overlayView = ComposeView(context).apply {
-                    setBackgroundColor(AndroidColor.TRANSPARENT)
-                    setViewCompositionStrategy(
-                        ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool
-                    )
-                    setContent {
-                        Column(modifier = Modifier.fillMaxSize()) {
-                            Spacer(modifier = Modifier.weight(1f))
-                            CanvasChatBar(
-                                nodeRuntimeRef = nodeRuntimeRef,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+    // Box layers the chat bar (Compose) directly on top of the WebView (AndroidView).
+    // CanvasChatBar lives in the main Compose composition → state flows (pendingRunCount,
+    // messages, etc.) properly trigger recomposition and isAiBusy stays accurate.
+    Box(modifier = modifier) {
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { context ->
+                // WebView returned directly — no FrameLayout wrapper.
+                // setOnTouchListener ensures ACTION_DOWN tells Compose not to intercept scrolls.
+                canvasController.getOrCreateWebView(context).also {
+                    (it.parent as? ViewGroup)?.removeView(it)
+                    it.webViewClient = CanvasWebViewClient(canvasController)
+                    it.setOnTouchListener { v, event ->
+                        if (event.action == MotionEvent.ACTION_DOWN) {
+                            v.parent?.requestDisallowInterceptTouchEvent(true)
                         }
+                        false
                     }
+                    canvasController.attach(it)
+                    it.requestFocus()
                 }
-                frame.addView(overlayView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
-            }
-        },
-        onRelease = { frame ->
-            val webView = (0 until frame.childCount)
-                .map { frame.getChildAt(it) }
-                .filterIsInstance<WebView>()
-                .firstOrNull()
-            webView?.stopLoading()
-            canvasController.detach()
-            webView?.destroy()
-        }
-    )
+            },
+            onRelease = { _ -> canvasController.detach() }
+        )
+        CanvasChatBar(
+            canvasController = canvasController,
+            nodeRuntimeRef = nodeRuntimeRef,
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+        )
+    }
 }
-
 
 @Composable
 private fun CanvasChatBar(
+    canvasController: CanvasController,
     nodeRuntimeRef: androidx.compose.runtime.State<NodeRuntime>,
     modifier: Modifier = Modifier
 ) {
     val nodeRuntime = nodeRuntimeRef.value
+    val isDefault by canvasController.isDefaultFlow.collectAsState()
+    val isPageLoading by canvasController.isPageLoadingFlow.collectAsState()
     val healthOk by nodeRuntime.chatHealthOk.collectAsState()
     val streamingText by nodeRuntime.chatStreamingAssistantText.collectAsState()
     val pendingTools by nodeRuntime.chatPendingToolCalls.collectAsState()
+    val pendingRunCount by nodeRuntime.pendingRunCount.collectAsState()
     val messages by nodeRuntime.chatMessages.collectAsState()
 
     var inputText by remember { mutableStateOf("") }
     var isSending by remember { mutableStateOf(false) }
     var lastAiText by remember { mutableStateOf<String?>(null) }
+    // Count of assistant messages at send time — used to detect a NEW response
+    var assistantCountAtSend by remember { mutableStateOf(0) }
 
-    val isAiBusy = isSending || streamingText != null || pendingTools.isNotEmpty()
+    // pendingRunCount covers the full AI processing window (send → tools → complete)
+    val isAiBusy = isSending || pendingRunCount > 0
 
-    // Extract text from the last assistant message to show as response
+    // Clear isSending only when a NEW assistant message arrives (not a pre-existing one)
     LaunchedEffect(messages) {
-        val lastAssistant = messages.lastOrNull { it.role == "assistant" }
-        val text = lastAssistant?.content?.firstOrNull()?.let { c ->
-            (c as? JsonObject)?.get("text")?.let { (it as? JsonPrimitive)?.content }
+        val assistantCount = messages.count { it.role == "assistant" }
+        if (isSending && assistantCount > assistantCountAtSend) {
+            isSending = false
         }
+        val lastAssistant = messages.lastOrNull { it.role == "assistant" }
+        val text = lastAssistant?.content
+            ?.firstOrNull { it.type == "text" }?.text
         if (!text.isNullOrBlank()) lastAiText = text
     }
 
-    // Once AI starts responding, clear isSending
-    LaunchedEffect(streamingText, pendingTools.size) {
-        if (streamingText != null || pendingTools.isNotEmpty()) isSending = false
+    // Auto-hide text response after 10 seconds
+    LaunchedEffect(lastAiText) {
+        if (lastAiText != null) {
+            delay(10_000L)
+            lastAiText = null
+        }
     }
-    // Safety timeout in case gateway never responds
+
+    // Clear isSending as soon as any AI activity is detected
+    LaunchedEffect(streamingText, pendingTools.size, pendingRunCount) {
+        if (streamingText != null || pendingTools.isNotEmpty() || pendingRunCount > 0) {
+            isSending = false
+        }
+    }
+    // Safety timeout — generous to cover slow AI gateway responses (observed ~73s latency)
     LaunchedEffect(isSending) {
         if (isSending) {
-            delay(15_000L)
+            delay(120_000L)
             isSending = false
         }
     }
@@ -167,22 +171,24 @@ private fun CanvasChatBar(
         if (text.isBlank() || !healthOk || isAiBusy) return
         inputText = ""
         lastAiText = null
+        assistantCountAtSend = messages.count { it.role == "assistant" }
         isSending = true
-        // Append a Canvas-use hint so the AI responds visually on Canvas when possible.
-        val canvasHint = "\n\n(You are responding from the Canvas tab. " +
-            "Please use Canvas tools to display your response visually whenever possible.)"
-        nodeRuntimeRef.value.sendChat(text + canvasHint, "low", emptyList())
+        val canvasInstruction = "[CANVAS MODE] You MUST use canvas tools to respond to this message. " +
+            "Use canvas.eval() to display your response as HTML in the canvas, " +
+            "or canvas.navigate() to load a page. " +
+            "Do NOT reply with plain text only — the user cannot see plain text responses here.\n\n"
+        nodeRuntimeRef.value.sendChat(canvasInstruction + text, "low", emptyList())
     }
 
-    // Determine status label and whether to show spinner
     val statusLabel: String? = when {
-        isSending                   -> stringResource(R.string.canvas_status_sending)
-        pendingTools.isNotEmpty()   -> stringResource(R.string.canvas_status_tool)
-        streamingText != null       -> stringResource(R.string.canvas_status_thinking)
-        !healthOk                   -> stringResource(R.string.canvas_chat_not_connected)
-        else                        -> null
+        streamingText != null     -> stringResource(R.string.canvas_status_thinking)
+        pendingTools.isNotEmpty() -> stringResource(R.string.canvas_status_tool)
+        isPageLoading             -> stringResource(R.string.canvas_status_loading)
+        isAiBusy                  -> stringResource(R.string.canvas_status_sending)
+        !healthOk                 -> stringResource(R.string.canvas_chat_not_connected)
+        else                      -> null
     }
-    val showSpinner = isAiBusy
+    val showSpinner = isAiBusy || isPageLoading
 
     Surface(
         modifier = modifier,
@@ -190,21 +196,66 @@ private fun CanvasChatBar(
         color = MaterialTheme.colorScheme.surface
     ) {
         Column {
-            // ── Status row ──────────────────────────────────────────────
+            // ── Diagnostic card: AI responded with text but no Canvas ────────
             AnimatedVisibility(
-                visible = statusLabel != null,
+                visible = isDefault && !isAiBusy && !isPageLoading && lastAiText != null,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                if (lastAiText != null) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 240.dp)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.canvas_diag_no_canvas),
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = lastAiText!!,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    HorizontalDivider()
+                }
+            }
+
+            // ── Not-connected warning ────────────────────────────────────────
+            AnimatedVisibility(
+                visible = !healthOk,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                Text(
+                    text = stringResource(R.string.canvas_diag_not_connected),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.errorContainer)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+
+            // ── Status row (spinner + label) ─────────────────────────────────
+            AnimatedVisibility(
+                visible = statusLabel != null && healthOk,
                 enter = expandVertically() + fadeIn(),
                 exit = shrinkVertically() + fadeOut()
             ) {
                 if (statusLabel != null) {
-                    val (bg, fg) = if (!healthOk && !isAiBusy)
-                        MaterialTheme.colorScheme.errorContainer to MaterialTheme.colorScheme.onErrorContainer
-                    else
-                        MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(bg)
+                            .background(MaterialTheme.colorScheme.secondaryContainer)
                             .padding(horizontal = 16.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -213,28 +264,28 @@ private fun CanvasChatBar(
                             CircularProgressIndicator(
                                 modifier = Modifier.size(14.dp),
                                 strokeWidth = 2.dp,
-                                color = fg
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                         }
                         Text(
                             text = statusLabel,
                             style = MaterialTheme.typography.labelMedium,
-                            color = fg
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
                 }
             }
 
-            // ── AI response text (streaming or last message) ─────────────
-            val displayText = streamingText ?: if (!isAiBusy) lastAiText else null
+            // ── Streaming text preview ───────────────────────────────────────
             AnimatedVisibility(
-                visible = displayText != null,
+                visible = streamingText != null,
                 enter = expandVertically() + fadeIn(),
                 exit = shrinkVertically() + fadeOut()
             ) {
-                if (displayText != null) {
+                val st = streamingText
+                if (st != null) {
                     Text(
-                        text = displayText,
+                        text = st,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 4,
@@ -247,7 +298,7 @@ private fun CanvasChatBar(
                 }
             }
 
-            // ── Input row ────────────────────────────────────────────────
+            // ── Input row ────────────────────────────────────────────────────
             Row(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -255,9 +306,7 @@ private fun CanvasChatBar(
                 TextField(
                     value = inputText,
                     onValueChange = { inputText = it },
-                    placeholder = {
-                        Text(text = stringResource(R.string.canvas_chat_hint))
-                    },
+                    placeholder = { Text(text = stringResource(R.string.canvas_chat_hint)) },
                     enabled = healthOk && !isAiBusy,
                     modifier = Modifier.weight(1f),
                     singleLine = true,
