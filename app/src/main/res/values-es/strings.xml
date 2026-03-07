@@ -460,24 +460,24 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="voicevox_size_unknown">Desconocido</string>
 
     <!-- Onboarding / Permissions Toggles -->
-    <string name="permission_discovery">Descubrimiento</string>
-    <string name="permission_discovery_desc">Buscar y conectar dispositivos en la red local</string>
-    <string name="permission_contacts">Contactos</string>
-    <string name="permission_contacts_desc">Permitir a la IA acceder a los contactos</string>
-    <string name="permission_calendar">Calendario</string>
-    <string name="permission_calendar_desc">Permitir a la IA acceder al calendario</string>
-    <string name="permission_motion">Movimiento y Fitness</string>
-    <string name="permission_special_access">Acceso Especial</string>
-    <string name="permission_notification_listener">Acceso a Notificaciones</string>
-    <string name="permission_notification_listener_desc">Requerido para leer y gestionar notificaciones</string>
-    <string name="permission_install_unknown_apps">Instalar aplicaciones desconocidas</string>
-    <string name="permission_install_unknown_apps_desc">Permitir a la IA instalar actualizaciones</string>
-    <string name="permission_summary_title">Resumen de Permisos</string>
-    <string name="permission_summary_format">%1$d estándar, %2$d especial concedidos</string>
     <string name="qr_scan_prompt">Escanear código QR</string>
     <string name="qr_scan_desc">Escanear QR</string>
     <!-- Capabilities -->
     <string name="none">Ninguno</string>
     <string name="capability_motion">Movimiento</string>
-    <string name="permission_motion_desc">Necesario para el conteo de pasos y la detección de movimiento</string>
+    <string name="permission_discovery">Discovery</string>
+    <string name="permission_discovery_desc">Find and connect to devices on your local network</string>
+    <string name="permission_contacts">Contacts</string>
+    <string name="permission_contacts_desc">Allow AI to access and manage your contacts</string>
+    <string name="permission_calendar">Calendar</string>
+    <string name="permission_calendar_desc">Allow AI to see and manage your calendar events</string>
+    <string name="permission_motion">Motion &amp; Fitness</string>
+    <string name="permission_motion_desc">Required for step counting and activity detection</string>
+    <string name="permission_special_access">Special Access</string>
+    <string name="permission_notification_listener">Notification Listener</string>
+    <string name="permission_notification_listener_desc">Required for AI to read and manage notifications</string>
+    <string name="permission_install_unknown_apps">Install Unknown Apps</string>
+    <string name="permission_install_unknown_apps_desc">Allow AI to install app updates</string>
+    <string name="permission_summary_title">Permissions Summary</string>
+    <string name="permission_summary_format">%1$d standard permissions, %2$d special access granted</string>
 </resources>
