@@ -54,10 +54,9 @@ class ContactsHandler(private val appContext: Context) {
 
     suspend fun handleSearch(paramsJson: String?): GatewaySession.InvokeResult {
         if (!ensureReadPermission()) {
-            val msg = if (permissionRequester != null) "CONTACTS_READ_PERMISSION_REQUIRED: grant Contacts read permission" else "CONTACTS_READ_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Contacts read permission in Settings"
             return GatewaySession.InvokeResult.error(
                 code = "CONTACTS_READ_PERMISSION_REQUIRED",
-                message = msg
+                message = "CONTACTS_READ_PERMISSION_REQUIRED: grant Contacts read permission"
             )
         }
 
@@ -126,10 +125,9 @@ class ContactsHandler(private val appContext: Context) {
 
     suspend fun handleAdd(paramsJson: String?): GatewaySession.InvokeResult {
         if (!ensureWritePermission()) {
-            val msg = if (permissionRequester != null) "CONTACTS_WRITE_PERMISSION_REQUIRED: grant Contacts write permission" else "CONTACTS_WRITE_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Contacts write permission in Settings"
             return GatewaySession.InvokeResult.error(
                 code = "CONTACTS_WRITE_PERMISSION_REQUIRED",
-                message = msg
+                message = "CONTACTS_WRITE_PERMISSION_REQUIRED: grant Contacts write permission"
             )
         }
 
@@ -177,10 +175,9 @@ class ContactsHandler(private val appContext: Context) {
 
     suspend fun handleUpdate(paramsJson: String?): GatewaySession.InvokeResult {
         if (!ensureWritePermission()) {
-            val msg = if (permissionRequester != null) "CONTACTS_WRITE_PERMISSION_REQUIRED: grant Contacts write permission" else "CONTACTS_WRITE_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Contacts write permission in Settings"
             return GatewaySession.InvokeResult.error(
                 code = "CONTACTS_WRITE_PERMISSION_REQUIRED",
-                message = msg
+                message = "CONTACTS_WRITE_PERMISSION_REQUIRED: grant Contacts write permission"
             )
         }
 
@@ -232,10 +229,9 @@ class ContactsHandler(private val appContext: Context) {
 
     suspend fun handleDelete(paramsJson: String?): GatewaySession.InvokeResult {
         if (!ensureWritePermission()) {
-            val msg = if (permissionRequester != null) "CONTACTS_WRITE_PERMISSION_REQUIRED: grant Contacts write permission" else "CONTACTS_WRITE_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Contacts write permission in Settings"
             return GatewaySession.InvokeResult.error(
                 code = "CONTACTS_WRITE_PERMISSION_REQUIRED",
-                message = msg
+                message = "CONTACTS_WRITE_PERMISSION_REQUIRED: grant Contacts write permission"
             )
         }
 

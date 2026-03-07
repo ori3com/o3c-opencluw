@@ -502,11 +502,10 @@ private fun ConnectionStep(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 trailingIcon = {
-                    val qrPrompt = stringResource(R.string.qr_scan_prompt)
                     IconButton(onClick = {
                         val options = ScanOptions().apply {
                             setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-                            setPrompt(qrPrompt)
+                            setPrompt(setupCode) // Show current code as prompt or similar
                             setBeepEnabled(false)
                             setOrientationLocked(false)
                         }
@@ -679,7 +678,6 @@ private fun PermissionsStep(onNext: () -> Unit) {
             if (toggle == PermissionToggle.Motion && !motionAvailable) return@forEach
             if (toggle == PermissionToggle.Notifications && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return@forEach
 
-
             PermissionItem(
                 icon = toggle.icon,
                 name = stringResource(toggle.titleRes),
@@ -827,11 +825,6 @@ private fun FinalCheckStep(
         if (isPairingRequired) pairingDetected = true
     }
 
-    val motionAvailable = remember(context) { hasMotionCapabilities(context) }
-    val smsAvailable = remember(context) {
-        context.packageManager?.hasSystemFeature(PackageManager.FEATURE_TELEPHONY) == true
-    }
-
     val gatewayUrl = remember(manualHost, manualPort, manualTls) {
         "${if (manualTls) "https" else "http"}://$manualHost:$manualPort"
     }
@@ -908,23 +901,6 @@ private fun FinalCheckStep(
                 )
                 Text(
                     text = authLabel,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = stringResource(R.string.capabilities_title),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.width(72.dp)
-                )
-                val caps = mutableListOf<String>().apply {
-                    if (smsAvailable) add(stringResource(R.string.capability_sms))
-                    if (motionAvailable) add(stringResource(R.string.capability_motion))
-                }
-                Text(
-                    text = if (caps.isEmpty()) stringResource(R.string.none) else caps.joinToString(", "),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -1071,8 +1047,6 @@ private fun PairingGuideBlock(deviceId: String?) {
         )
     }
 }
-
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

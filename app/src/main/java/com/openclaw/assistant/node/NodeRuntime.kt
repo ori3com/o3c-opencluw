@@ -692,11 +692,6 @@ class NodeRuntime(context: Context) {
     updateStatus()
     val token = prefs.loadGatewayToken()
     val password = prefs.loadGatewayPassword()
-    val scheme = if (endpoint.tlsEnabled) "https" else "http"
-    canvas.setGatewayAuth(
-      origin = "$scheme://${endpoint.host}:${endpoint.port}",
-      token = token
-    )
     operatorSession.connect(endpoint, token, password, connectionManager.buildOperatorConnectOptions(), tls)
     nodeSession.connect(endpoint, token, password, connectionManager.buildNodeConnectOptions(), tls)
   }
@@ -749,7 +744,6 @@ class NodeRuntime(context: Context) {
   fun disconnect() {
     connectedEndpoint = null
     _pendingGatewayTrust.value = null
-    canvas.setGatewayAuth(origin = null, token = null)
     operatorSession.disconnect()
     nodeSession.disconnect()
     motionHandler.close()

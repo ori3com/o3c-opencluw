@@ -47,10 +47,9 @@ class MotionHandler(private val appContext: Context) : SensorEventListener {
 
     suspend fun handleActivity(): GatewaySession.InvokeResult {
         if (!ensurePermission()) {
-            val msg = if (permissionRequester != null) "MOTION_PERMISSION_REQUIRED: grant Activity Recognition permission" else "MOTION_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Activity Recognition permission in Settings"
             return GatewaySession.InvokeResult.error(
                 code = "MOTION_PERMISSION_REQUIRED",
-                message = msg
+                message = "MOTION_PERMISSION_REQUIRED: grant Activity Recognition permission"
             )
         }
         val payload = buildJsonObject {
@@ -61,10 +60,9 @@ class MotionHandler(private val appContext: Context) : SensorEventListener {
 
     suspend fun handlePedometer(): GatewaySession.InvokeResult {
         if (!ensurePermission()) {
-            val msg = if (permissionRequester != null) "MOTION_PERMISSION_REQUIRED: grant Activity Recognition permission" else "MOTION_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Activity Recognition permission in Settings"
             return GatewaySession.InvokeResult.error(
-                    code = "MOTION_PERMISSION_REQUIRED",
-                    message = msg
+                code = "MOTION_PERMISSION_REQUIRED",
+                message = "MOTION_PERMISSION_REQUIRED: grant Activity Recognition permission"
             )
         }
         val payload = buildJsonObject {

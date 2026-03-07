@@ -71,10 +71,9 @@ class CalendarHandler(private val appContext: Context) {
 
     suspend fun handleEvents(paramsJson: String?): GatewaySession.InvokeResult {
         if (!ensureReadPermission()) {
-            val msg = if (permissionRequester != null) "CALENDAR_READ_PERMISSION_REQUIRED: grant Calendar read permission" else "CALENDAR_READ_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Calendar read permission in Settings"
             return GatewaySession.InvokeResult.error(
                 code = "CALENDAR_READ_PERMISSION_REQUIRED",
-                message = msg
+                message = "CALENDAR_READ_PERMISSION_REQUIRED: grant Calendar read permission"
             )
         }
 
@@ -144,10 +143,9 @@ class CalendarHandler(private val appContext: Context) {
 
     suspend fun handleAdd(paramsJson: String?): GatewaySession.InvokeResult {
         if (!ensureWritePermission()) {
-            val msg = if (permissionRequester != null) "CALENDAR_WRITE_PERMISSION_REQUIRED: grant Calendar write permission" else "CALENDAR_WRITE_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Calendar write permission in Settings"
             return GatewaySession.InvokeResult.error(
                 code = "CALENDAR_WRITE_PERMISSION_REQUIRED",
-                message = msg
+                message = "CALENDAR_WRITE_PERMISSION_REQUIRED: grant Calendar write permission"
             )
         }
 
@@ -191,10 +189,9 @@ class CalendarHandler(private val appContext: Context) {
 
     suspend fun handleUpdate(paramsJson: String?): GatewaySession.InvokeResult {
         if (!ensureWritePermission()) {
-            val msg = if (permissionRequester != null) "CALENDAR_WRITE_PERMISSION_REQUIRED: grant Calendar write permission" else "CALENDAR_WRITE_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Calendar write permission in Settings"
             return GatewaySession.InvokeResult.error(
                 code = "CALENDAR_WRITE_PERMISSION_REQUIRED",
-                message = msg
+                message = "CALENDAR_WRITE_PERMISSION_REQUIRED: grant Calendar write permission"
             )
         }
 
@@ -242,10 +239,9 @@ class CalendarHandler(private val appContext: Context) {
 
     suspend fun handleDelete(paramsJson: String?): GatewaySession.InvokeResult {
         if (!ensureWritePermission()) {
-            val msg = if (permissionRequester != null) "CALENDAR_WRITE_PERMISSION_REQUIRED: grant Calendar write permission" else "CALENDAR_WRITE_PERMISSION_REQUIRED: open OpenClaw Assistant and grant Calendar write permission in Settings"
             return GatewaySession.InvokeResult.error(
                 code = "CALENDAR_WRITE_PERMISSION_REQUIRED",
-                message = msg
+                message = "CALENDAR_WRITE_PERMISSION_REQUIRED: grant Calendar write permission"
             )
         }
 
