@@ -43,14 +43,16 @@ class OpenClawClient(private val ignoreSslErrors: Boolean = false) {
     private val gson = Gson()
 
     /**
-     * POST message to HTTP connection and return response
+     * POST message to HTTP connection and return response.
+     * @param attachments List of (mimeType, base64) pairs for image attachments.
      */
     suspend fun sendMessage(
         httpUrl: String,
         message: String,
         sessionId: String,
         authToken: String? = null,
-        agentId: String? = null
+        agentId: String? = null,
+        attachments: List<Pair<String, String>> = emptyList()
     ): Result<OpenClawResponse> = withContext(Dispatchers.IO) {
         if (httpUrl.isBlank()) {
             return@withContext Result.failure(
@@ -66,7 +68,28 @@ class OpenClawClient(private val ignoreSslErrors: Boolean = false) {
                 val messagesArray = JsonArray()
                 val userMessage = JsonObject().apply {
                     addProperty("role", "user")
-                    addProperty("content", message)
+                    if (attachments.isEmpty()) {
+                        // Text-only: use simple string content (backward compatible)
+                        addProperty("content", message)
+                    } else {
+                        // Multimodal: use content array with text + images (OpenAI vision format)
+                        val contentArray = JsonArray()
+                        if (message.isNotBlank()) {
+                            contentArray.add(JsonObject().apply {
+                                addProperty("type", "text")
+                                addProperty("text", message)
+                            })
+                        }
+                        for ((mimeType, base64) in attachments) {
+                            contentArray.add(JsonObject().apply {
+                                addProperty("type", "image_url")
+                                add("image_url", JsonObject().apply {
+                                    addProperty("url", "data:$mimeType;base64,$base64")
+                                })
+                            })
+                        }
+                        add("content", contentArray)
+                    }
                 }
                 messagesArray.add(userMessage)
                 add("messages", messagesArray)

@@ -673,7 +673,7 @@ fun ChatAttachmentPreview(attachment: com.openclaw.assistant.chat.ChatMessageCon
             failed = false
             image = withContext(Dispatchers.Default) {
                 try {
-                    val bytes = android.util.Base64.decode(attachment.base64, android.util.Base64.NO_WRAP)
+                    val bytes = android.util.Base64.decode(attachment.base64, android.util.Base64.DEFAULT)
                     val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: return@withContext null
                     bitmap.asImageBitmap()
                 } catch (_: Throwable) {

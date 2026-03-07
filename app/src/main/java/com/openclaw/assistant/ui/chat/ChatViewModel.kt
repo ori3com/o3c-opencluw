@@ -501,6 +501,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         // Ensure we have a session
         val sessionId = _currentSessionId.value ?: return
 
+        val httpAttachments = _uiState.value.attachments
         _uiState.update { it.copy(isThinking = true, attachments = emptyList()) }
         if (lastInputWasVoice) {
             toneGenerator.startTone(android.media.ToneGenerator.TONE_PROP_ACK, 150)
@@ -511,9 +512,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 // Save User Message
                 chatRepository.addMessage(sessionId, text, isUser = true)
-                // HTTP API currently doesn't support generic file attachments yet in OpenClaw backend structure natively without node format
-                // So they are technically dropped in the original HTTP flow here unless backend translates them.
-                sendViaHttp(sessionId, text)
+                sendViaHttp(sessionId, text, httpAttachments)
             } catch (e: Exception) {
                 stopThinkingSound()
                 _uiState.update { it.copy(isThinking = false, error = e.message) }
@@ -521,7 +520,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun sendViaHttp(sessionId: String, text: String) {
+    private fun sendViaHttp(sessionId: String, text: String, attachments: List<PendingFileAttachment> = emptyList()) {
         val httpUrl = settings.getChatCompletionsUrl()
         val authToken = settings.authToken.takeIf { it.isNotBlank() }
         val effectiveAgentId = getEffectiveAgentId()
@@ -533,7 +532,8 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                     message = text,
                     sessionId = sessionId,
                     authToken = authToken,
-                    agentId = effectiveAgentId
+                    agentId = effectiveAgentId,
+                    attachments = attachments.map { Pair(it.mimeType, it.base64) }
                 )
 
                 result.fold(
