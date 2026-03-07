@@ -464,6 +464,7 @@
 
 
     <!-- Onboarding / Permissions Toggles -->
+<<<<<<< HEAD
 <string name="permission_discovery">Discovery</string>
 <string name="permission_discovery_desc">Find and connect to devices on your local network</string>
 <string name="permission_contacts">Contacts</string>
@@ -489,4 +490,46 @@
     <string name="qr_scan_desc">Align the QR code within the frame to scan it</string>
     <string name="qr_scan_prompt">Scan QR Code</string>
     <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
+=======
+    <string name="qr_scan_prompt">扫描二维码</string>
+    <string name="setup_guide_qr_scan_title">方式 1：扫描 QR 码</string>
+    <string name="setup_guide_qr_scan_cmd_label">在网关主机上运行以下命令以显示 QR 码：</string>
+    <string name="setup_guide_code_input_title">方式 2：输入设置码</string>
+    <string name="qr_scan_desc">扫描二维码</string>
+    <!-- Bottom Navigation Tabs -->
+    <string name="tab_nav_home">主页</string>
+    <string name="tab_nav_chat">聊天</string>
+    <string name="tab_nav_canvas">Canvas</string>
+    <string name="tab_nav_settings">设置</string>
+    <string name="canvas_placeholder_title">Canvas</string>
+    <string name="canvas_placeholder_body">Canvas 是由 AI 助手控制的显示区域。请在聊天中让助手在这里显示一些内容。</string>
+    <string name="canvas_go_to_chat">前往聊天</string>
+    <string name="canvas_chat_hint">在 Canvas 上显示什么？</string>
+    <string name="canvas_chat_not_connected">连接 Gateway 以开始聊天</string>
+    <string name="canvas_chat_send">发送</string>
+    <string name="canvas_status_sending">发送中...</string>
+    <string name="canvas_status_thinking">思考中...</string>
+    <string name="canvas_status_tool">使用工具中...</string>
+    <string name="canvas_status_loading">Canvas 加载中...</string>
+    <string name="canvas_diag_no_canvas">AI 未使用 Canvas — 文字回复如下所示。\nCanvas 工具可能不可用或未启用。</string>
+    <string name="canvas_diag_not_connected">未连接到 Gateway。连接后 AI 可操作 Canvas。</string>
+    <!-- Capabilities -->
+    <string name="none">无</string>
+    <string name="capability_motion">运动</string>
+    <string name="permission_discovery">Discovery</string>
+    <string name="permission_discovery_desc">Find and connect to devices on your local network</string>
+    <string name="permission_contacts">Contacts</string>
+    <string name="permission_contacts_desc">Allow AI to access and manage your contacts</string>
+    <string name="permission_calendar">Calendar</string>
+    <string name="permission_calendar_desc">Allow AI to see and manage your calendar events</string>
+    <string name="permission_motion">Motion &amp; Fitness</string>
+    <string name="permission_motion_desc">Required for step counting and activity detection</string>
+    <string name="permission_special_access">Special Access</string>
+    <string name="permission_notification_listener">Notification Listener</string>
+    <string name="permission_notification_listener_desc">Required for AI to read and manage notifications</string>
+    <string name="permission_install_unknown_apps">Install Unknown Apps</string>
+    <string name="permission_install_unknown_apps_desc">Allow AI to install app updates</string>
+    <string name="permission_summary_title">Permissions Summary</string>
+    <string name="permission_summary_format">%1$d standard permissions, %2$d special access granted</string>
+>>>>>>> 9669510 (feat: setup code supports both QR scan and text input with dark-bg visibility fix + i18n for all 8 languages)
 </resources>

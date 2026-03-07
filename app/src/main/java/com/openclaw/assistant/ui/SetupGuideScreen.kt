@@ -461,8 +461,63 @@ private fun ConnectionStep(
         Spacer(modifier = Modifier.height(24.dp))
 
         if (mode == ConnectionMode.SetupCode) {
+            // --- Option 1: QR Scan ---
             Text(
-                text = stringResource(R.string.setup_guide_connection_guide_title),
+                text = stringResource(R.string.setup_guide_qr_scan_title),
+                style = MaterialTheme.typography.titleMedium,
+                color = OnboardingTextPrimary,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = stringResource(R.string.setup_guide_qr_scan_cmd_label),
+                style = MaterialTheme.typography.bodySmall,
+                color = OnboardingTextSecondary
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .background(Color(0xFF0D1117), RoundedCornerShape(8.dp))
+                    .padding(12.dp)
+            ) {
+                Text(
+                    text = "openclaw qr",
+                    color = Color(0xFF58A6FF),
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                    fontSize = 13.sp
+                )
+            }
+
+            val qrPrompt = stringResource(R.string.qr_scan_prompt)
+            OutlinedButton(
+                onClick = {
+                    val options = ScanOptions().apply {
+                        setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                        setPrompt(qrPrompt)
+                        setBeepEnabled(false)
+                        setOrientationLocked(false)
+                    }
+                    scanLauncher.launch(options)
+                },
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
+                    contentColor = OnboardingGradientMid
+                ),
+                border = androidx.compose.foundation.BorderStroke(1.dp, OnboardingGradientMid)
+            ) {
+                Icon(Icons.Default.QrCodeScanner, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(stringResource(R.string.qr_scan_prompt), fontSize = 16.sp)
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+            HorizontalDivider(color = OnboardingBorder)
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // --- Option 2: Text input ---
+            Text(
+                text = stringResource(R.string.setup_guide_code_input_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = OnboardingTextPrimary,
                 fontWeight = FontWeight.Bold
@@ -476,14 +531,14 @@ private fun ConnectionStep(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .background(Color.Black, RoundedCornerShape(8.dp))
+                    .background(Color(0xFF0D1117), RoundedCornerShape(8.dp))
                     .padding(12.dp)
             ) {
                 Text(
                     text = "openclaw qr --setup-code-only",
-                    color = Color.Green,
+                    color = Color(0xFF58A6FF),
                     fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                    fontSize = 12.sp
+                    fontSize = 13.sp
                 )
             }
             Text(
@@ -492,7 +547,7 @@ private fun ConnectionStep(
                 color = OnboardingTextSecondary
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = setupCode,
@@ -501,19 +556,17 @@ private fun ConnectionStep(
                 placeholder = { Text(stringResource(R.string.setup_guide_setup_code_hint)) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                trailingIcon = {
-                    IconButton(onClick = {
-                        val options = ScanOptions().apply {
-                            setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-                            setPrompt(setupCode) // Show current code as prompt or similar
-                            setBeepEnabled(false)
-                            setOrientationLocked(false)
-                        }
-                        scanLauncher.launch(options)
-                    }) {
-                        Icon(Icons.Default.QrCodeScanner, contentDescription = "Scan QR")
-                    }
-                }
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = OnboardingTextPrimary,
+                    unfocusedTextColor = OnboardingTextPrimary,
+                    focusedLabelColor = OnboardingGradientMid,
+                    unfocusedLabelColor = OnboardingTextSecondary,
+                    focusedBorderColor = OnboardingGradientMid,
+                    unfocusedBorderColor = OnboardingBorder,
+                    cursorColor = OnboardingGradientMid,
+                    focusedPlaceholderColor = OnboardingTextSecondary,
+                    unfocusedPlaceholderColor = OnboardingTextSecondary,
+                ),
             )
 
             val isCodeValid = GatewayConfigUtils.decodeGatewaySetupCode(setupCode) != null
@@ -527,6 +580,17 @@ private fun ConnectionStep(
             }
         } else {
             // Manual Mode fields
+            val manualFieldColors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = OnboardingTextPrimary,
+                unfocusedTextColor = OnboardingTextPrimary,
+                focusedLabelColor = OnboardingGradientMid,
+                unfocusedLabelColor = OnboardingTextSecondary,
+                focusedBorderColor = OnboardingGradientMid,
+                unfocusedBorderColor = OnboardingBorder,
+                cursorColor = OnboardingGradientMid,
+                focusedPlaceholderColor = OnboardingTextSecondary,
+                unfocusedPlaceholderColor = OnboardingTextSecondary,
+            )
             OutlinedTextField(
                 value = manualHost,
                 onValueChange = onManualHostChange,
@@ -534,7 +598,8 @@ private fun ConnectionStep(
                 placeholder = { Text("192.168.1.100") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                colors = manualFieldColors
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
@@ -543,15 +608,25 @@ private fun ConnectionStep(
                 label = { Text(stringResource(R.string.setup_guide_manual_port)) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                colors = manualFieldColors
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(stringResource(R.string.setup_guide_manual_tls), fontWeight = FontWeight.Bold)
-                    Text(stringResource(R.string.setup_guide_manual_tls_desc), style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.setup_guide_manual_tls), fontWeight = FontWeight.Bold, color = OnboardingTextPrimary)
+                    Text(stringResource(R.string.setup_guide_manual_tls_desc), style = MaterialTheme.typography.bodySmall, color = OnboardingTextSecondary)
                 }
-                Switch(checked = manualTls, onCheckedChange = onManualTlsChange)
+                Switch(
+                    checked = manualTls,
+                    onCheckedChange = onManualTlsChange,
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = OnboardingGradientMid,
+                        checkedTrackColor = OnboardingGradientMid.copy(alpha = 0.4f),
+                        uncheckedThumbColor = OnboardingTextSecondary,
+                        uncheckedTrackColor = OnboardingBorder,
+                    )
+                )
             }
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
@@ -561,7 +636,8 @@ private fun ConnectionStep(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                colors = manualFieldColors
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
@@ -571,7 +647,8 @@ private fun ConnectionStep(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                colors = manualFieldColors
             )
         }
 

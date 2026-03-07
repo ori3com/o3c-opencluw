@@ -572,5 +572,29 @@
     <string name="permission_summary_format">%1 standard permissions, %2 special access granted</string>
 
     <string name="qr_scan_prompt">Scan QR Code</string>
+<<<<<<< HEAD
     <string name="qr_scan_desc">Align the QR code within the frame to scan it</string>
+=======
+    <string name="qr_scan_desc">Scan QR</string>
+    <string name="setup_guide_qr_scan_title">Option 1: Scan QR Code</string>
+    <string name="setup_guide_qr_scan_cmd_label">Run this on the gateway host to display a QR code:</string>
+    <string name="setup_guide_code_input_title">Option 2: Enter Setup Code</string>
+    <!-- Bottom Navigation Tabs -->
+    <string name="tab_nav_home">Home</string>
+    <string name="tab_nav_chat">Chat</string>
+    <string name="tab_nav_canvas">Canvas</string>
+    <string name="tab_nav_settings">Settings</string>
+    <string name="canvas_placeholder_title">Canvas</string>
+    <string name="canvas_placeholder_body">Canvas is a display area controlled by the AI assistant. Ask the assistant in Chat to show something here.</string>
+    <string name="canvas_go_to_chat">Go to Chat</string>
+    <string name="canvas_chat_hint">What to show on Canvas?</string>
+    <string name="canvas_chat_not_connected">Connect to Gateway to chat</string>
+    <string name="canvas_chat_send">Send</string>
+    <string name="canvas_status_sending">Sending...</string>
+    <string name="canvas_status_thinking">Thinking...</string>
+    <string name="canvas_status_tool">Using tools...</string>
+    <string name="canvas_status_loading">Loading Canvas...</string>
+    <string name="canvas_diag_no_canvas">AI did not use Canvas — text response shown below.\nCanvas tools may not be available or enabled.</string>
+    <string name="canvas_diag_not_connected">Not connected to Gateway. Connect to allow AI to operate Canvas.</string>
+>>>>>>> 9669510 (feat: setup code supports both QR scan and text input with dark-bg visibility fix + i18n for all 8 languages)
 </resources>
