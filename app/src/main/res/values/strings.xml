@@ -569,7 +569,7 @@
     <string name="permission_install_unknown_apps">Install Unknown Apps</string>
     <string name="permission_install_unknown_apps_desc">Allow AI to install app updates</string>
     <string name="permission_summary_title">Permissions Summary</string>
-    <string name="permission_summary_format">%1 standard permissions, %2 special access granted</string>
+    <string name="permission_summary_format">%1$d standard permissions, %2$d special access granted</string>
 
     <string name="qr_scan_prompt">Scan QR Code</string>
 <string name="qr_scan_desc">Align the QR code within the frame to scan it</string>

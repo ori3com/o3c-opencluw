@@ -477,7 +477,7 @@
 <string name="permission_install_unknown_apps">Install Unknown Apps</string>
 <string name="permission_install_unknown_apps_desc">Allow AI to install app updates</string>
 <string name="permission_summary_title">Permissions Summary</string>
-<string name="permission_summary_format">%1 standard permissions, %2 special access granted</string>
+<string name="permission_summary_format">%1$d standard permissions, %2$d special access granted</string>
     <!-- Missing translations -->
     <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
     <string name="credits_support_description">このアプリが役に立った場合は、Ko-fiでの支援をご検討ください。</string>

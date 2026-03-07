@@ -475,7 +475,7 @@
 <string name="permission_install_unknown_apps">不明なアプリのインストール</string>
 <string name="permission_install_unknown_apps_desc">AIがアプリのアップデートをインストールすることを許可します</string>
 <string name="permission_summary_title">権限の概要</string>
-<string name="permission_summary_format">%1 個の標準権限、%2 個の特別なアクセスが許可されました</string>
+<string name="permission_summary_format">%1$d 個の標準権限、%2$d 個の特別なアクセスが許可されました</string>
 <string name="qr_scan_prompt">QRコードをスキャンしてください</string>
     <string name="setup_guide_qr_scan_title">方法1：QRコードをスキャン</string>
     <string name="setup_guide_qr_scan_cmd_label">QRコードを表示するには、ゲートウェイホストでこれを実行してください:</string>

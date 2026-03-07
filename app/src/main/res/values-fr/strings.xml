@@ -478,7 +478,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="permission_install_unknown_apps">Installer des applications inconnues</string>
 <string name="permission_install_unknown_apps_desc">Autoriser l\'IA à installer des mises à jour d\'applications</string>
 <string name="permission_summary_title">Résumé des autorisations</string>
-<string name="permission_summary_format">%1 autorisations standard, %2 accès spéciaux accordés</string>
+<string name="permission_summary_format">%1$d autorisations standard, %2$d accès spéciaux accordés</string>
     <!-- Missing translations -->
     <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
     <string name="credits_support_description">このアプリが役に立った場合は、Ko-fiでの支援をご検討ください。</string>
