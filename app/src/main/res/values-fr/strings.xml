@@ -461,20 +461,18 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 
     <!-- Onboarding / Permissions Toggles -->
     <string name="permission_discovery">Découverte</string>
-    <string name="permission_discovery_desc">Trouver et se connecter aux appareils du réseau local</string>
+    <string name="permission_discovery_desc">Trouver et se connecter aux appareils sur votre réseau local</string>
     <string name="permission_contacts">Contacts</string>
-    <string name="permission_contacts_desc">Autoriser l\'IA à accéder à vos contacts</string>
+    <string name="permission_contacts_desc">Autoriser l'IA à accéder et gérer vos contacts</string>
     <string name="permission_calendar">Calendrier</string>
-    <string name="permission_calendar_desc">Autoriser l\'IA à accéder à votre calendrier</string>
-    <string name="permission_motion">Mouvement et Forme</string>
-    <string name="permission_motion_desc">Requis pour le podomètre et les activités</string>
-    <string name="permission_special_access">Accès Spécial</string>
-    <string name="permission_notification_listener">Accès aux notifications</string>
-    <string name="permission_notification_listener_desc">Requis pour lire et gérer les notifications</string>
+    <string name="permission_calendar_desc">Autoriser l'IA à voir et gérer vos événements de calendrier</string>
+    <string name="permission_motion">Mouvement et fitness</string>
+    <string name="permission_motion_desc">Requis pour le comptage des pas et la détection d'activité</string>
+    <string name="permission_special_access">Accès spécial</string>
+    <string name="permission_notification_listener">Écouteur de notifications</string>
+    <string name="permission_notification_listener_desc">Requis pour que l'IA puisse lire et gérer les notifications</string>
     <string name="permission_install_unknown_apps">Installer des applications inconnues</string>
-    <string name="permission_install_unknown_apps_desc">Autoriser l\'IA à installer des mises à jour</string>
-    <string name="permission_summary_title">Résumé des Autorisations</string>
-    <string name="permission_summary_format">%1$d standard, %2$d accès spécial</string>
-    <string name="qr_scan_prompt">Scanner le code QR</string>
-    <string name="qr_scan_desc">Scanner QR</string>
+    <string name="permission_install_unknown_apps_desc">Autoriser l'IA à installer des mises à jour d'applications</string>
+    <string name="permission_summary_title">Résumé des autorisations</string>
+    <string name="permission_summary_format">%1 autorisations standard, %2 accès spéciaux accordés</string>
 </resources>

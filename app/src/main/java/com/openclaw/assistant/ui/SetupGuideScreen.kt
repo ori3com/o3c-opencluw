@@ -430,9 +430,6 @@ private fun ConnectionStep(
         }
     }
 
-    val qrPrompt = stringResource(R.string.qr_scan_prompt)
-    val qrDesc = stringResource(R.string.qr_scan_desc)
-
     Column {
         Text(
             text = stringResource(R.string.setup_guide_connection_title),
@@ -508,13 +505,13 @@ private fun ConnectionStep(
                     IconButton(onClick = {
                         val options = ScanOptions().apply {
                             setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-                            setPrompt(qrPrompt)
+                            setPrompt(setupCode) // Show current code as prompt or similar
                             setBeepEnabled(false)
                             setOrientationLocked(false)
                         }
                         scanLauncher.launch(options)
                     }) {
-                        Icon(Icons.Default.QrCodeScanner, contentDescription = qrDesc)
+                        Icon(Icons.Default.QrCodeScanner, contentDescription = "Scan QR")
                     }
                 }
             )

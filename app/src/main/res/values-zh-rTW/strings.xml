@@ -459,21 +459,19 @@
     <string name="voicevox_size_unknown">不清楚</string>
 
     <!-- Onboarding / Permissions Toggles -->
-    <string name="permission_discovery">裝置發現</string>
-    <string name="permission_discovery_desc">在區域網路尋找並連接裝置</string>
-    <string name="permission_contacts">聯絡人</string>
-    <string name="permission_contacts_desc">允許 AI 存取及管理您的聯絡人</string>
-    <string name="permission_calendar">日曆</string>
-    <string name="permission_calendar_desc">允許 AI 檢視和管理您的日曆</string>
-    <string name="permission_motion">運動與健身</string>
-    <string name="permission_motion_desc">計步與活動偵測所需</string>
-    <string name="permission_special_access">特殊存取權限</string>
-    <string name="permission_notification_listener">通知讀取權限</string>
-    <string name="permission_notification_listener_desc">AI 讀取和管理通知所需</string>
-    <string name="permission_install_unknown_apps">安裝未知的應用程式</string>
-    <string name="permission_install_unknown_apps_desc">允許 AI 安裝應用程式更新</string>
-    <string name="permission_summary_title">權限摘要</string>
-    <string name="permission_summary_format">已授予 %1$d 項標準權限，%2$d 項特殊權限</string>
-    <string name="qr_scan_prompt">掃描行動條碼</string>
-    <string name="qr_scan_desc">掃描 QR</string>
+    <string name="permission_discovery">Discovery</string>
+    <string name="permission_discovery_desc">Find and connect to devices on your local network</string>
+    <string name="permission_contacts">Contacts</string>
+    <string name="permission_contacts_desc">Allow AI to access and manage your contacts</string>
+    <string name="permission_calendar">Calendar</string>
+    <string name="permission_calendar_desc">Allow AI to see and manage your calendar events</string>
+    <string name="permission_motion">Motion &amp; Fitness</string>
+    <string name="permission_motion_desc">Required for step counting and activity detection</string>
+    <string name="permission_special_access">Special Access</string>
+    <string name="permission_notification_listener">Notification Listener</string>
+    <string name="permission_notification_listener_desc">Required for AI to read and manage notifications</string>
+    <string name="permission_install_unknown_apps">Install Unknown Apps</string>
+    <string name="permission_install_unknown_apps_desc">Allow AI to install app updates</string>
+    <string name="permission_summary_title">Permissions Summary</string>
+    <string name="permission_summary_format">%1 standard permissions, %2 special access granted</string>
 </resources>

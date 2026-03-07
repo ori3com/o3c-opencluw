@@ -4,7 +4,7 @@
     <string name="notification_channel_name">唤醒词服务</string>
     <string name="notification_channel_description">始终开启的语音检测服务</string>
     <string name="notification_title">OpenClaw 助手</string>
-    <string name="notification_content">说“%s\\”即可激活</string>
+    <string name="notification_content">说“%s”即可激活</string>
     <string name="default_session_title_format">语音会话 %s</string>
     <string name="chat_session_title_format">聊天 %s</string>
     <string name="error_config_required">请在“设置”中配置连接</string>
@@ -32,7 +32,7 @@
     <string name="error_speech_general">语音错误</string>
     <string name="error_no_recognition_result">无识别结果</string>
     <string name="error_start_failed">启动错误：%s</string>
-    <string name="notification_text">说“%s\\”即可激活</string>
+    <string name="notification_text">说“%s”即可激活</string>
     <string name="settings_title">设置</string>
     <string name="webhook_url_label">服务器 URL</string>
     <string name="webhook_url_hint">https://您的服务器</string>
@@ -460,21 +460,19 @@
     <string name="voicevox_size_unknown">未知</string>
 
     <!-- Onboarding / Permissions Toggles -->
-    <string name="permission_discovery">设备发现</string>
-    <string name="permission_discovery_desc">在本地网络上查找并连接设备</string>
-    <string name="permission_contacts">通讯录</string>
-    <string name="permission_contacts_desc">允许 AI 访问并管理您的联系人</string>
-    <string name="permission_calendar">日历</string>
-    <string name="permission_calendar_desc">允许 AI 查看和管理您的日历</string>
-    <string name="permission_motion">运动与体能</string>
-    <string name="permission_motion_desc">计步和活动检测所需</string>
-    <string name="permission_special_access">特殊访问权限</string>
-    <string name="permission_notification_listener">通知读取权限</string>
-    <string name="permission_notification_listener_desc">AI 读取和管理通知所需</string>
-    <string name="permission_install_unknown_apps">安装未知应用</string>
-    <string name="permission_install_unknown_apps_desc">允许 AI 安装应用更新</string>
-    <string name="permission_summary_title">权限摘要</string>
-    <string name="permission_summary_format">已授予 %1$d 项标准权限，%2$d 项特殊权限</string>
-    <string name="qr_scan_prompt">扫描二维码</string>
-    <string name="qr_scan_desc">扫描二维码</string>
+    <string name="permission_discovery">Discovery</string>
+    <string name="permission_discovery_desc">Find and connect to devices on your local network</string>
+    <string name="permission_contacts">Contacts</string>
+    <string name="permission_contacts_desc">Allow AI to access and manage your contacts</string>
+    <string name="permission_calendar">Calendar</string>
+    <string name="permission_calendar_desc">Allow AI to see and manage your calendar events</string>
+    <string name="permission_motion">Motion &amp; Fitness</string>
+    <string name="permission_motion_desc">Required for step counting and activity detection</string>
+    <string name="permission_special_access">Special Access</string>
+    <string name="permission_notification_listener">Notification Listener</string>
+    <string name="permission_notification_listener_desc">Required for AI to read and manage notifications</string>
+    <string name="permission_install_unknown_apps">Install Unknown Apps</string>
+    <string name="permission_install_unknown_apps_desc">Allow AI to install app updates</string>
+    <string name="permission_summary_title">Permissions Summary</string>
+    <string name="permission_summary_format">%1 standard permissions, %2 special access granted</string>
 </resources>
