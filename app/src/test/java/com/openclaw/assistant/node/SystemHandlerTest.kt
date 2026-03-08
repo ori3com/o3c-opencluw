@@ -11,13 +11,14 @@ import androidx.core.content.ContextCompat
 import android.content.pm.PackageManager
 import android.Manifest
 import android.os.Build
+import kotlinx.coroutines.runBlocking
 
 class SystemHandlerTest {
     private val context = mockk<Context>()
     private val handler = SystemHandler(context)
 
     @Test
-    fun `handleNotify returns INVALID_REQUEST when params are null`() {
+    fun `handleNotify returns INVALID_REQUEST when params are null`() = runBlocking {
         val result = handler.handleNotify(null)
 
         assertEquals(false, result.ok)
@@ -25,7 +26,7 @@ class SystemHandlerTest {
     }
 
     @Test
-    fun `handleNotify returns INVALID_REQUEST when message is empty`() {
+    fun `handleNotify returns INVALID_REQUEST when message is empty`() = runBlocking {
         mockkStatic(ContextCompat::class)
         every {
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
@@ -40,10 +41,10 @@ class SystemHandlerTest {
     }
 
     @Test
-    fun `handleNotify returns PERMISSION_REQUIRED on Android 13+ when POST_NOTIFICATIONS denied`() {
+    fun `handleNotify returns NOT_AUTHORIZED on Android 13+ when POST_NOTIFICATIONS denied`() = runBlocking {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             // Permission check is only enforced on API 33+; skip on lower SDK environments
-            return
+            return@runBlocking
         }
         mockkStatic(ContextCompat::class)
         every {
@@ -53,7 +54,7 @@ class SystemHandlerTest {
         val result = handler.handleNotify("""{"message":"test"}""")
 
         assertEquals(false, result.ok)
-        assertEquals("PERMISSION_REQUIRED", result.error?.code)
+        assertEquals("NOT_AUTHORIZED", result.error?.code)
         unmockkStatic(ContextCompat::class)
     }
 }

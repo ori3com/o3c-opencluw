@@ -463,7 +463,9 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
             // instead of letting the message silently fail inside ChatController.
             if (!nodeRuntime.chatHealthOk.value) {
                 Log.w(TAG, "sendMessage: chatHealthOk is false. useNodeChat=true")
-                _uiState.update { it.copy(error = "接続が確立されていません。しばらく待ってから再送信してください。") }
+                val app = getApplication<Application>()
+                val errorMsg = app.getString(com.openclaw.assistant.R.string.error_gateway_not_connected)
+                _uiState.update { it.copy(error = errorMsg) }
                 return
             }
             val attachmentsToProcess = _uiState.value.attachments
