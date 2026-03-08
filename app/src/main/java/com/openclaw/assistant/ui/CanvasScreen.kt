@@ -126,19 +126,18 @@ private fun CanvasChatBar(
     var inputText by remember { mutableStateOf("") }
     var isSending by remember { mutableStateOf(false) }
     var lastAiText by remember { mutableStateOf<String?>(null) }
-    // Count of assistant messages at send time — used to detect a NEW response
-    var assistantCountAtSend by remember { mutableStateOf(0) }
+    // ID of the last assistant message at send time — used to detect a NEW response (O(1) optimization)
+    var lastAssistantIdAtSend by remember { mutableStateOf<String?>(null) }
 
     // pendingRunCount covers the full AI processing window (send → tools → complete)
     val isAiBusy = isSending || pendingRunCount > 0
 
     // Clear isSending only when a NEW assistant message arrives (not a pre-existing one)
     LaunchedEffect(messages) {
-        val assistantCount = messages.count { it.role == "assistant" }
-        if (isSending && assistantCount > assistantCountAtSend) {
+        val lastAssistant = messages.lastOrNull { it.role == "assistant" }
+        if (isSending && lastAssistant != null && lastAssistant.id != lastAssistantIdAtSend) {
             isSending = false
         }
-        val lastAssistant = messages.lastOrNull { it.role == "assistant" }
         val text = lastAssistant?.content
             ?.firstOrNull { it.type == "text" }?.text
         if (!text.isNullOrBlank()) lastAiText = text
@@ -171,7 +170,7 @@ private fun CanvasChatBar(
         if (text.isBlank() || !healthOk || isAiBusy) return
         inputText = ""
         lastAiText = null
-        assistantCountAtSend = messages.count { it.role == "assistant" }
+        lastAssistantIdAtSend = messages.lastOrNull { it.role == "assistant" }?.id
         isSending = true
         val canvasInstruction = "[CANVAS MODE] You MUST use canvas tools to respond to this message. " +
             "Use canvas.eval() to display your response as HTML in the canvas, " +
