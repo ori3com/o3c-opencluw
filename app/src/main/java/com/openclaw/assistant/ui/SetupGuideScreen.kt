@@ -15,6 +15,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -24,6 +25,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -482,20 +484,9 @@ private fun ConnectionStep(
                 style = MaterialTheme.typography.bodySmall,
                 color = OnboardingTextSecondary
             )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .background(Color(0xFF0D1117), RoundedCornerShape(8.dp))
-                    .padding(12.dp)
-            ) {
-                Text(
-                    text = "openclaw qr",
-                    color = Color(0xFF58A6FF),
-                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                    fontSize = 13.sp
-                )
-            }
+            Spacer(modifier = Modifier.height(8.dp))
+            CommandBlock("openclaw qr")
+            Spacer(modifier = Modifier.height(8.dp))
 
             val qrPrompt = stringResource(R.string.qr_scan_prompt)
             OutlinedButton(
@@ -536,20 +527,9 @@ private fun ConnectionStep(
                 style = MaterialTheme.typography.bodySmall,
                 color = OnboardingTextSecondary
             )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .background(Color(0xFF0D1117), RoundedCornerShape(8.dp))
-                    .padding(12.dp)
-            ) {
-                Text(
-                    text = "openclaw qr --setup-code-only",
-                    color = Color(0xFF58A6FF),
-                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                    fontSize = 13.sp
-                )
-            }
+            Spacer(modifier = Modifier.height(8.dp))
+            CommandBlock("openclaw qr --setup-code-only")
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(R.string.setup_guide_connection_guide_json_desc),
                 style = MaterialTheme.typography.bodySmall,
@@ -1145,29 +1125,36 @@ private fun PairingGuideBlock(deviceId: String?) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun CommandBlock(command: String) {
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Black, RoundedCornerShape(6.dp))
-            .combinedClickable(
-                onClick = {},
-                onLongClick = {
-                    clipboardManager.setText(AnnotatedString(command))
-                    android.widget.Toast.makeText(context, context.getString(R.string.setup_guide_copied), android.widget.Toast.LENGTH_SHORT).show()
-                }
-            )
-            .padding(10.dp)
+            .background(Color(0xFF0D1117), RoundedCornerShape(8.dp))
+            .clickable(
+                onClickLabel = stringResource(R.string.operator_offline_copy)
+            ) {
+                clipboardManager.setText(AnnotatedString(command))
+                android.widget.Toast.makeText(context, context.getString(R.string.setup_guide_copied), android.widget.Toast.LENGTH_SHORT).show()
+            }
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = command,
-            color = Color.Green,
+            color = Color(0xFF58A6FF),
             fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-            fontSize = 12.sp
+            fontSize = 13.sp,
+            modifier = Modifier.weight(1f)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Icon(
+            imageVector = Icons.Default.ContentCopy,
+            contentDescription = null,
+            tint = Color(0xFF58A6FF),
+            modifier = Modifier.size(16.dp)
         )
     }
 }
