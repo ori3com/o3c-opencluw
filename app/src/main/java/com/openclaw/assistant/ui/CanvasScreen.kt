@@ -126,7 +126,7 @@ private fun CanvasChatBar(
     var inputText by remember { mutableStateOf("") }
     var isSending by remember { mutableStateOf(false) }
     var lastAiText by remember { mutableStateOf<String?>(null) }
-    // ID of the last assistant message at send time — used to detect a NEW response (O(1) optimization)
+    // ID of the last assistant message at send time — used to detect a NEW response (avoids double traversal)
     var lastAssistantIdAtSend by remember { mutableStateOf<String?>(null) }
 
     // pendingRunCount covers the full AI processing window (send → tools → complete)
