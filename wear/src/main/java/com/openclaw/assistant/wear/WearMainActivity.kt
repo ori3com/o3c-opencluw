@@ -173,7 +173,7 @@ class WearMainActivity : ComponentActivity() {
                             Button(
                                 onClick = {
                                     val trimmedUrl = urlText.trim()
-                                    if (trimmedUrl.isNotBlank() && !com.openclaw.assistant.wear.utils.NetworkUtils.isUrlSecure(trimmedUrl)) {
+                                    if (trimmedUrl.isNotBlank() && !com.openclaw.assistant.shared.utils.NetworkUtils.isUrlSecure(trimmedUrl)) {
                                         android.widget.Toast.makeText(this@WearMainActivity, "Insecure URL: Only HTTPS or local HTTP allowed.", android.widget.Toast.LENGTH_LONG).show()
                                         return@Button
                                     }

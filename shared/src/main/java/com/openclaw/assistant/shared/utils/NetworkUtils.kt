@@ -1,4 +1,4 @@
-package com.openclaw.assistant.utils
+package com.openclaw.assistant.shared.utils
 
 import android.net.Uri
 

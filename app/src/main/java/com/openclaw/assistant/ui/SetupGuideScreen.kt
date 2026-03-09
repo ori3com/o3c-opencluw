@@ -313,7 +313,7 @@ fun SetupGuideScreen(
                                     // Auto-generate HTTP URL and token from gateway endpoint
                                     GatewayConfigUtils.composeGatewayManualUrl(parsed.host, parsed.port.toString(), parsed.tls)
                                         ?.let {
-                                            if (com.openclaw.assistant.utils.NetworkUtils.isUrlSecure(it)) {
+                                            if (com.openclaw.assistant.shared.utils.NetworkUtils.isUrlSecure(it)) {
                                                 settings.httpUrl = it
                                             }
                                         }
@@ -331,7 +331,7 @@ fun SetupGuideScreen(
                             // Auto-generate HTTP URL from gateway endpoint
                             GatewayConfigUtils.composeGatewayManualUrl(manualHost, manualPort, manualTls)
                                 ?.let {
-                                    if (com.openclaw.assistant.utils.NetworkUtils.isUrlSecure(it)) {
+                                    if (com.openclaw.assistant.shared.utils.NetworkUtils.isUrlSecure(it)) {
                                         settings.httpUrl = it
                                     }
                                 }

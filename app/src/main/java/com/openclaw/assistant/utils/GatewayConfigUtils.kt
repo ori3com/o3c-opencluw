@@ -2,6 +2,7 @@ package com.openclaw.assistant.utils
 
 import android.util.Base64
 import androidx.core.net.toUri
+import com.openclaw.assistant.shared.utils.NetworkUtils
 import java.util.Locale
 import org.json.JSONObject
 
