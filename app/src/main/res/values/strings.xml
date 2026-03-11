@@ -397,6 +397,7 @@
     <string name="location_precise">Precise</string>
     <string name="location_info_title">Location Accuracy Modes</string>
     <string name="location_info_message">Off: AI cannot access your location.\n\nCoarse: City/neighborhood level. Uses less battery.\n\nPrecise: GPS accuracy. Higher battery usage.\n\nLong-press this card to see this info again.</string>
+    <string name="info_description">More information</string>
 
     <!-- App Version -->
     <string name="app_version">Version %s</string>
