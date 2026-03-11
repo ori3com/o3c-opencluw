@@ -12,6 +12,22 @@ object TTSUtils {
     private const val TAG = "TTSUtils"
     const val GOOGLE_TTS_PACKAGE = "com.google.android.tts"
 
+    // Pre-compiled regex patterns to avoid repeated compilation overhead in stripMarkdownForSpeech
+    private val REGEX_CODE_BLOCK_START = Regex("```.*\\n?")
+    private val REGEX_CODE_BLOCK_END = Regex("```")
+    private val REGEX_HEADERS = Regex("^#{1,6}\\s+", RegexOption.MULTILINE)
+    private val REGEX_BOLD_1 = Regex("\\*\\*([^*]+)\\*\\*")
+    private val REGEX_BOLD_2 = Regex("__([^_]+)__")
+    private val REGEX_ITALIC_1 = Regex("\\*([^*]+)\\*")
+    private val REGEX_ITALIC_2 = Regex("_([^_]+)_")
+    private val REGEX_INLINE_CODE = Regex("`([^`]+)`")
+    private val REGEX_LINK = Regex("\\[([^\\]]+)]\\([^)]+\\)")
+    private val REGEX_IMAGE = Regex("!\\[([^\\]]*)]\\([^)]+\\)")
+    private val REGEX_HORIZONTAL_RULE = Regex("^[-*_]{3,}$", RegexOption.MULTILINE)
+    private val REGEX_BLOCKQUOTE = Regex("^>\\s?", RegexOption.MULTILINE)
+    private val REGEX_BULLET_POINTS = Regex("^\\s*[-*+]\\s+", RegexOption.MULTILINE)
+    private val REGEX_CONSECUTIVE_NEWLINES = Regex("\n{3,}")
+
     /**
      * Setup locale and high-quality voice
      */
@@ -80,41 +96,41 @@ object TTSUtils {
         // Adjustments like removing backticks and the first line (language name) for cases with language specification (```kotlin ...) are needed, but
         // simplify by just removing backticks and reading the content. Or should it say "code block"?
         // According to user request "read everything except symbols", keep the content.
-        result = result.replace(Regex("```.*\\n?"), "") // Remove starting ```language
-        result = result.replace(Regex("```"), "")       // Remove ending ```
+        result = result.replace(REGEX_CODE_BLOCK_START, "") // Remove starting ```language
+        result = result.replace(REGEX_CODE_BLOCK_END, "")   // Remove ending ```
 
         // Remove headers (# ## ### etc.)
-        result = result.replace(Regex("^#{1,6}\\s+", RegexOption.MULTILINE), "")
+        result = result.replace(REGEX_HEADERS, "")
         
         // Bold/Italic (**text**, *text*, __text__, _text_)
-        result = result.replace(Regex("\\*\\*([^*]+)\\*\\*"), "$1")
-        result = result.replace(Regex("\\*([^*]+)\\*"), "$1")
-        result = result.replace(Regex("__([^_]+)__"), "$1")
-        result = result.replace(Regex("_([^_]+)_"), "$1")
+        result = result.replace(REGEX_BOLD_1, "$1")
+        result = result.replace(REGEX_ITALIC_1, "$1")
+        result = result.replace(REGEX_BOLD_2, "$1")
+        result = result.replace(REGEX_ITALIC_2, "$1")
         
         // Inline code (code)
-        result = result.replace(Regex("`([^`]+)`"), "$1")
+        result = result.replace(REGEX_INLINE_CODE, "$1")
         
         // Link [text](url) → text
-        result = result.replace(Regex("\\[([^\\]]+)]\\([^)]+\\)"), "$1")
+        result = result.replace(REGEX_LINK, "$1")
         
         // Image ![alt](url) → alt
-        result = result.replace(Regex("!\\[([^\\]]*)]\\([^)]+\\)"), "$1")
+        result = result.replace(REGEX_IMAGE, "$1")
         
         // Horizontal rule (---, ***) -> Remove
-        result = result.replace(Regex("^[-*_]{3,}$", RegexOption.MULTILINE), "")
+        result = result.replace(REGEX_HORIZONTAL_RULE, "")
         
         // Blockquote (>)
-        result = result.replace(Regex("^>\\s?", RegexOption.MULTILINE), "")
+        result = result.replace(REGEX_BLOCKQUOTE, "")
         
         // Bullet point markers (-, *, +)
-        result = result.replace(Regex("^\\s*[-*+]\\s+", RegexOption.MULTILINE), "")
+        result = result.replace(REGEX_BULLET_POINTS, "")
         
         // Numbered list markers (1., 2., etc.) - these might be okay to read, but keep only the numbers
         // result = result.replace(Regex("^\\s*\\d+\\.\\s+", RegexOption.MULTILINE), "")
         
         // Organize consecutive newlines
-        result = result.replace(Regex("\n{3,}"), "\n\n")
+        result = result.replace(REGEX_CONSECUTIVE_NEWLINES, "\n\n")
         
         return result.trim()
     }
