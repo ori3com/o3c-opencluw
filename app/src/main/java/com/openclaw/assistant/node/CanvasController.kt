@@ -101,7 +101,21 @@ class CanvasController {
 
   fun navigate(url: String) {
     val trimmed = url.trim()
-    this.url = if (trimmed.isBlank() || trimmed == "/") null else trimmed
+
+    val safeUrl = if (trimmed.isBlank() || trimmed == "/") {
+      null
+    } else {
+      val lowerUrl = trimmed.lowercase()
+      when {
+        lowerUrl.startsWith("http://") ||
+        lowerUrl.startsWith("https://") ||
+        lowerUrl.startsWith("file:///android_asset/") -> trimmed
+        lowerUrl.contains("://") -> null // Block other schemes like javascript:, content:, file:// (non-asset)
+        else -> "https://$trimmed" // Default to https for scheme-less URLs like "example.com"
+      }
+    }
+
+    this.url = safeUrl
     _isDefaultState.value = this.url == null
     if (this.url != null) _isPageLoading.value = true
     reload()
