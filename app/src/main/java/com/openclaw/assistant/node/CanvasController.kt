@@ -105,13 +105,16 @@ class CanvasController {
     val safeUrl = if (trimmed.isBlank() || trimmed == "/") {
       null
     } else {
-      val lowerUrl = trimmed.lowercase()
-      when {
-        lowerUrl.startsWith("http://") ||
-        lowerUrl.startsWith("https://") ||
-        lowerUrl.startsWith("file:///android_asset/") -> trimmed
-        lowerUrl.contains("://") -> null // Block other schemes like javascript:, content:, file:// (non-asset)
-        else -> "https://$trimmed" // Default to https for scheme-less URLs like "example.com"
+      val lowerUrl = trimmed.lowercase(java.util.Locale.ROOT)
+      // Block dangerous schemes that could lead to XSS or local file disclosure,
+      // while allowing standard web navigation, scheme-less URLs, and the internal scaffold asset.
+      if (lowerUrl.startsWith("javascript:") ||
+          lowerUrl.startsWith("content:") ||
+          lowerUrl.startsWith("intent:") ||
+          (lowerUrl.startsWith("file://") && !lowerUrl.startsWith("file:///android_asset/"))) {
+        null
+      } else {
+        trimmed
       }
     }
 
