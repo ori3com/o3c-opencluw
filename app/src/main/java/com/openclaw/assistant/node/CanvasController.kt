@@ -105,9 +105,8 @@ class CanvasController {
       null
     } else {
       val lower = trimmed.lowercase()
-      if (lower.startsWith("http://") ||
-          lower.startsWith("https://") ||
-          lower.startsWith("file:///android_asset/")) {
+      if (lower.startsWith("file:///android_asset/") ||
+          com.openclaw.assistant.shared.utils.NetworkUtils.isUrlSecure(trimmed)) {
         trimmed
       } else {
         Log.w("OpenClawCanvas", "Blocked unsafe navigation URL: $trimmed")
