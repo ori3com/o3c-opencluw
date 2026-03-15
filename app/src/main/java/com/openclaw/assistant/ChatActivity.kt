@@ -650,7 +650,7 @@ fun MessageBubble(message: ChatMessage) {
                             Spacer(modifier = Modifier.width(4.dp))
                             Icon(
                                 imageVector = Icons.Default.ContentCopy,
-                                contentDescription = "Copy",
+                                contentDescription = stringResource(R.string.action_copy),
                                 tint = contentColor.copy(alpha = 0.4f),
                                 modifier = Modifier
                                     .size(14.dp)
@@ -709,7 +709,7 @@ fun ChatAttachmentPreview(attachment: com.openclaw.assistant.chat.ChatMessageCon
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.InsertDriveFile,
-                contentDescription = "File",
+                contentDescription = stringResource(R.string.file_attachment),
                 tint = contentColor,
                 modifier = Modifier.size(24.dp)
             )
@@ -968,7 +968,7 @@ fun ChatInputArea(
         ) {
             Icon(
                 imageVector = androidx.compose.material.icons.Icons.Default.AttachFile,
-                contentDescription = "Attach file",
+                contentDescription = stringResource(R.string.attach_file),
                 tint = MaterialTheme.colorScheme.primary
             )
         }
@@ -1018,7 +1018,11 @@ fun ChatInputArea(
                 } else {
                      Icons.AutoMirrored.Filled.Send
                 },
-                contentDescription = stringResource(R.string.send_description),
+                contentDescription = if (!canSend) {
+                    if (isListening || isSpeaking) stringResource(R.string.stop_description) else stringResource(R.string.listening)
+                } else {
+                    stringResource(R.string.send_description)
+                },
                 tint = Color.White
             )
         }

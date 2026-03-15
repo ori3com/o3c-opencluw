@@ -51,6 +51,9 @@
     <string name="try_again_button">Try again</string>
     <string name="ask_hint">Ask OpenClaw…</string>
     <string name="send_description">Send</string>
+    <string name="action_copy">Copy</string>
+    <string name="attach_file">Attach file</string>
+    <string name="file_attachment">File</string>
     <string name="stop_description">Stop</string>
     <string name="listening">Listening…</string>
     <string name="thinking">Thinking…</string>
@@ -235,6 +238,7 @@
     <string name="notification_session_content">Voice session is active</string>
 
     <!-- Chat UI -->
+    <string name="chat_empty_state_hint">Message OpenClaw…</string>
     <string name="conversations_title">Conversations</string>
     <string name="new_chat">New Chat</string>
     <string name="delete">Delete</string>
