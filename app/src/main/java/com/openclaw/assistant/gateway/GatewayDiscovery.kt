@@ -1,11 +1,13 @@
 package com.openclaw.assistant.gateway
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.DnsResolver
 import android.net.NetworkCapabilities
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
+import android.os.Build
 import android.os.CancellationSignal
 import android.util.Log
 import java.io.IOException
@@ -445,16 +447,14 @@ class GatewayDiscovery(
     }
   }
 
-  private suspend fun rawQuery(network: android.net.Network?, wireQuery: ByteArray): ByteArray =
-    suspendCancellableCoroutine { cont ->
-      if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q || dns == null) {
-        cont.resumeWithException(IOException("DnsResolver not supported on this Android version"))
-        return@suspendCancellableCoroutine
-      }
+  @SuppressLint("NewApi") // dns is non-null only on API 29+ (Build.VERSION_CODES.Q)
+  private suspend fun rawQuery(network: android.net.Network?, wireQuery: ByteArray): ByteArray {
+    val resolver = dns ?: throw UnsupportedOperationException("DnsResolver requires API 29+")
+    return suspendCancellableCoroutine { cont ->
       val signal = CancellationSignal()
       cont.invokeOnCancellation { signal.cancel() }
 
-      dns.rawQuery(
+      resolver.rawQuery(
         network,
         wireQuery,
         DnsResolver.FLAG_EMPTY,
@@ -471,6 +471,7 @@ class GatewayDiscovery(
         },
       )
     }
+  }
 
   private fun txtValue(records: List<TXTRecord>, key: String): String? {
     val prefix = "$key="
