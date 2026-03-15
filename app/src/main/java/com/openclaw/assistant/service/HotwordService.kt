@@ -79,11 +79,16 @@ class HotwordService : Service(), VoskRecognitionListener {
     private var retryJob: Job? = null
     private val SESSION_TIMEOUT_MS = 5 * 60 * 1000L // 5 minutes
 
+    private fun debugLog(message: String) {
+        if (settings.wakeWordDebugEnabled) HotwordDebugLogger.log(message)
+    }
+
     private val controlReceiver = object : android.content.BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 ACTION_PAUSE_HOTWORD -> {
                     Log.d(TAG, "Pause signal received")
+                    debugLog("Session started — hotword paused")
                     pendingInterruptLaunch = false
                     isSessionActive = true
                     speechService?.stop()
@@ -94,6 +99,7 @@ class HotwordService : Service(), VoskRecognitionListener {
                 }
                 ACTION_RESUME_HOTWORD -> {
                     Log.d(TAG, "Resume signal received")
+                    debugLog("Session ended — resuming hotword")
                     cancelWatchdog()
                     pendingInterruptLaunch = false
                     // Reset both flags to ensure clean state
@@ -302,6 +308,7 @@ class HotwordService : Service(), VoskRecognitionListener {
             if (!isSessionActive) startHotwordListening()
             return
         }
+        debugLog("Vosk: initializing model...")
         val prefs = getSharedPreferences("hotword_prefs", Context.MODE_PRIVATE)
 
         // Clear vosk_unsupported flag when the app is updated, so the new Vosk
@@ -321,6 +328,7 @@ class HotwordService : Service(), VoskRecognitionListener {
                 prefs.edit().remove("vosk_unsupported").remove("vosk_unsupported_version").apply()
             } else {
                 Log.w(TAG, "Vosk is unsupported on this device. Skipping init.")
+                debugLog("Vosk: NOT supported on this device")
                 return
             }
         }
@@ -329,15 +337,19 @@ class HotwordService : Service(), VoskRecognitionListener {
             try {
                 val modelPath = copyAssets()
                 if (modelPath != null) {
+                    debugLog("Vosk: model loaded — starting listener")
                     model = Model(modelPath)
                     withContext(Dispatchers.Main) {
                         if (!isSessionActive) startHotwordListening()
                     }
+                } else {
+                    debugLog("Vosk: model copy failed")
                 }
             } catch (e: kotlinx.coroutines.CancellationException) {
                 throw e
             } catch (e: UnsatisfiedLinkError) {
                 Log.e(TAG, "Vosk native library not supported on this device", e)
+                debugLog("Vosk: UnsatisfiedLinkError — native lib not supported")
                 FirebaseCrashlytics.getInstance().recordException(e)
                 prefs.edit()
                     .putBoolean("vosk_unsupported", true)
@@ -345,6 +357,7 @@ class HotwordService : Service(), VoskRecognitionListener {
                     .apply()
             } catch (e: Exception) {
                 Log.e(TAG, "Init error", e)
+                debugLog("Vosk: init error — ${e.message}")
                 FirebaseCrashlytics.getInstance().recordException(e)
             }
         }
@@ -482,6 +495,7 @@ class HotwordService : Service(), VoskRecognitionListener {
             val wakeWords = settings.getWakeWords()
             val wakeWordsJson = (wakeWords + "[unk]").joinToString("\", \"", "[\"", "\"]")
             Log.d(TAG, "Starting hotword detection with words: $wakeWordsJson")
+            debugLog("Listening for: ${wakeWords.joinToString()} (sensitivity=${settings.wakeWordSensitivity})")
 
             val rec = Recognizer(model, SAMPLE_RATE, wakeWordsJson)
             speechService = SpeechService(rec, SAMPLE_RATE)
@@ -489,6 +503,7 @@ class HotwordService : Service(), VoskRecognitionListener {
             Log.d(TAG, "Hotword listening started")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start hotword listening", e)
+            debugLog("Failed to start listener: ${e.message}")
             speechService = null
             scheduleAudioRetry()
         }
@@ -497,6 +512,7 @@ class HotwordService : Service(), VoskRecognitionListener {
     private fun scheduleAudioRetry() {
         if (audioRetryCount >= MAX_AUDIO_RETRIES) {
             Log.e(TAG, "Max audio retries ($MAX_AUDIO_RETRIES) exceeded. Giving up.")
+            debugLog("Mic unavailable after $MAX_AUDIO_RETRIES retries — giving up")
             audioRetryCount = 0
             showMicUnavailableNotification()
             return
@@ -504,6 +520,7 @@ class HotwordService : Service(), VoskRecognitionListener {
         audioRetryCount++
         val delayMs = (2000L * audioRetryCount).coerceAtMost(10000L)
         Log.w(TAG, "Scheduling audio retry #$audioRetryCount in ${delayMs}ms")
+        debugLog("Mic unavailable — retry #$audioRetryCount in ${delayMs}ms")
         retryJob?.cancel()
         retryJob = scope.launch {
             delay(delayMs)
@@ -536,12 +553,20 @@ class HotwordService : Service(), VoskRecognitionListener {
 
                 // Check against configured wake words with confidence threshold
                 val wakeWords = settings.getWakeWords()
+                var maxConfidence = 0f
                 val detected = wakeWords.any { word ->
-                    parseWakeWordConfidence(text, word) >= settings.wakeWordSensitivity
+                    val conf = parseWakeWordConfidence(text, word)
+                    if (conf > maxConfidence) maxConfidence = conf
+                    conf >= settings.wakeWordSensitivity
+                }
+
+                if (text.isNotEmpty()) {
+                    debugLog("heard: \"$text\" conf=${"%.2f".format(maxConfidence)}")
                 }
 
                 if (detected) {
                     Log.e(TAG, "Hotword detected! Text: $text")
+                    debugLog("DETECTED: \"$text\" conf=${"%.2f".format(maxConfidence)}")
                     onHotwordDetected()
                 }
             } catch (e: Exception) {
@@ -557,6 +582,7 @@ class HotwordService : Service(), VoskRecognitionListener {
 
     override fun onError(exception: Exception?) {
         Log.e(TAG, "Vosk Error: " + exception?.message)
+        debugLog("Vosk error: ${exception?.message} — recovering in 3s")
         if (isSessionActive) return
         errorRecoveryJob?.cancel()
         errorRecoveryJob = scope.launch {
