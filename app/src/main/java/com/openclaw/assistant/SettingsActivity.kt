@@ -266,13 +266,19 @@ fun SettingsScreen(
     var showDisplayLanguageMenu by rememberSaveable { mutableStateOf(false) }
     var httpIgnoreSslErrors by rememberSaveable { mutableStateOf(settings.httpIgnoreSslErrors) }
     var wakewordConnectionType by rememberSaveable { mutableStateOf(settings.wakewordConnectionType) }
+    var aiModel by rememberSaveable { mutableStateOf(settings.aiModel) }
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val runtime = remember(context.applicationContext) {
         (context.applicationContext as OpenClawApplication).nodeRuntime
     }
-    val apiClient = remember(httpIgnoreSslErrors) { OpenClawClient(ignoreSslErrors = httpIgnoreSslErrors) }
+    val apiClient = remember(httpIgnoreSslErrors, aiModel) {
+        OpenClawClient(
+            ignoreSslErrors = httpIgnoreSslErrors,
+            defaultModel = aiModel
+        )
+    }
     
     var isTesting by rememberSaveable { mutableStateOf(false) }
     var testResult by remember { mutableStateOf<TestResult?>(null) }
@@ -451,6 +457,7 @@ fun SettingsScreen(
                             }
                             settings.authToken = httpToken.trim()
                             settings.httpIgnoreSslErrors = httpIgnoreSslErrors
+                            settings.aiModel = aiModel.trim()
 
                             settings.defaultAgentId = defaultAgentId
                             settings.ttsEnabled = ttsEnabled
@@ -745,6 +752,17 @@ fun SettingsScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true
                             )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            OutlinedTextField(
+                                value = aiModel,
+                                onValueChange = { aiModel = it.trim() },
+                                label = { Text(stringResource(R.string.ai_model_label)) },
+                                leadingIcon = { Icon(Icons.Default.Memory, contentDescription = null) },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(24.dp))
@@ -933,6 +951,7 @@ fun SettingsScreen(
                                                     settings.httpUrl = httpInputUrl.trim()
                                                     settings.authToken = httpToken.trim()
                                                     settings.httpIgnoreSslErrors = httpIgnoreSslErrors
+                                                    settings.aiModel = aiModel.trim()
                                                     settings.isVerified = true
                                                 },
                                                 onFailure = {

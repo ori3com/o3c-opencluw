@@ -38,6 +38,7 @@
 <string name="webhook_url_hint">https://your-server</string>
 <string name="auth_token_label">認証トークン（任意）</string>
 <string name="auth_token_hint">任意</string>
+<string name="ai_model_label">AIモデル</string>
 <string name="session_id_label">セッションID</string>
 <string name="user_id_label">ユーザーID</string>
 <string name="save_button">保存</string>

@@ -20,7 +20,10 @@ import javax.net.ssl.X509TrustManager
 /**
  * Simple client - POSTs to the configured HTTP connection
  */
-class OpenClawClient(private val ignoreSslErrors: Boolean = false) {
+class OpenClawClient(
+    private val ignoreSslErrors: Boolean = false,
+    private val defaultModel: String = "claude-sonnet-4.5-20250929"
+) {
 
     private val client: OkHttpClient = run {
         val builder = OkHttpClient.Builder()
@@ -46,6 +49,7 @@ class OpenClawClient(private val ignoreSslErrors: Boolean = false) {
     /**
      * POST message to HTTP connection and return response.
      * @param attachments List of (mimeType, base64) pairs for image attachments.
+     * @param model Optional model override. If not provided, uses defaultModel.
      */
     suspend fun sendMessage(
         httpUrl: String,
@@ -53,7 +57,8 @@ class OpenClawClient(private val ignoreSslErrors: Boolean = false) {
         sessionId: String,
         authToken: String? = null,
         agentId: String? = null,
-        attachments: List<Pair<String, String>> = emptyList()
+        attachments: List<Pair<String, String>> = emptyList(),
+        model: String? = null
     ): Result<OpenClawResponse> = withContext(Dispatchers.IO) {
         if (httpUrl.isBlank()) {
             return@withContext Result.failure(
@@ -72,7 +77,7 @@ class OpenClawClient(private val ignoreSslErrors: Boolean = false) {
         try {
             // OpenAI Chat Completions format for /v1/chat/completions
             val requestBody = JsonObject().apply {
-                addProperty("model", "openclaw")
+                addProperty("model", model ?: defaultModel)
                 addProperty("user", sessionId)
                 val messagesArray = JsonArray()
                 val userMessage = JsonObject().apply {
@@ -193,7 +198,7 @@ class OpenClawClient(private val ignoreSslErrors: Boolean = false) {
 
             // Fallback: POST with minimal OpenAI format
             val requestBody = JsonObject().apply {
-                addProperty("model", "openclaw")
+                addProperty("model", defaultModel)
                 addProperty("user", "connection-test")
                 val messagesArray = JsonArray()
                 val testMessage = JsonObject().apply {

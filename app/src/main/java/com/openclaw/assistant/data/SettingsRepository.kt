@@ -234,6 +234,11 @@ class SettingsRepository(context: Context) {
         get() = prefs.getBoolean(KEY_USE_NODE_CHAT, false)
         set(value) = prefs.edit().putBoolean(KEY_USE_NODE_CHAT, value).apply()
 
+    // AI Model name (for chat completions)
+    var aiModel: String
+        get() = prefs.getString(KEY_AI_MODEL, DEFAULT_AI_MODEL) ?: DEFAULT_AI_MODEL
+        set(value) = prefs.edit().putString(KEY_AI_MODEL, value).apply()
+
     // Connection Type (Gateway vs Legacy)
     var connectionType: String
         get() = prefs.getString(KEY_CONNECTION_TYPE, CONNECTION_TYPE_GATEWAY) ?: CONNECTION_TYPE_GATEWAY
@@ -307,6 +312,7 @@ class SettingsRepository(context: Context) {
         private const val KEY_GATEWAY_PORT = "gateway_port"
         private const val KEY_DEFAULT_AGENT_ID = "default_agent_id"
         private const val KEY_USE_NODE_CHAT = "use_node_chat"
+        private const val KEY_AI_MODEL = "ai_model"
         private const val KEY_CONNECTION_TYPE = "connection_type"
         private const val KEY_HTTP_IGNORE_SSL_ERRORS = "http_ignore_ssl_errors"
         private const val KEY_WAKEWORD_CONNECTION_TYPE = "wakeword_connection_type"
@@ -342,9 +348,12 @@ class SettingsRepository(context: Context) {
         
         const val CONNECTION_TYPE_GATEWAY = "gateway"
         const val CONNECTION_TYPE_HTTP = "http"
-        
+
         const val GOOGLE_TTS_PACKAGE = "com.google.android.tts"
-        
+
+        // AI Model (for chat completions)
+        const val DEFAULT_AI_MODEL = "claude-sonnet-4.5-20250929"
+
         // TTS Type constants
         const val TTS_TYPE_LOCAL = "local"
         const val TTS_TYPE_ELEVENLABS = "elevenlabs"

@@ -38,6 +38,7 @@
     <string name="webhook_url_hint">https://your-server</string>
     <string name="auth_token_label">Auth Token (optional)</string>
     <string name="auth_token_hint">Optional</string>
+    <string name="ai_model_label">AI Model</string>
     <string name="session_id_label">Session ID</string>
     <string name="user_id_label">User ID</string>
     <string name="save_button">Save</string>
