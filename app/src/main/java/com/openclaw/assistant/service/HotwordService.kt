@@ -175,6 +175,7 @@ class HotwordService : Service(), VoskRecognitionListener {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
             != PackageManager.PERMISSION_GRANTED) {
             Log.w(TAG, "RECORD_AUDIO permission not granted. Cannot start foreground service with microphone type.")
+            debugLog("RECORD_AUDIO permission denied — service stopped")
             showPermissionNotification()
             stopSelf()
             return START_NOT_STICKY
@@ -455,6 +456,7 @@ class HotwordService : Service(), VoskRecognitionListener {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
             != PackageManager.PERMISSION_GRANTED) {
             Log.w(TAG, "RECORD_AUDIO permission not granted. Cannot start hotword listening.")
+            debugLog("RECORD_AUDIO permission denied — cannot listen")
             return
         }
 
@@ -466,6 +468,7 @@ class HotwordService : Service(), VoskRecognitionListener {
         )
         if (bufferSize == AudioRecord.ERROR || bufferSize == AudioRecord.ERROR_BAD_VALUE) {
             Log.e(TAG, "AudioRecord.getMinBufferSize failed: $bufferSize")
+            debugLog("AudioRecord.getMinBufferSize failed: $bufferSize")
             scheduleAudioRetry()
             return
         }
@@ -483,6 +486,7 @@ class HotwordService : Service(), VoskRecognitionListener {
         }
         if (testRecord == null || testRecord.state != AudioRecord.STATE_INITIALIZED) {
             Log.e(TAG, "AudioRecord failed to initialize. Mic may be in use or unavailable.")
+            debugLog("AudioRecord init failed — mic may be in use or unavailable")
             testRecord?.release()
             scheduleAudioRetry()
             return
