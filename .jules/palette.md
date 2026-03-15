@@ -5,3 +5,7 @@
 ## 2025-02-16 - Replace plain text icons with semantic Icons in Compose
 **Learning:** Using simple string characters (like "×") as button labels inside `IconButton` leads to confusing screen reader announcements (e.g., "times" or "cross") instead of the actual action ("Close" or "Delete"). This negatively affects accessibility.
 **Action:** Always replace standalone text characters used as interactive visual symbols with standard Compose `Icon` components (e.g., `Icons.Default.Close`) alongside an explicit `contentDescription` (e.g., `stringResource(R.string.close)` or `delete`). This ensures the screen reader announces the correct semantic action.
+
+## 2025-02-19 - Accessibility descriptions must be localized
+**Learning:** Hardcoded English strings used for `contentDescription` in Android/Jetpack Compose will break internationalization (i18n) and trigger lint warnings.
+**Action:** Always define accessibility text in the `strings.xml` resource file and reference it using `stringResource(R.string.x)` when updating Compose components.

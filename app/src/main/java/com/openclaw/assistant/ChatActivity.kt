@@ -1008,6 +1008,15 @@ fun ChatInputArea(
             containerColor = fabColor,
             shape = CircleShape
         ) {
+            val description = if (!canSend) {
+                when {
+                    isListening -> stringResource(R.string.chat_action_stop_recording)
+                    isSpeaking -> stringResource(R.string.chat_action_interrupt_listen)
+                    else -> stringResource(R.string.chat_action_start_recording)
+                }
+            } else {
+                stringResource(R.string.send_description)
+            }
             Icon(
                 imageVector = if (!canSend) {
                      when {
@@ -1018,7 +1027,7 @@ fun ChatInputArea(
                 } else {
                      Icons.AutoMirrored.Filled.Send
                 },
-                contentDescription = stringResource(R.string.send_description),
+                contentDescription = description,
                 tint = Color.White
             )
         }

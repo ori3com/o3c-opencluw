@@ -605,6 +605,10 @@
     <string name="canvas_chat_not_connected">Connect to Gateway to chat</string>
     <string name="canvas_chat_send">Send</string>
     <string name="canvas_status_sending">Sending...</string>
+
+    <string name="chat_action_stop_recording">Stop recording</string>
+    <string name="chat_action_interrupt_listen">Interrupt and listen</string>
+    <string name="chat_action_start_recording">Start recording</string>
     <string name="canvas_status_thinking">Thinking...</string>
     <string name="canvas_status_tool">Using tools...</string>
     <string name="canvas_status_loading">Loading Canvas...</string>
