@@ -9,6 +9,8 @@ import android.os.CancellationSignal
 import androidx.core.content.ContextCompat
 import java.time.Instant
 import java.time.format.DateTimeFormatter
+import androidx.core.location.LocationManagerCompat
+import androidx.core.os.CancellationSignal as CoreCancellationSignal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
@@ -132,9 +134,14 @@ class LocationCaptureManager(private val context: Context) {
         ?: throw IllegalStateException("LOCATION_UNAVAILABLE: no providers available")
     return withTimeout(timeoutMs.coerceAtLeast(1)) {
       suspendCancellableCoroutine { cont ->
-        val signal = CancellationSignal()
+        val signal = CoreCancellationSignal()
         cont.invokeOnCancellation { signal.cancel() }
-        manager.getCurrentLocation(resolved, signal, context.mainExecutor) { location ->
+        LocationManagerCompat.getCurrentLocation(
+            manager,
+            resolved,
+            signal,
+            ContextCompat.getMainExecutor(context)
+        ) { location ->
           if (location != null) {
             cont.resume(location)
           } else {

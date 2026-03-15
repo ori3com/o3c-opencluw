@@ -50,7 +50,11 @@ class GatewayDiscovery(
 ) {
   private val nsd = context.getSystemService(NsdManager::class.java)
   private val connectivity = context.getSystemService(ConnectivityManager::class.java)
-  private val dns = DnsResolver.getInstance()
+  private val dns = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+    DnsResolver.getInstance()
+  } else {
+    null
+  }
   private val serviceType = "_openclaw-gw._tcp."
   private val wideAreaDomain = System.getenv("OPENCLAW_WIDE_AREA_DOMAIN")
   private val logTag = "OpenClaw/GatewayDiscovery"
@@ -443,6 +447,10 @@ class GatewayDiscovery(
 
   private suspend fun rawQuery(network: android.net.Network?, wireQuery: ByteArray): ByteArray =
     suspendCancellableCoroutine { cont ->
+      if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q || dns == null) {
+        cont.resumeWithException(IOException("DnsResolver not supported on this Android version"))
+        return@suspendCancellableCoroutine
+      }
       val signal = CancellationSignal()
       cont.invokeOnCancellation { signal.cancel() }
 
