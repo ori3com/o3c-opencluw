@@ -458,6 +458,7 @@
     <string name="show_instructions">Show Instructions</string>
     <string name="diagnostic_engines">Engines</string>
     <string name="diagnostic_app_permissions">App Permissions</string>
+    <string name="diagnostic_refresh">Refresh Diagnostics</string>
     <string name="technical_details">Technical Details:</string>
     <!-- Update Checker -->
     <string name="check_for_updates">Check for Updates</string>

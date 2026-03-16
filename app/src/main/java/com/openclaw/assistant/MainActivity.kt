@@ -451,7 +451,7 @@ fun MainNavHost(
                     NavigationBarItem(
                         selected  = selectedTab == tab,
                         onClick   = { selectedTab = tab },
-                        icon      = { Icon(tab.icon, contentDescription = null) },
+                        icon      = { Icon(tab.icon, contentDescription = stringResource(tab.labelResId)) },
                         label     = { Text(stringResource(tab.labelResId)) }
                     )
                 }
@@ -1168,7 +1168,7 @@ fun DiagnosticPanel(diagnostic: VoiceDiagnostic, onRefresh: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.diagnostic_engines), fontWeight = FontWeight.Medium, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                IconButton(onClick = onRefresh, modifier = Modifier.size(24.dp)) { Icon(Icons.Default.Refresh, contentDescription = "Refresh", modifier = Modifier.size(16.dp)) }
+                IconButton(onClick = onRefresh, modifier = Modifier.size(24.dp)) { Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.diagnostic_refresh), modifier = Modifier.size(16.dp)) }
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -1193,7 +1193,7 @@ fun PermissionDiagnosticsPanel(allPermissionsStatus: List<PermissionStatusInfo>,
         Column(modifier = Modifier.padding(16.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.diagnostic_app_permissions), fontWeight = FontWeight.Medium, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                IconButton(onClick = onRefresh, modifier = Modifier.size(24.dp)) { Icon(Icons.Default.Refresh, contentDescription = "Refresh", modifier = Modifier.size(16.dp)) }
+                IconButton(onClick = onRefresh, modifier = Modifier.size(24.dp)) { Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.diagnostic_refresh), modifier = Modifier.size(16.dp)) }
             }
             Spacer(modifier = Modifier.height(8.dp))
             allPermissionsStatus.forEach { perm ->
