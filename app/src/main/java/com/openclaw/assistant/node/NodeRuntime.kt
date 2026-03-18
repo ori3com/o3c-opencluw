@@ -682,8 +682,7 @@ class NodeRuntime(context: Context) {
     val password = prefs.loadGatewayPassword()
     val bootstrapToken = prefs.loadGatewayBootstrapToken()
     val tls = connectionManager.resolveTlsParams(endpoint)
-    // bootstrapToken is single-use and issued for the node role only — do not pass to operatorSession.
-    operatorSession.connect(endpoint, token, password, null, connectionManager.buildOperatorConnectOptions(), tls)
+    operatorSession.connect(endpoint, token, password, bootstrapToken, connectionManager.buildOperatorConnectOptions(), tls)
     nodeSession.connect(endpoint, token, password, bootstrapToken, connectionManager.buildNodeConnectOptions(), tls)
     operatorSession.reconnect()
     nodeSession.reconnect()
@@ -714,8 +713,7 @@ class NodeRuntime(context: Context) {
     val token = prefs.loadGatewayToken()
     val password = prefs.loadGatewayPassword()
     val bootstrapToken = prefs.loadGatewayBootstrapToken()
-    // bootstrapToken is single-use and issued for the node role only — do not pass to operatorSession.
-    operatorSession.connect(endpoint, token, password, null, connectionManager.buildOperatorConnectOptions(), tls)
+    operatorSession.connect(endpoint, token, password, bootstrapToken, connectionManager.buildOperatorConnectOptions(), tls)
     nodeSession.connect(endpoint, token, password, bootstrapToken, connectionManager.buildNodeConnectOptions(), tls)
   }
 
