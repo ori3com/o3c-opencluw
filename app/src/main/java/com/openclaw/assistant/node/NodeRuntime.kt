@@ -25,6 +25,7 @@ import com.openclaw.assistant.gateway.AgentListResult
 import com.openclaw.assistant.gateway.DeviceAuthStore
 import com.openclaw.assistant.gateway.DeviceIdentityStore
 import com.openclaw.assistant.gateway.GatewayDiscovery
+import com.openclaw.assistant.gateway.GatewayTlsParams
 import com.openclaw.assistant.gateway.GatewayEndpoint
 import com.openclaw.assistant.gateway.GatewaySession
 import com.openclaw.assistant.gateway.probeGatewayTlsFingerprint
@@ -691,21 +692,37 @@ class NodeRuntime(context: Context) {
   fun connect(endpoint: GatewayEndpoint) {
     val tls = connectionManager.resolveTlsParams(endpoint)
     if (tls?.required == true && tls.expectedFingerprint.isNullOrBlank()) {
-      // First-time TLS: capture fingerprint, ask user to verify out-of-band, then store and connect.
+      // First-time TLS with no stored fingerprint: probe to get the cert fingerprint for user
+      // verification (self-signed cert flow). Only block for manual endpoints — non-manual HTTPS
+      // (e.g. Tailscale Funnel) uses CA-validated certs and the raw TLS probe is rejected by the
+      // server, so fall through to CA validation instead of showing an error.
+      val isManual = endpoint.stableId.startsWith("manual|")
       scope.launch {
         _statusText.value = appContext.getString(R.string.state_verify_fingerprint)
         android.util.Log.d("NodeRuntime", "Starting TLS probe for ${endpoint.host}:${endpoint.port}")
-        val fp = probeGatewayTlsFingerprint(endpoint.host, endpoint.port) ?: run {
-          android.util.Log.e("NodeRuntime", "TLS probe failed")
+        val fp = probeGatewayTlsFingerprint(endpoint.host, endpoint.port)
+        if (fp != null) {
+          android.util.Log.d("NodeRuntime", "TLS probe success, setting pending trust")
+          _pendingGatewayTrust.value = GatewayTrustPrompt(endpoint = endpoint, fingerprintSha256 = fp)
+          return@launch
+        }
+        if (isManual) {
+          android.util.Log.e("NodeRuntime", "TLS probe failed for manual endpoint")
           _statusText.value = appContext.getString(R.string.state_failed_fingerprint)
           return@launch
         }
-        android.util.Log.d("NodeRuntime", "TLS probe success, setting pending trust")
-        _pendingGatewayTrust.value = GatewayTrustPrompt(endpoint = endpoint, fingerprintSha256 = fp)
+        // Non-manual HTTPS (e.g. Tailscale Funnel): probe failed because the server closes raw TLS
+        // sockets. Proceed with CA validation — the cert is issued by a trusted CA.
+        android.util.Log.i("NodeRuntime", "TLS probe failed for non-manual endpoint ${endpoint.host}; proceeding with CA validation")
+        doConnect(endpoint, tls)
       }
       return
     }
 
+    doConnect(endpoint, tls)
+  }
+
+  private fun doConnect(endpoint: GatewayEndpoint, tls: GatewayTlsParams?) {
     connectedEndpoint = endpoint
     operatorStatusText = "Connecting…"
     nodeStatusText = "Connecting…"
