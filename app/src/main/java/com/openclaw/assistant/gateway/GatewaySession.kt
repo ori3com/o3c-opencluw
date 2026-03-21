@@ -139,8 +139,8 @@ class GatewaySession(
   fun currentCanvasHostUrl(): String? = canvasHostUrl
   fun currentMainSessionKey(): String? = mainSessionKey
 
-  suspend fun sendNodeEvent(event: String, payloadJson: String?) {
-    val conn = currentConnection ?: return
+  suspend fun sendNodeEvent(event: String, payloadJson: String?): Boolean {
+    val conn = currentConnection ?: return false
     val parsedPayload = payloadJson?.let { parseJsonOrNull(it) }
     val params =
       buildJsonObject {
@@ -153,10 +153,27 @@ class GatewaySession(
           put("payloadJSON", JsonNull)
         }
       }
-    try {
+    return try {
       conn.request("node.event", params, timeoutMs = 8_000)
+      true
     } catch (err: Throwable) {
       Log.w("OpenClawGateway", "node.event failed: ${err.message ?: err::class.java.simpleName}")
+      false
+    }
+  }
+
+  /** Fetch the current canvas capability from the node and refresh [canvasHostUrl]. */
+  suspend fun refreshNodeCanvasCapability() {
+    val target = desired ?: return
+    try {
+      val res = request("node.canvas.capability.refresh", null)
+      val obj = json.parseToJsonElement(res).asObjectOrNull() ?: return
+      val rawCanvas = obj["canvasHostUrl"].asStringOrNull()
+      if (rawCanvas != null) {
+        canvasHostUrl = normalizeCanvasHostUrl(rawCanvas, target.endpoint, isTlsConnection = target.tls != null)
+      }
+    } catch (_: Throwable) {
+      // best-effort — canvas URL from connect payload is the fallback
     }
   }
 
@@ -433,7 +450,7 @@ class GatewaySession(
         deviceAuthStore.saveToken(identityId, authRole, deviceToken)
       }
       val rawCanvas = obj["canvasHostUrl"].asStringOrNull()
-      canvasHostUrl = normalizeCanvasHostUrl(rawCanvas, endpoint)
+      canvasHostUrl = normalizeCanvasHostUrl(rawCanvas, endpoint, isTlsConnection = tls != null)
       val sessionDefaults =
         obj["snapshot"].asObjectOrNull()
           ?.get("sessionDefaults").asObjectOrNull()
@@ -625,11 +642,11 @@ class GatewaySession(
           } catch (err: Throwable) {
             invokeErrorFromThrowable(err)
           }
-        sendInvokeResult(id, nodeId, result)
+        sendInvokeResult(id, nodeId, result, invokeTimeoutMs = timeoutMs)
       }
     }
 
-    private suspend fun sendInvokeResult(id: String, nodeId: String, result: InvokeResult) {
+    private suspend fun sendInvokeResult(id: String, nodeId: String, result: InvokeResult, invokeTimeoutMs: Long? = null) {
       val parsedPayload = result.payloadJson?.let { parseJsonOrNull(it) }
       val params =
         buildJsonObject {
@@ -651,8 +668,9 @@ class GatewaySession(
             )
           }
         }
+      val ackTimeoutMs = resolveInvokeResultAckTimeoutMs(invokeTimeoutMs)
       try {
-        request("node.invoke.result", params, timeoutMs = 15_000)
+        request("node.invoke.result", params, timeoutMs = ackTimeoutMs)
       } catch (err: Throwable) {
         Log.w(loggerTag, "node.invoke.result failed: ${err.message ?: err::class.java.simpleName}")
       }
@@ -746,24 +764,47 @@ class GatewaySession(
     return parts.joinToString("|")
   }
 
-  private fun normalizeCanvasHostUrl(raw: String?, endpoint: GatewayEndpoint): String? {
+  private fun buildUrlSuffix(parsed: java.net.URI?): String {
+    if (parsed == null) return ""
+    val path = parsed.rawPath?.takeIf { it.isNotEmpty() && it != "/" }.orEmpty()
+    val query = parsed.rawQuery?.let { "?$it" }.orEmpty()
+    val fragment = parsed.rawFragment?.let { "#$it" }.orEmpty()
+    return "$path$query$fragment"
+  }
+
+  private fun buildCanvasUrl(scheme: String, host: String, port: Int, suffix: String): String {
+    val formattedHost = if (host.contains(":")) "[$host]" else host
+    val portSuffix =
+      when {
+        (scheme == "https" && port == 443) || (scheme == "http" && port == 80) -> ""
+        port > 0 -> ":$port"
+        else -> ""
+      }
+    return "$scheme://$formattedHost$portSuffix$suffix"
+  }
+
+  private fun resolveInvokeResultAckTimeoutMs(invokeTimeoutMs: Long?): Long {
+    if (invokeTimeoutMs == null) return 15_000L
+    return minOf(maxOf(invokeTimeoutMs + 5_000L, 15_000L), 120_000L)
+  }
+
+  private fun normalizeCanvasHostUrl(raw: String?, endpoint: GatewayEndpoint, isTlsConnection: Boolean = false): String? {
     val trimmed = raw?.trim().orEmpty()
     val parsed = trimmed.takeIf { it.isNotBlank() }?.let { runCatching { java.net.URI(it) }.getOrNull() }
     val host = parsed?.host?.trim().orEmpty()
     val port = parsed?.port ?: -1
     val scheme = parsed?.scheme?.trim().orEmpty().ifBlank { "http" }
+    val suffix = buildUrlSuffix(parsed)
 
-    // Detect TLS reverse proxy: endpoint on port 443, or domain-based host
-    val tls = endpoint.port == 443 || endpoint.host.contains(".")
+    // Use actual TLS connection state; fall back to port/domain heuristic when not provided.
+    val tls = isTlsConnection || endpoint.port == 443 || endpoint.host.contains(".")
 
     // If raw URL is a non-loopback address AND we're behind TLS reverse proxy,
     // fix the port (gateway sends its internal port like 18789, but we need 443 via Caddy)
     if (trimmed.isNotBlank() && !isLoopbackHost(host)) {
       if (tls && port > 0 && port != 443) {
         // Rewrite the URL to use the reverse proxy port instead of the raw gateway port
-        val fixedScheme = "https"
-        val formattedHost = if (host.contains(":")) "[${host}]" else host
-        return "$fixedScheme://$formattedHost"
+        return buildCanvasUrl("https", host, 443, suffix)
       }
       return trimmed
     }
@@ -779,9 +820,7 @@ class GatewaySession(
     val fallbackScheme = if (tls) "https" else scheme
     // Behind reverse proxy, always use the proxy port (443), not the raw canvas port
     val fallbackPort = if (tls) endpoint.port else (endpoint.canvasPort ?: endpoint.port)
-    val formattedHost = if (fallbackHost.contains(":")) "[${fallbackHost}]" else fallbackHost
-    val portSuffix = if ((fallbackScheme == "https" && fallbackPort == 443) || (fallbackScheme == "http" && fallbackPort == 80)) "" else ":$fallbackPort"
-    return "$fallbackScheme://$formattedHost$portSuffix"
+    return buildCanvasUrl(fallbackScheme, fallbackHost, fallbackPort, suffix)
   }
 
   private fun isLoopbackHost(raw: String?): Boolean {
