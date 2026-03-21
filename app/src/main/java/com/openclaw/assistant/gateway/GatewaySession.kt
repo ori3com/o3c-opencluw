@@ -172,6 +172,8 @@ class GatewaySession(
       if (rawCanvas != null) {
         canvasHostUrl = normalizeCanvasHostUrl(rawCanvas, target.endpoint, isTlsConnection = target.tls != null)
       }
+    } catch (e: kotlinx.coroutines.CancellationException) {
+      throw e
     } catch (_: Throwable) {
       // best-effort — canvas URL from connect payload is the fallback
     }
