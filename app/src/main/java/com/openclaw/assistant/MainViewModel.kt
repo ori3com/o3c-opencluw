@@ -9,15 +9,10 @@ import com.openclaw.assistant.node.CanvasController
 import com.openclaw.assistant.node.NodeRuntime
 import com.openclaw.assistant.node.ScreenRecordManager
 import com.openclaw.assistant.node.SmsManager
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
-  private val runtimeRef: MutableStateFlow<NodeRuntime?> =
-    MutableStateFlow((app as OpenClawApplication).ensureRuntime())
-  val runtimeInitialized: StateFlow<NodeRuntime?> = runtimeRef
-
-  private val runtime: NodeRuntime = runtimeRef.value!!
+  private val runtime: NodeRuntime = (app as OpenClawApplication).ensureRuntime()
 
   val canvas: CanvasController = runtime.canvas
   val camera: CameraCaptureManager = runtime.camera

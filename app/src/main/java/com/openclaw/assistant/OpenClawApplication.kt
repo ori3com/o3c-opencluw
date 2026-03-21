@@ -7,20 +7,21 @@ import androidx.core.os.LocaleListCompat
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.openclaw.assistant.data.SettingsRepository
+import com.openclaw.assistant.node.NodeRuntime
 import java.security.Security
 
 class OpenClawApplication : Application() {
 
-    @Volatile private var _nodeRuntime: com.openclaw.assistant.node.NodeRuntime? = null
+    @Volatile private var _nodeRuntime: NodeRuntime? = null
 
     /**
      * Returns the runtime, initializing it if needed.
      * Call this from Activities/ViewModels to ensure the runtime exists.
      */
-    fun ensureRuntime(): com.openclaw.assistant.node.NodeRuntime {
+    fun ensureRuntime(): NodeRuntime {
         _nodeRuntime?.let { return it }
         return synchronized(this) {
-            _nodeRuntime ?: com.openclaw.assistant.node.NodeRuntime(this).also { _nodeRuntime = it }
+            _nodeRuntime ?: NodeRuntime(this).also { _nodeRuntime = it }
         }
     }
 
@@ -28,13 +29,13 @@ class OpenClawApplication : Application() {
      * Returns the runtime if already initialized, or null if it has not been created yet.
      * Use this in places that must NOT force initialization (e.g. foreground service).
      */
-    fun peekRuntime(): com.openclaw.assistant.node.NodeRuntime? = _nodeRuntime
+    fun peekRuntime(): NodeRuntime? = _nodeRuntime
 
     /**
      * Retained for backwards compatibility with existing call sites.
      * Equivalent to [ensureRuntime].
      */
-    val nodeRuntime: com.openclaw.assistant.node.NodeRuntime get() = ensureRuntime()
+    val nodeRuntime: NodeRuntime get() = ensureRuntime()
 
     override fun onCreate() {
         super.onCreate()

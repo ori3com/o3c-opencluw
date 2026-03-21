@@ -58,6 +58,7 @@ class NodeForegroundService : Service() {
     // (e.g. service started before onboarding completes), stop gracefully instead.
     val runtime = (application as OpenClawApplication).peekRuntime()
     if (runtime == null) {
+      startForegroundWithTypes(buildNotification("OpenClaw Node", "Starting…"), false)
       stopSelf()
       return
     }
