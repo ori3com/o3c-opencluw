@@ -173,15 +173,15 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         settings = SettingsRepository.getInstance(this)
-        
+
         screenCaptureRequester = ScreenCaptureRequester(this)
         permissionRequester = PermissionRequester(this)
-        
+
         val runtime = (applicationContext as OpenClawApplication).nodeRuntime
         runtime.screenRecorder.attachScreenCaptureRequester(screenCaptureRequester)
         runtime.screenRecorder.attachPermissionRequester(permissionRequester)
         runtime.attachPermissionRequester(permissionRequester)
-        
+
         initializeTTS()
         // Removed checkPermissions() from onCreate to allow SetupGuideScreen to handle it
         refreshMissingPermissions()
@@ -241,7 +241,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             runDiagnostics()
         } else {
             Log.e("MainActivity", "Google TTS failed, trying default...")
-            tts = TextToSpeech(this) { 
+            tts = TextToSpeech(this) {
                 runDiagnostics()
             }
         }
@@ -570,7 +570,7 @@ fun MainScreen(
     var showTroubleshooting by rememberSaveable { mutableStateOf(false) }
     var showHowToUse by rememberSaveable { mutableStateOf(false) }
     var showLocationInfo by rememberSaveable { mutableStateOf(false) }
-    
+
     var showScreenCaptureDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val smsEnabled by runtime.smsEnabled.collectAsState()
@@ -697,7 +697,7 @@ fun MainScreen(
                 "Offline" -> stringResource(R.string.status_offline)
                 else -> nodeStatusText
             }
-            
+
             SystemStatusCard(
                 connected = nodeConnected,
                 statusText = displayStatusText,
@@ -705,7 +705,7 @@ fun MainScreen(
                 onDisconnect = { runtime.disconnect() },
                 onOpenSettings = onOpenSettings
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
 
             // === CAPABILITIES CONTROLS ===
@@ -716,11 +716,11 @@ fun MainScreen(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             val cameraEnabled by runtime.cameraEnabled.collectAsState()
             val locationMode by runtime.locationMode.collectAsState()
             val locationPrecise by runtime.locationPreciseEnabled.collectAsState()
-            
+
             // === CAPABILITIES: all 4 in one row ===
             val hasTelephony = remember { runtime.sms.hasTelephonyFeature() }
 
@@ -766,7 +766,7 @@ fun MainScreen(
                             val fineGranted = ContextCompat.checkSelfPermission(
                                 context, Manifest.permission.ACCESS_FINE_LOCATION
                             ) == PackageManager.PERMISSION_GRANTED
-                            
+
                             if (coarseGranted || fineGranted) {
                                 runtime.setLocationMode(LocationMode.WhileUsing)
                                 runtime.setLocationPreciseEnabled(fineGranted)
@@ -1076,6 +1076,7 @@ fun SystemStatusCard(
                             contentColor = Color.White
                         )
                     ) {
+                        // Button is technically still enabled but shows connecting
                         if (isConnecting) {
                             Text(stringResource(R.string.gateway_connecting))
                         } else {
@@ -1266,43 +1267,43 @@ fun MissingScopeCard(error: String, onClick: () -> Unit) {
     val context = LocalContext.current
 
     Card(
-        modifier = Modifier.fillMaxWidth(), 
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer), 
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
         onClick = { expanded = !expanded }
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = Icons.Default.Error, 
-                    contentDescription = null, 
-                    tint = MaterialTheme.colorScheme.error, 
+                    imageVector = Icons.Default.Error,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(32.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = stringResource(R.string.permission_error_title), 
-                        fontWeight = FontWeight.Bold, 
+                        text = stringResource(R.string.permission_error_title),
+                        fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
                     Text(
-                        text = stringResource(R.string.permission_error_desc), 
-                        fontSize = 13.sp, 
+                        text = stringResource(R.string.permission_error_desc),
+                        fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.9f)
                     )
                     if (!expanded) {
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = stringResource(R.string.permission_error_action), 
-                            fontSize = 12.sp, 
+                            text = stringResource(R.string.permission_error_action),
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onErrorContainer
                         )
                     }
                 }
                 Icon(
-                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, 
-                    contentDescription = null, 
+                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.error
                 )
             }
@@ -1379,7 +1380,7 @@ fun MissingScopeCard(error: String, onClick: () -> Unit) {
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
-                        onClick = onClick, // This now just toggles via the card click, wait... user might want to open settings. 
+                        onClick = onClick, // This now just toggles via the card click, wait... user might want to open settings.
                         // The `onClick` passed to MissingScopeCard was originally to open settings?
                         // Let's check where it's called.
                         // In MainScreen: MissingScopeCard(error = it) { settingsIntent... }
@@ -1496,10 +1497,10 @@ fun UsageStep(number: String, text: String) {
 fun HowToUseDialog(displayWakeWord: String, onDismiss: () -> Unit) {
     val context = LocalContext.current
     AlertDialog(
-        onDismissRequest = onDismiss, 
-        title = { Text(stringResource(R.string.how_to_use)) }, 
-        text = { 
-            Column { 
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.how_to_use)) },
+        text = {
+            Column {
                 (1..4).forEach { i ->
                     val resId = context.resources.getIdentifier("step_$i", "string", context.packageName)
                     val text = if (i == 1) {
@@ -1507,10 +1508,10 @@ fun HowToUseDialog(displayWakeWord: String, onDismiss: () -> Unit) {
                     } else {
                         stringResource(resId)
                     }
-                    UsageStep(i.toString(), text) 
-                } 
-            } 
-        }, 
+                    UsageStep(i.toString(), text)
+                }
+            }
+        },
         confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.got_it)) } }
     )
 }
@@ -1521,10 +1522,10 @@ fun TroubleshootingDialog(onDismiss: () -> Unit) {
     AlertDialog(onDismissRequest = onDismiss, title = { Text(stringResource(R.string.assist_gesture_not_working)) }, text = {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.verticalScroll(rememberScrollState())) {
             Text(stringResource(R.string.troubleshooting_intro), fontSize = 14.sp)
-            listOf("circle_to_search", "gesture_navigation", "google_app_setting", "refresh_binding").forEach { key -> 
+            listOf("circle_to_search", "gesture_navigation", "google_app_setting", "refresh_binding").forEach { key ->
                 val titleId = context.resources.getIdentifier("${key}_title", "string", context.packageName)
                 val descId = context.resources.getIdentifier("${key}_desc", "string", context.packageName)
-                BulletPoint(stringResource(titleId), stringResource(descId)) 
+                BulletPoint(stringResource(titleId), stringResource(descId))
             }
             Spacer(modifier = Modifier.height(8.dp)); HorizontalDivider(); Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = { context.startService(Intent(context, OpenClawAssistantService::class.java).apply { action = OpenClawAssistantService.ACTION_SHOW_ASSISTANT }) }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)) { Text(stringResource(R.string.debug_force_start)) }
