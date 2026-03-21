@@ -19,7 +19,7 @@ data class ImageAttachmentData(val base64: String, val width: Int, val height: I
 
 internal object ChatImageCodec {
 
-    // LRU cache keyed by a short prefix of the base64 string.
+    // LRU cache keyed by the full base64 string for exact-match deduplication.
     private val bitmapCache = object : LruCache<String, Bitmap>(4 * 1024 * 1024) {
         override fun sizeOf(key: String, value: Bitmap) = value.byteCount
     }
@@ -115,7 +115,7 @@ internal object ChatImageCodec {
         if (outHeight > reqHeight || outWidth > reqWidth) {
             val halfHeight = outHeight / 2
             val halfWidth = outWidth / 2
-            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+            while (halfHeight / inSampleSize >= reqHeight || halfWidth / inSampleSize >= reqWidth) {
                 inSampleSize *= 2
             }
         }
@@ -123,7 +123,7 @@ internal object ChatImageCodec {
     }
 
     /** Ensures the file name has a recognised image extension, defaulting to `.jpg`. */
-    private fun normalizeAttachmentFileName(fileName: String?): String {
+    internal fun normalizeAttachmentFileName(fileName: String?): String {
         val name = fileName?.trim()?.takeIf { it.isNotEmpty() } ?: "image"
         val lower = name.lowercase()
         return if (lower.endsWith(".jpg") || lower.endsWith(".jpeg") ||
