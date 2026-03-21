@@ -102,7 +102,7 @@ class GatewaySession(
     val tls: GatewayTlsParams?,
   )
 
-  private var desired: DesiredConnection? = null
+  @Volatile private var desired: DesiredConnection? = null
   private var job: Job? = null
   @Volatile private var currentConnection: Connection? = null
 
@@ -156,6 +156,8 @@ class GatewaySession(
     return try {
       conn.request("node.event", params, timeoutMs = 8_000)
       true
+    } catch (err: kotlinx.coroutines.CancellationException) {
+      throw err
     } catch (err: Throwable) {
       Log.w("OpenClawGateway", "node.event failed: ${err.message ?: err::class.java.simpleName}")
       false
