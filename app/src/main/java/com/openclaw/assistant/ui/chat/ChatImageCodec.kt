@@ -19,10 +19,17 @@ data class ImageAttachmentData(val base64: String, val width: Int, val height: I
 
 internal object ChatImageCodec {
 
-    // LRU cache keyed by the full base64 string for exact-match deduplication.
+    // LRU cache keyed by an MD5 hash of the base64 string.
+    // Full base64 strings (~200-400 KB per image) are NOT counted in the 4 MB capacity budget,
+    // so storing them as keys would silently exceed the intended memory limit.
     private val bitmapCache = object : LruCache<String, Bitmap>(4 * 1024 * 1024) {
         override fun sizeOf(key: String, value: Bitmap) = value.byteCount
     }
+
+    private fun cacheKey(base64: String): String =
+        java.security.MessageDigest.getInstance("MD5")
+            .digest(base64.toByteArray())
+            .joinToString("") { "%02x".format(it) }
 
     /**
      * Loads an image from [uri], scales it down to [maxDimension] px on the longest edge,
@@ -87,7 +94,8 @@ internal object ChatImageCodec {
      * pixels on the longest edge. Results are cached in an LRU cache.
      */
     fun decodeBase64Bitmap(base64: String, maxDimension: Int = 512): Bitmap? {
-        bitmapCache.get(base64)?.let { return it }
+        val key = cacheKey(base64)
+        bitmapCache.get(key)?.let { return it }
 
         val bytes = try {
             Base64.decode(base64, Base64.DEFAULT)
@@ -100,7 +108,7 @@ internal object ChatImageCodec {
         val sampleSize = computeInSampleSize(boundsOpts, maxDimension, maxDimension)
         val decodeOpts = BitmapFactory.Options().apply { inSampleSize = sampleSize }
         val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, decodeOpts) ?: return null
-        bitmapCache.put(base64, bitmap)
+        bitmapCache.put(key, bitmap)
         return bitmap
     }
 
