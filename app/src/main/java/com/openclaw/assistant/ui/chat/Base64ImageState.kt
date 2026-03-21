@@ -1,6 +1,5 @@
 package com.openclaw.assistant.ui.chat
 
-import android.util.Base64
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue

@@ -87,8 +87,7 @@ internal object ChatImageCodec {
      * pixels on the longest edge. Results are cached in an LRU cache.
      */
     fun decodeBase64Bitmap(base64: String, maxDimension: Int = 512): Bitmap? {
-        val cacheKey = base64.take(64)
-        bitmapCache.get(cacheKey)?.let { return it }
+        bitmapCache.get(base64)?.let { return it }
 
         val bytes = try {
             Base64.decode(base64, Base64.DEFAULT)
@@ -101,7 +100,7 @@ internal object ChatImageCodec {
         val sampleSize = computeInSampleSize(boundsOpts, maxDimension, maxDimension)
         val decodeOpts = BitmapFactory.Options().apply { inSampleSize = sampleSize }
         val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, decodeOpts) ?: return null
-        bitmapCache.put(cacheKey, bitmap)
+        bitmapCache.put(base64, bitmap)
         return bitmap
     }
 
@@ -109,7 +108,7 @@ internal object ChatImageCodec {
      * Calculates the largest power-of-two [BitmapFactory.Options.inSampleSize] that keeps
      * the decoded bitmap within [reqWidth] x [reqHeight].
      */
-    fun computeInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    private fun computeInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
         val outHeight = options.outHeight
         val outWidth = options.outWidth
         var inSampleSize = 1
@@ -124,7 +123,7 @@ internal object ChatImageCodec {
     }
 
     /** Ensures the file name has a recognised image extension, defaulting to `.jpg`. */
-    fun normalizeAttachmentFileName(fileName: String?): String {
+    private fun normalizeAttachmentFileName(fileName: String?): String {
         val name = fileName?.trim()?.takeIf { it.isNotEmpty() } ?: "image"
         val lower = name.lowercase()
         return if (lower.endsWith(".jpg") || lower.endsWith(".jpeg") ||

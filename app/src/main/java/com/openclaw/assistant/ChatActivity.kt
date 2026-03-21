@@ -77,8 +77,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Locale
-import java.io.ByteArrayOutputStream
-import android.util.Base64
 import android.content.ContentResolver
 
 import com.openclaw.assistant.data.SettingsRepository
