@@ -1,5 +1,0 @@
-- Source: openclaw/openclaw commit `f7866c1` ("Android: escape SQL LIKE wildcards in contacts search query")
-- Why: User input in contacts search was passed directly to a SQL `LIKE` clause without escaping `%` or `_`. If a user entered these characters, they acted as wildcards, returning incorrect matching contacts.
-- Adaptation: Added an `escapeLikePattern` method and updated the selection args and clause to use `ESCAPE '\'` within `ContactsHandler.kt`. Also added a JUnit test in `ContactsHandlerTest.kt` using MockK slots to verify the generated selection arguments.
-- Excluded upstream behavior: N/A, exact logic porting for `ContactsHandler` and its tests.
-- Verification: Compiled successfully and passed existing and new unit tests locally via `./gradlew app:testStandardDebugUnitTest`.
