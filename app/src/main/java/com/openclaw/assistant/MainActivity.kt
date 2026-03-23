@@ -1264,17 +1264,17 @@ fun CompactActionCard(modifier: Modifier = Modifier, icon: ImageVector, title: S
 fun MissingScopeCard(error: String, onClick: () -> Unit) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
+    val actionLabel = if (expanded) stringResource(R.string.action_collapse) else stringResource(R.string.action_expand)
 
     Card(
-        modifier = Modifier.fillMaxWidth(), 
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer), 
-        onClick = { expanded = !expanded }
+        modifier = Modifier.fillMaxWidth().clickable(onClickLabel = actionLabel) { expanded = !expanded },
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Error, 
-                    contentDescription = null, 
+                    contentDescription = stringResource(R.string.permission_error_title),
                     tint = MaterialTheme.colorScheme.error, 
                     modifier = Modifier.size(32.dp)
                 )
@@ -1302,7 +1302,7 @@ fun MissingScopeCard(error: String, onClick: () -> Unit) {
                 }
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, 
-                    contentDescription = null, 
+                    contentDescription = actionLabel,
                     tint = MaterialTheme.colorScheme.error
                 )
             }
