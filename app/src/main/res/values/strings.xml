@@ -321,6 +321,14 @@
     <string name="pairing_guide_step_3">3. Once the server says \"Device approved\", tap Refresh Status below.</string>
     <string name="pairing_troubleshooting_title">Troubleshooting</string>
     <string name="pairing_troubleshooting_desc">• Ensure the Server URL in Settings is correct.\n• If the command fails, check if the openclaw CLI is installed.\n• You can also manually approve using: openclaw devices approve &lt;REQUEST_ID&gt;</string>
+    <string name="hide_api_key">Hide API Key</string>
+    <string name="show_api_key">Show API Key</string>
+    <string name="hide_token">Hide token</string>
+    <string name="show_token">Show token</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
+    <string name="action_refresh_agents">Refresh Agents</string>
+    <string name="status_downloaded">Downloaded</string>
 
     <!-- Support Section -->
     <string name="language_section">Language</string>
