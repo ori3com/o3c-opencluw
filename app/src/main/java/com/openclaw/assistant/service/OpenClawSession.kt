@@ -107,6 +107,14 @@ class OpenClawSession(context: Context) : VoiceInteractionSession(context),
     // WakeLock to keep CPU alive during voice conversation when screen is off
     private var wakeLock: PowerManager.WakeLock? = null
 
+    private val waitPhrases by lazy {
+        listOf(
+            context.getString(R.string.wait_phrase_let_me_think),
+            context.getString(R.string.wait_phrase_one_moment),
+            context.getString(R.string.wait_phrase_checking)
+        )
+    }
+
     override fun onCreate() {
         Log.e(TAG, "Session onCreate start")
         super.onCreate()
@@ -605,11 +613,6 @@ class OpenClawSession(context: Context) : VoiceInteractionSession(context),
     }
 
     private fun playWaitPhrase() {
-        val waitPhrases = listOf(
-            context.getString(R.string.wait_phrase_let_me_think),
-            context.getString(R.string.wait_phrase_one_moment),
-            context.getString(R.string.wait_phrase_checking)
-        )
         val phrase = waitPhrases.random()
         
         stopAuxiliarySpeech()

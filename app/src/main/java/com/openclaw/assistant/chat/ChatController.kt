@@ -591,17 +591,20 @@ internal fun messageIdentityKey(message: ChatMessage): String? {
   val timestamp = message.timestampMs?.toString().orEmpty()
   val contentFingerprint =
     message.content.joinToString(separator = "\u001E") { part ->
-      listOf(
-        part.type.trim().lowercase(),
-        part.text?.trim().orEmpty(),
-        part.mimeType?.trim()?.lowercase().orEmpty(),
-        part.fileName?.trim().orEmpty(),
-        part.base64?.hashCode()?.toString().orEmpty(),
-      ).joinToString(separator = "\u001F")
+      val type = part.type.trim().lowercase()
+      val text = part.text?.trim().orEmpty()
+      val mimeType = part.mimeType?.trim()?.lowercase().orEmpty()
+      val fileName = part.fileName?.trim().orEmpty()
+      val base64Hash = part.base64?.hashCode()?.toString().orEmpty()
+
+      // ⚡ Bolt: Direct string concatenation prevents allocating intermediate List objects
+      // and iterators for every part on the hot path.
+      "$type\u001F$text\u001F$mimeType\u001F$fileName\u001F$base64Hash"
     }
 
   if (timestamp.isEmpty() && contentFingerprint.isEmpty()) return null
-  return listOf(role, timestamp, contentFingerprint).joinToString(separator = "|")
+  // ⚡ Bolt: Prevent overhead of listOf(...).joinToString(...) with a direct template string.
+  return "$role|$timestamp|$contentFingerprint"
 }
 
 private fun JsonElement?.asObjectOrNull(): JsonObject? = this as? JsonObject

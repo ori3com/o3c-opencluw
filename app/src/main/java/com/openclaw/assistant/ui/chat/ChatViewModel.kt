@@ -111,6 +111,15 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     // Whether selectSessionOnStart() was called (session set via Intent before init completes)
     private var sessionSelectedViaIntent = false
 
+    private val waitPhrases by lazy {
+        val app = getApplication<Application>()
+        listOf(
+            app.getString(R.string.wait_phrase_let_me_think),
+            app.getString(R.string.wait_phrase_one_moment),
+            app.getString(R.string.wait_phrase_checking)
+        )
+    }
+
     // Set when user sends a message in nodeChat mode; cleared after TTS is triggered.
     // Avoids race condition between pendingRunCount→0 and chatMessages emitting.
     private var pendingNodeChatTts = false
@@ -1049,12 +1058,6 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun playWaitPhrase() {
-        val app = getApplication<Application>()
-        val waitPhrases = listOf(
-            app.getString(R.string.wait_phrase_let_me_think),
-            app.getString(R.string.wait_phrase_one_moment),
-            app.getString(R.string.wait_phrase_checking)
-        )
         val phrase = waitPhrases.random()
 
         stopAuxiliarySpeech()
