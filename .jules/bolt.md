@@ -5,3 +5,7 @@
 ## 2024-05-24 - Hoist Static Collection Allocations in Loop Parsers
 **Learning:** Instantiating static data structures like `listOf(...)` inside frequently called parsing methods (such as text chunking) causes redundant memory allocations and garbage collection pressure, leading to hidden CPU overhead.
 **Action:** Always hoist static parsing collections (like sentence or comma enders) to `private val` properties at the file or object level to ensure they are created exactly once.
+
+## 2025-02-28 - Optimizing String Append in Kotlin Collections
+**Learning:** `listOf(a, b, c).joinToString(separator)` creates intermediate List allocations and iterators which add overhead when called repeatedly. In hot paths (like ChatController reconciliations or frequent state updates), using direct string interpolation `"$a$separator$b$separator$c"` avoids these allocations.
+**Action:** When working on frequently executed paths that join small, fixed numbers of strings, prefer string interpolation over `listOf(...).joinToString()`.
