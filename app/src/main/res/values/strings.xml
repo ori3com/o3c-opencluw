@@ -348,6 +348,7 @@
     <string name="gateway_manual_desc">Connect to specific host/port</string>
     <string name="gateway_host">Host</string>
     <string name="gateway_port">Port</string>
+    <string name="more_info_description">More information about %1$s</string>
     <string name="gateway_port_error">Invalid port</string>
     <string name="gateway_token">Token</string>
     <string name="gateway_password">Password</string>
