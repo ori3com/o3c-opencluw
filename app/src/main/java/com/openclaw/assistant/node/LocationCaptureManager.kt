@@ -132,7 +132,7 @@ class LocationCaptureManager(private val context: Context) {
       providers.firstOrNull { manager.isProviderEnabled(it) }
         ?: throw IllegalStateException("LOCATION_UNAVAILABLE: no providers available")
     return withTimeout(timeoutMs.coerceAtLeast(1)) {
-      suspendCancellableCoroutine { cont ->
+      val loc = suspendCancellableCoroutine<Location?> { cont ->
         val signal = CoreCancellationSignal()
         cont.invokeOnCancellation { signal.cancel() }
         LocationManagerCompat.getCurrentLocation(
@@ -142,12 +142,13 @@ class LocationCaptureManager(private val context: Context) {
             ContextCompat.getMainExecutor(context)
         ) { location ->
           if (location != null) {
-            cont.resume(location)
+            cont.resume(location) { _ -> }
           } else {
-            cont.resumeWithException(IllegalStateException("LOCATION_UNAVAILABLE: no fix"))
+            cont.resume(null) { _ -> }
           }
         }
       }
+      loc ?: throw IllegalStateException("LOCATION_UNAVAILABLE: no fix")
     }
   }
 }
