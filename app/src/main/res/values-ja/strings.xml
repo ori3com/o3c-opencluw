@@ -346,6 +346,7 @@
 <string name="location_info_message">オフ: AIはあなたの位置情報に一切アクセスできません。\n\nおおまかな位置: 市区町村レベルの範囲を共有します。バッテリー消費を抑えられます。\n\n正確な位置: GPSを使用し、詳細な現在地を共有します。より具体的な場所に基づいた回答が可能になります。\n\n※この項目を長押しすると、いつでもこの説明を確認できます。</string>
 <string name="app_version">バージョン %s</string>
 <string name="status_online">オンライン</string>
+    <string name="more_info_description">%1$s の詳細情報</string>
 <string name="status_offline">オフライン</string>
 <string name="status_operator_online_node_offline">オペレーター接続中（ノードオフライン）</string>
 <string name="status_node_online_operator_offline">ノード接続中（オペレーター未認証）</string>

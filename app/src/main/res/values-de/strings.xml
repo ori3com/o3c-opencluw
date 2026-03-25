@@ -546,4 +546,5 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="action_collapse">Einklappen</string>
     <string name="action_expand">Ausklappen</string>
     <string name="action_refresh">Aktualisieren</string>
+    <string name="more_info_description">Weitere Informationen zu %1$s</string>
 </resources>

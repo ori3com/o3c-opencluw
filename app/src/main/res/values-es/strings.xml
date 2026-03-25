@@ -547,4 +547,5 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="action_collapse">Contraer</string>
     <string name="action_expand">Expandir</string>
     <string name="action_refresh">Actualizar</string>
+    <string name="more_info_description">Más información sobre %1$s</string>
 </resources>

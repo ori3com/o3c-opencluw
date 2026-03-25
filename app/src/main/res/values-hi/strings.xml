@@ -547,4 +547,5 @@
     <string name="action_collapse">संकुचित करें</string>
     <string name="action_expand">विस्तारित करें</string>
     <string name="action_refresh">ताज़ा करें</string>
+    <string name="more_info_description">%1$s के बारे में अधिक जानकारी</string>
 </resources>
