@@ -1302,7 +1302,7 @@ fun MissingScopeCard(error: String, onClick: () -> Unit) {
                 }
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, 
-                    contentDescription = actionLabel,
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.error
                 )
             }
