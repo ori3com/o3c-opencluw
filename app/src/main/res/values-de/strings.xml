@@ -480,10 +480,6 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
 <string name="voicevox_size_approx_mb">ca. %1$d MB</string>
 <string name="voicevox_size_unknown">nicht klar</string>
 
-
-
-
-
     <!-- Onboarding / Permissions Toggles -->
 <string name="permission_discovery">Discovery</string>
 <string name="permission_discovery_desc">Find and connect to devices on your local network</string>
@@ -546,4 +542,14 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="action_collapse">Einklappen</string>
     <string name="action_expand">Ausklappen</string>
     <string name="action_refresh">Aktualisieren</string>
+
+    <string name="hide_api_key">API-Schlüssel ausblenden</string>
+    <string name="show_api_key">API-Schlüssel anzeigen</string>
+    <string name="hide_token">Token ausblenden</string>
+    <string name="show_token">Token anzeigen</string>
+    <string name="hide_password">Passwort ausblenden</string>
+    <string name="show_password">Passwort anzeigen</string>
+    <string name="action_refresh_agents">Agenten aktualisieren</string>
+    <string name="status_downloaded">Heruntergeladen</string>
+
 </resources>

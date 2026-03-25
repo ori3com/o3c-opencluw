@@ -481,10 +481,6 @@
 <string name="voicevox_size_approx_mb">Прибл. %1$d МБ</string>
 <string name="voicevox_size_unknown">Неизвестно</string>
 
-
-
-
-
     <!-- Onboarding / Permissions Toggles -->
 <string name="permission_discovery">Discovery</string>
 <string name="permission_discovery_desc">Find and connect to devices on your local network</string>
@@ -547,4 +543,14 @@
     <string name="action_collapse">Свернуть</string>
     <string name="action_expand">Развернуть</string>
     <string name="action_refresh">Обновить</string>
+
+    <string name="hide_api_key">Скрыть ключ API</string>
+    <string name="show_api_key">Показать ключ API</string>
+    <string name="hide_token">Скрыть токен</string>
+    <string name="show_token">Показать токен</string>
+    <string name="hide_password">Скрыть пароль</string>
+    <string name="show_password">Показать пароль</string>
+    <string name="action_refresh_agents">Обновить агенты</string>
+    <string name="status_downloaded">Скачано</string>
+
 </resources>

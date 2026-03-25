@@ -481,10 +481,6 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="voicevox_size_approx_mb">Env. %1$d Mo</string>
 <string name="voicevox_size_unknown">Inconnu</string>
 
-
-
-
-
     <!-- Onboarding / Permissions Toggles -->
 <string name="permission_discovery">Découverte</string>
 <string name="permission_discovery_desc">Trouver et se connecter aux appareils sur votre réseau local</string>
@@ -547,4 +543,14 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="action_collapse">Réduire</string>
     <string name="action_expand">Développer</string>
     <string name="action_refresh">Actualiser</string>
+
+    <string name="hide_api_key">Masquer la clé API</string>
+    <string name="show_api_key">Afficher la clé API</string>
+    <string name="hide_token">Masquer le jeton</string>
+    <string name="show_token">Afficher le jeton</string>
+    <string name="hide_password">Masquer le mot de passe</string>
+    <string name="show_password">Afficher le mot de passe</string>
+    <string name="action_refresh_agents">Actualiser les agents</string>
+    <string name="status_downloaded">Téléchargé</string>
+
 </resources>

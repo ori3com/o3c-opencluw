@@ -481,10 +481,6 @@
 <string name="voicevox_size_approx_mb">约%1$d MB</string>
 <string name="voicevox_size_unknown">未知</string>
 
-
-
-
-
     <!-- Onboarding / Permissions Toggles -->
 <string name="permission_discovery">Discovery</string>
 <string name="permission_discovery_desc">Find and connect to devices on your local network</string>
@@ -547,4 +543,14 @@
     <string name="action_collapse">折叠</string>
     <string name="action_expand">展开</string>
     <string name="action_refresh">刷新</string>
+
+    <string name="hide_api_key">隐藏 API 密钥</string>
+    <string name="show_api_key">显示 API 密钥</string>
+    <string name="hide_token">隐藏令牌</string>
+    <string name="show_token">显示令牌</string>
+    <string name="hide_password">隐藏密码</string>
+    <string name="show_password">显示密码</string>
+    <string name="action_refresh_agents">刷新代理</string>
+    <string name="status_downloaded">已下载</string>
+
 </resources>
