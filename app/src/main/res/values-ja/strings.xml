@@ -432,6 +432,7 @@
 <string name="setup_code_applied">設定を適用しました！</string>
 <string name="setup_code_invalid_code">セットアップコードが無効または不完全です。</string>
 <string name="setup_code_credential_copy_button">コマンドをコピー</string>
+    <string name="unsupported_attachment">サポートされていない添付ファイル</string>
     <string name="setup_code_credential_hint_title">ゲートウェイのパスワードまたはトークンを入力してください</string>
 <string name="setup_code_credential_hint_desc">セットアップコードでサーバーURLを設定しました。オペレーターセッションを接続するには、ゲートウェイのパスワードまたはトークンを入力してください。\n\nOpenClawを起動しているホストで以下のコマンドを実行して取得できます：</string>
 <string name="permission_camera_desc">AIがカメラ映像を確認するために必要です</string>

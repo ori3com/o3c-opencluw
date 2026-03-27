@@ -314,6 +314,7 @@
     <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
     <string name="pairing_approve_command">Approve Command (Copy)</string>
     <string name="pairing_reject_command">Reject Command (Copy)</string>
+    <string name="unsupported_attachment">Unsupported attachment</string>
     <string name="pairing_refresh_status">Refresh Status</string>
     <string name="pairing_guide_title">How to approve this device:</string>
     <string name="pairing_guide_step_1">1. Access your OpenClaw server terminal.</string>

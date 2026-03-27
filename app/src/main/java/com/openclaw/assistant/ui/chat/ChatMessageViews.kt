@@ -216,7 +216,7 @@ private fun ChatBase64Image(base64: String, mimeType: String?) {
       modifier = Modifier.fillMaxWidth(),
     )
   } else if (state.failed) {
-    Text("Unsupported attachment", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text(stringResource(R.string.unsupported_attachment), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
   }
 }
 
