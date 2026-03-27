@@ -26,10 +26,18 @@ internal object ChatImageCodec {
         override fun sizeOf(key: String, value: Bitmap) = value.byteCount
     }
 
-    private fun cacheKey(base64: String): String =
-        java.security.MessageDigest.getInstance("MD5")
-            .digest(base64.toByteArray())
-            .joinToString("") { "%02x".format(it) }
+    private val HEX_CHARS = "0123456789abcdef".toCharArray()
+
+    private fun cacheKey(base64: String): String {
+        val bytes = java.security.MessageDigest.getInstance("MD5").digest(base64.toByteArray())
+        val result = CharArray(bytes.size * 2)
+        for (i in bytes.indices) {
+            val v = bytes[i].toInt() and 0xFF
+            result[i * 2] = HEX_CHARS[v ushr 4]
+            result[i * 2 + 1] = HEX_CHARS[v and 0x0F]
+        }
+        return String(result)
+    }
 
     /**
      * Loads an image from [uri], scales it down to [maxDimension] px on the longest edge,

@@ -8,3 +8,7 @@
 ## 2025-05-24 - Readable Kotlin String Interpolation Refactor
 **Learning:** When refactoring multi-line `listOf(...).joinToString(...)` constructions into direct string interpolation to avoid list allocation overhead, squashing the entire multi-chained list element instantiation into a single, excessively long string interpolation string (e.g. `"${part.type.trim().lowercase()}\u001F${part.text?.trim().orEmpty()}..."`) severely degrades code readability.
 **Action:** When replacing multi-line list interpolations, assign the components to individual, properly named local variables first, then construct the final string using those simple variables in the string interpolation template (e.g., `"$type\u001F$text\u001F..."`). This preserves the line-by-line readability of the original list while still eliminating the list allocation performance bottleneck.
+
+## $(date +%Y-%m-%d) - Optimize byte array to hex string conversion
+**Learning:** Formatting byte arrays to hex strings using Kotlin's `joinToString("") { "%02x".format(it) }` creates massive garbage collection pressure and is extremely slow due to per-byte string and lambda allocations. When converting large byte arrays (e.g., in `ChatImageCodec` or `DeviceIdentity`), it can become a significant performance bottleneck.
+**Action:** Always replace `joinToString` formatting with a fast manual `CharArray` bitwise shift approach for byte array to hex string conversions to improve performance significantly and reduce memory allocations.

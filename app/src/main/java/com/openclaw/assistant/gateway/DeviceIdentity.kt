@@ -185,7 +185,15 @@ class DeviceIdentity(context: Context) {
         return value.filter { it.code in 0x20..0x7E }.lowercase()
     }
 
+    private val HEX_CHARS = "0123456789abcdef".toCharArray()
+
     private fun bytesToHex(bytes: ByteArray): String {
-        return bytes.joinToString("") { "%02x".format(it) }
+        val result = CharArray(bytes.size * 2)
+        for (i in bytes.indices) {
+            val v = bytes[i].toInt() and 0xFF
+            result[i * 2] = HEX_CHARS[v ushr 4]
+            result[i * 2 + 1] = HEX_CHARS[v and 0x0F]
+        }
+        return String(result)
     }
 }
