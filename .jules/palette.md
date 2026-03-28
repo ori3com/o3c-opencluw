@@ -17,3 +17,6 @@
 ## 2025-03-27 - Expand/Collapse Accessibility Pattern for MissingScopeCard
 **Learning:** Using `Card(onClick=)` without an `onClickLabel` leads to generic, unhelpful screen reader announcements. Expandable cards require explicit labels that change based on state (e.g. Expand / Collapse).
 **Action:** When converting `Card(onClick=)` to use `Modifier.clickable()`, use `onClickLabel = stringResource(if (expanded) R.string.action_collapse else R.string.action_expand)` and assign `role = Role.Button` so the action changes dynamically for screen readers.
+## 2025-02-24 - Improve Icon + Text Grouping in Status Indicators
+**Learning:** When pairing an icon (or shape) with text in a `Row` to convey a single state (like a connection status), adding `contentDescription` piecemeal to the inner elements causes screen readers to announce them individually or ignore the text entirely if the icon is focused first.
+**Action:** Apply `Modifier.semantics(mergeDescendants = true) {}` to the parent `Row`. *Crucially*, if the `Row` contains a child `Text` element displaying the label, do NOT also set `contentDescription = label` on the parent, as TalkBack will concatenate and read the string twice. Only apply `contentDescription` on the parent if the child text is absent (e.g., when showing an icon only).

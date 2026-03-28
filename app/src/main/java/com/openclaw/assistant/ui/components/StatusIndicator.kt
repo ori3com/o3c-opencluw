@@ -70,7 +70,11 @@ fun StatusIndicator(
     )
 
     Row(
-        modifier = modifier,
+        modifier = modifier.semantics(mergeDescendants = true) {
+            if (label == null) {
+                contentDescription = stateDesc
+            }
+        },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
@@ -79,15 +83,6 @@ fun StatusIndicator(
                 .size(dotSize)
                 .alpha(alpha)
                 .background(dotColor, CircleShape)
-                .then(
-                    if (label == null) {
-                        Modifier.semantics {
-                            contentDescription = stateDesc
-                        }
-                    } else {
-                        Modifier
-                    }
-                )
         )
         if (label != null) {
             Text(
