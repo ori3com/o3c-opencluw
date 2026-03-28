@@ -176,16 +176,30 @@ class WearSession(context: Context) : VoiceInteractionSession(context),
 
     override fun onShow(args: Bundle?, showFlags: Int) {
         super.onShow(args, showFlags)
+        val intent = Intent(context, WearSessionForegroundService::class.java)
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to start WearSessionForegroundService", e)
+        }
         lifecycleRegistry.currentState = Lifecycle.State.RESUMED
         startListening()
     }
 
     override fun onHide() {
+        val intent = Intent(context, WearSessionForegroundService::class.java)
+        context.stopService(intent)
         super.onHide()
         lifecycleRegistry.currentState = Lifecycle.State.CREATED
     }
 
     override fun onDestroy() {
+        val intent = Intent(context, WearSessionForegroundService::class.java)
+        context.stopService(intent)
         lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
         scope.cancel()
         speechRecognizer?.destroy()
