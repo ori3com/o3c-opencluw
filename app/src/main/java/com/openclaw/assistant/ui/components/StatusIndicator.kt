@@ -93,7 +93,7 @@ fun StatusIndicator(
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
-                color = dotColor
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
