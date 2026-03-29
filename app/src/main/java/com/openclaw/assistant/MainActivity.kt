@@ -51,6 +51,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.text.font.FontFamily
@@ -1031,25 +1032,33 @@ fun SystemStatusCard(
     ) {
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                val state = when {
-                    connected -> ConnectionState.Connected
-                    isConnecting -> ConnectionState.Connecting
-                    else -> ConnectionState.Disconnected
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .semantics(mergeDescendants = true) {},
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val state = when {
+                        connected -> ConnectionState.Connected
+                        isConnecting -> ConnectionState.Connecting
+                        else -> ConnectionState.Disconnected
+                    }
+                    Box(modifier = Modifier.clearAndSetSemantics {}) {
+                        StatusIndicator(state = state)
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = statusText,
+                        fontSize = 13.sp,
+                        color = contentColor.copy(alpha = 0.8f)
+                    )
                 }
-                StatusIndicator(state = state)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.app_name),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = statusText,
-                    fontSize = 13.sp,
-                    color = contentColor.copy(alpha = 0.8f),
-                    modifier = Modifier.weight(1f)
-                )
                 IconButton(onClick = onOpenSettings, modifier = Modifier.size(24.dp)) {
                     Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings_title), tint = contentColor.copy(alpha = 0.6f))
                 }
