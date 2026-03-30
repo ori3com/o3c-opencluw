@@ -12,3 +12,7 @@
 ## 2026-03-26 - Kotlin `ByteArray.joinToString("") { "%02x".format(it) }` Performance Bottleneck
 **Learning:** Formatting byte arrays to hex strings using Kotlin's `joinToString` with `"%02x".format(it)` is extremely slow and memory inefficient because it allocates a new string and lambda invocation for every single byte, creating immense garbage collector pressure during heavy data processing (like image encoding or cryptographic hashing). A benchmark showed `joinToString` taking ~691ms for 1000 iterations vs a manual `CharArray` bit-shift approach taking only ~26ms (a 26x speedup).
 **Action:** When converting large byte arrays to hex strings (e.g., in `ChatImageCodec` for MD5 caching or `DeviceIdentity` for signature generation), replace `joinToString` formatting with a fast manual `CharArray` bitwise approach.
+
+## 2025-03-30 - StringBuilder over joinToString with lambda
+**Learning:** `joinToString` combined with string templates creates intermediate string instances for each loop iteration and has significant overhead compared to direct string building inside hot paths.
+**Action:** Use manual `StringBuilder` approaches combined with standard loops (instead of `.joinToString`) to optimize string concatenation in hot paths.
