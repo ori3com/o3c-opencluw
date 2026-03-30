@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.StartOffset
 import androidx.compose.animation.core.animateFloat
@@ -106,7 +107,7 @@ fun ChatTypingIndicatorBubble() {
       color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
       Row(
-        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp).semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
       ) {
@@ -133,6 +134,7 @@ fun ChatPendingToolsBubble(toolCalls: List<ChatPendingToolCall>) {
         Row(
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.spacedBy(8.dp),
+          modifier = Modifier.semantics(mergeDescendants = true) {}
         ) {
           DotPulse()
           Text(stringResource(R.string.running_tools), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface)

@@ -17,3 +17,7 @@
 ## 2025-03-27 - Expand/Collapse Accessibility Pattern for MissingScopeCard
 **Learning:** Using `Card(onClick=)` without an `onClickLabel` leads to generic, unhelpful screen reader announcements. Expandable cards require explicit labels that change based on state (e.g. Expand / Collapse).
 **Action:** When converting `Card(onClick=)` to use `Modifier.clickable()`, use `onClickLabel = stringResource(if (expanded) R.string.action_collapse else R.string.action_expand)` and assign `role = Role.Button` so the action changes dynamically for screen readers.
+
+## 2025-03-30 - Add mergeDescendants semantics to Chat Bubbles
+**Learning:** In Jetpack Compose, container rows with loading animations and text labels (like typing indicators and tool running bubbles) are read as separate, disjointed elements by TalkBack.
+**Action:** Always add `Modifier.semantics(mergeDescendants = true)` to parent containers of loading indicators and their descriptive text to group them into a single, cohesive accessibility announcement.
