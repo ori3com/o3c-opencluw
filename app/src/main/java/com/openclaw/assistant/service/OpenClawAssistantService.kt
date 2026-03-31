@@ -120,6 +120,6 @@ class OpenClawAssistantService : VoiceInteractionService() {
         isServiceReady = false
         pendingShowSession = false
         handler.removeCallbacks(pendingSessionTimeoutRunnable)
-        unregisterReceiver(debugReceiver)
+        try { unregisterReceiver(debugReceiver) } catch (_: Exception) {}
     }
 }
