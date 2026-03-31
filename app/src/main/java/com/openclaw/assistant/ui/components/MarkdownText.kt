@@ -11,14 +11,20 @@ import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownColor
 import com.mikepenz.markdown.m3.markdownTypography
 
+private const val MAX_MARKDOWN_LENGTH = 20_000
+
 @Composable
 fun MarkdownText(
     markdown: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onSurface
 ) {
+    val content = remember(markdown) {
+        if (markdown.length > MAX_MARKDOWN_LENGTH) markdown.take(MAX_MARKDOWN_LENGTH) + "\n\n[...]"
+        else markdown
+    }
     Markdown(
-        content = markdown,
+        content = content,
         modifier = modifier,
         colors = markdownColor(
             text = color,
