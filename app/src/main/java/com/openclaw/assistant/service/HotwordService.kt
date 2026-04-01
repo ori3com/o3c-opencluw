@@ -647,8 +647,12 @@ class HotwordService : Service(), VoskRecognitionListener {
             val intent = Intent(this@HotwordService, OpenClawAssistantService::class.java).apply {
                 action = OpenClawAssistantService.ACTION_SHOW_ASSISTANT
             }
-            startService(intent)
-            Log.e(TAG, "startService ACTION_SHOW_ASSISTANT called")
+            try {
+                startService(intent)
+                Log.e(TAG, "startService ACTION_SHOW_ASSISTANT called")
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to start OpenClawAssistantService: ${e.message}", e)
+            }
         }
     }
 
