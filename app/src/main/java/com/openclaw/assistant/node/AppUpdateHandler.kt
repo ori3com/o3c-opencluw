@@ -70,6 +70,8 @@ internal fun parseAppUpdateRequest(paramsJson: String?, connectedHost: String?):
   )
 }
 
+private val HEX_CHARS = "0123456789abcdef".toCharArray()
+
 internal fun sha256Hex(file: File): String {
   val digest = MessageDigest.getInstance("SHA-256")
   file.inputStream().use { input ->
@@ -81,11 +83,15 @@ internal fun sha256Hex(file: File): String {
       digest.update(buffer, 0, read)
     }
   }
-  val out = StringBuilder(64)
-  for (byte in digest.digest()) {
-    out.append(String.format(Locale.US, "%02x", byte))
+  // ⚡ Bolt Optimization: Fast CharArray bitwise shift to avoid GC overhead
+  val hashBytes = digest.digest()
+  val result = CharArray(hashBytes.size * 2)
+  for (i in hashBytes.indices) {
+    val v = hashBytes[i].toInt() and 0xFF
+    result[i * 2] = HEX_CHARS[v ushr 4]
+    result[i * 2 + 1] = HEX_CHARS[v and 0x0F]
   }
-  return out.toString()
+  return String(result)
 }
 
 class AppUpdateHandler(
