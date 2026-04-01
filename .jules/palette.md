@@ -17,3 +17,7 @@
 ## 2025-03-27 - Expand/Collapse Accessibility Pattern for MissingScopeCard
 **Learning:** Using `Card(onClick=)` without an `onClickLabel` leads to generic, unhelpful screen reader announcements. Expandable cards require explicit labels that change based on state (e.g. Expand / Collapse).
 **Action:** When converting `Card(onClick=)` to use `Modifier.clickable()`, use `onClickLabel = stringResource(if (expanded) R.string.action_collapse else R.string.action_expand)` and assign `role = Role.Button` so the action changes dynamically for screen readers.
+
+## 2025-04-01 - Semantics Grouping in Status Indicator
+**Learning:** In Compose, an animated `Box` acting as a "dot" next to a `Text` label creates disjointed screen reader announcements if the `Row` wrapper doesn't use `Modifier.semantics(mergeDescendants = true)`. Without merging, users navigating by swipe hear the dot's state separate from the adjacent text label. Adding `mergeDescendants = true` ensures the entire status block is read cohesively as a single node.
+**Action:** Always group visual indicators (like dots, spinners, or icons) and their corresponding text descriptions in a `Row` or `Column` using `Modifier.semantics(mergeDescendants = true) {}`.
