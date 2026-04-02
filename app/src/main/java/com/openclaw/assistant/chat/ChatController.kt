@@ -589,15 +589,21 @@ internal fun messageIdentityKey(message: ChatMessage): String? {
   if (role.isEmpty()) return null
 
   val timestamp = message.timestampMs?.toString().orEmpty()
-  val contentFingerprint =
-    message.content.joinToString(separator = "\u001E") { part ->
+  val contentFingerprint = buildString {
+    for ((index, part) in message.content.withIndex()) {
+      if (index > 0) append("\u001E")
       val type = part.type.trim().lowercase()
       val text = part.text?.trim().orEmpty()
       val mime = part.mimeType?.trim()?.lowercase().orEmpty()
       val name = part.fileName?.trim().orEmpty()
       val base64Hash = part.base64?.hashCode()?.toString().orEmpty()
-      "$type\u001F$text\u001F$mime\u001F$name\u001F$base64Hash"
+      append(type).append("\u001F")
+        .append(text).append("\u001F")
+        .append(mime).append("\u001F")
+        .append(name).append("\u001F")
+        .append(base64Hash)
     }
+  }
 
   if (timestamp.isEmpty() && contentFingerprint.isEmpty()) return null
   return "$role|$timestamp|$contentFingerprint"
