@@ -858,8 +858,12 @@ private fun PermissionsStep(onNext: () -> Unit) {
                 onClick = {
                     when (toggle) {
                         SpecialAccessToggle.NotificationListener -> {
-                            val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
-                            context.startActivity(intent)
+                            try {
+                                val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+                                context.startActivity(intent)
+                            } catch (_: android.content.ActivityNotFoundException) {
+                                // Some devices (e.g. TV, custom Android) don't have this settings screen
+                            }
                         }
                         SpecialAccessToggle.AppUpdates -> {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
