@@ -281,7 +281,12 @@ class NodeForegroundService : Service() {
 
     fun stop(context: Context) {
       val intent = Intent(context, NodeForegroundService::class.java).setAction(ACTION_STOP)
-      context.startService(intent)
+      try {
+        context.startService(intent)
+      } catch (e: Exception) {
+        android.util.Log.e(TAG, "Failed to start NodeForegroundService for stop action, falling back to stopService: ${e.message}", e)
+        context.stopService(Intent(context, NodeForegroundService::class.java))
+      }
     }
 
     /**
