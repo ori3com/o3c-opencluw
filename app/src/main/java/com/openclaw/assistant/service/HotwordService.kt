@@ -58,7 +58,11 @@ class HotwordService : Service(), VoskRecognitionListener {
         }
 
         fun stop(context: Context) {
-            context.stopService(Intent(context, HotwordService::class.java))
+            try {
+                context.stopService(Intent(context, HotwordService::class.java))
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to stop HotwordService: ${e.message}", e)
+            }
         }
 
         fun shouldCopyModel(currentVersion: Int, savedVersion: Int, targetDirExists: Boolean, targetDirNotEmpty: Boolean): Boolean {
@@ -647,8 +651,12 @@ class HotwordService : Service(), VoskRecognitionListener {
             val intent = Intent(this@HotwordService, OpenClawAssistantService::class.java).apply {
                 action = OpenClawAssistantService.ACTION_SHOW_ASSISTANT
             }
-            startService(intent)
-            Log.e(TAG, "startService ACTION_SHOW_ASSISTANT called")
+            try {
+                startService(intent)
+                Log.d(TAG, "startService ACTION_SHOW_ASSISTANT called")
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to start OpenClawAssistantService: ${e.message}", e)
+            }
         }
     }
 
