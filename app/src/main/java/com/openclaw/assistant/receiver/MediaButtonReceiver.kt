@@ -44,7 +44,11 @@ class MediaButtonReceiver : BroadcastReceiver() {
                 val serviceIntent = Intent(context, OpenClawAssistantService::class.java).apply {
                     action = OpenClawAssistantService.ACTION_SHOW_ASSISTANT
                 }
-                context.startService(serviceIntent)
+                try {
+                    context.startService(serviceIntent)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to start OpenClawAssistantService: ${e.message}")
+                }
                 // Absorb the event so it doesn't reach the media player
                 abortBroadcast()
             }
