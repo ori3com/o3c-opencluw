@@ -58,7 +58,11 @@ class HotwordService : Service(), VoskRecognitionListener {
         }
 
         fun stop(context: Context) {
-            context.stopService(Intent(context, HotwordService::class.java))
+            try {
+                context.stopService(Intent(context, HotwordService::class.java))
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to stop HotwordService: ${e.message}", e)
+            }
         }
 
         fun shouldCopyModel(currentVersion: Int, savedVersion: Int, targetDirExists: Boolean, targetDirNotEmpty: Boolean): Boolean {
@@ -644,11 +648,21 @@ class HotwordService : Service(), VoskRecognitionListener {
             }
             pendingInterruptLaunch = false
             isSessionActive = true
-            val intent = Intent(this@HotwordService, OpenClawAssistantService::class.java).apply {
-                action = OpenClawAssistantService.ACTION_SHOW_ASSISTANT
+            try {
+                val intent = Intent(this@HotwordService, OpenClawAssistantService::class.java).apply {
+                    action = OpenClawAssistantService.ACTION_SHOW_ASSISTANT
+                }
+                startService(intent)
+                Log.e(TAG, "startService ACTION_SHOW_ASSISTANT called")
+            } catch (e: IllegalStateException) {
+                Log.e(TAG, "Failed to start OpenClawAssistantService, falling back to broadcast: ${e.message}")
+                val broadcastIntent = Intent(OpenClawAssistantService.ACTION_SHOW_ASSISTANT).apply {
+                    setPackage(packageName)
+                }
+                sendBroadcast(broadcastIntent)
+            } catch (e: SecurityException) {
+                Log.e(TAG, "Failed to start OpenClawAssistantService: ${e.message}")
             }
-            startService(intent)
-            Log.e(TAG, "startService ACTION_SHOW_ASSISTANT called")
         }
     }
 

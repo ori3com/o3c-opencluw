@@ -41,10 +41,20 @@ class MediaButtonReceiver : BroadcastReceiver() {
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE,
             KeyEvent.KEYCODE_MEDIA_PLAY -> {
                 Log.d(TAG, "Media button pressed (keyCode=${event.keyCode}) — triggering assistant")
-                val serviceIntent = Intent(context, OpenClawAssistantService::class.java).apply {
-                    action = OpenClawAssistantService.ACTION_SHOW_ASSISTANT
+                try {
+                    val serviceIntent = Intent(context, OpenClawAssistantService::class.java).apply {
+                        action = OpenClawAssistantService.ACTION_SHOW_ASSISTANT
+                    }
+                    context.startService(serviceIntent)
+                } catch (e: IllegalStateException) {
+                    Log.e(TAG, "Failed to start OpenClawAssistantService, falling back to broadcast: ${e.message}")
+                    val broadcastIntent = Intent(OpenClawAssistantService.ACTION_SHOW_ASSISTANT).apply {
+                        setPackage(context.packageName)
+                    }
+                    context.sendBroadcast(broadcastIntent)
+                } catch (e: SecurityException) {
+                    Log.e(TAG, "Failed to start OpenClawAssistantService: ${e.message}")
                 }
-                context.startService(serviceIntent)
                 // Absorb the event so it doesn't reach the media player
                 abortBroadcast()
             }
