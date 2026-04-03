@@ -52,12 +52,9 @@ class GatewayConfigUtilsTest {
     }
 
     @Test
-    fun `decodeGatewaySetupCode extracts password from local WS setup code`() {
+    fun `decodeGatewaySetupCode fails on non-loopback WS setup code`() {
         val result = GatewayConfigUtils.decodeGatewaySetupCode(codeLocalWsPassword)
-        assertNotNull("Local WS setup code should decode successfully", result)
-        assertEquals("localpass", result!!.password)
-        assertNull("Token should be null when not present", result.token)
-        assertEquals("ws://192.168.1.100:18789", result.url)
+        assertNull(result)
     }
 
     @Test
@@ -98,11 +95,9 @@ class GatewayConfigUtilsTest {
     }
 
     @Test
-    fun `parseGatewayEndpoint defaults to port 18789 for WS`() {
+    fun `parseGatewayEndpoint returns null for non-loopback WS`() {
         val result = GatewayConfigUtils.parseGatewayEndpoint("ws://192.168.1.100")
-        assertNotNull(result)
-        assertEquals(18789, result!!.port)
-        assertEquals(false, result.tls)
+        assertNull(result)
     }
 
     @Test

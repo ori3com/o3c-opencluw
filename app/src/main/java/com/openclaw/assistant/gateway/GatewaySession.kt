@@ -1,6 +1,7 @@
 package com.openclaw.assistant.gateway
 
 import android.util.Log
+import com.openclaw.assistant.gateway.isLoopbackGatewayHost
 import java.util.Locale
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
@@ -77,7 +78,7 @@ class GatewaySession(
     }
 
     internal fun buildCanvasUrl(scheme: String, host: String, port: Int, suffix: String): String {
-      val formattedHost = if (host.contains(":")) "[$host]" else host
+      val formattedHost = formatGatewayAuthorityHost(host)
       val portSuffix =
         when {
           (scheme == "https" && port == 443) || (scheme == "http" && port == 80) -> ""
@@ -90,15 +91,6 @@ class GatewaySession(
     internal fun resolveInvokeResultAckTimeoutMs(invokeTimeoutMs: Long?): Long {
       if (invokeTimeoutMs == null) return 15_000L
       return minOf(maxOf(invokeTimeoutMs + 5_000L, 15_000L), 120_000L)
-    }
-
-    internal fun isLoopbackHost(raw: String?): Boolean {
-      val host = raw?.trim()?.lowercase().orEmpty()
-      if (host.isEmpty()) return false
-      if (host == "localhost") return true
-      if (host == "::1") return true
-      if (host == "0.0.0.0" || host == "::") return true
-      return host.startsWith("127.")
     }
 
     internal fun normalizeCanvasHostUrl(
@@ -116,7 +108,7 @@ class GatewaySession(
 
       val tls = isTlsConnection || endpoint.port == 443 || endpoint.host.contains(".")
 
-      if (trimmed.isNotBlank() && !isLoopbackHost(host)) {
+      if (trimmed.isNotBlank() && !isLoopbackGatewayHost(host)) {
         if (tls && port > 0 && port != 443) {
           return buildCanvasUrl("https", host, 443, suffix)
         }
@@ -279,18 +271,12 @@ class GatewaySession(
     private var socket: WebSocket? = null
     private val loggerTag = "OpenClawGateway"
 
-    val remoteAddress: String =
-      if (endpoint.host.contains(":")) {
-        "[${endpoint.host}]:${endpoint.port}"
-      } else {
-        "${endpoint.host}:${endpoint.port}"
-      }
+    val remoteAddress: String = formatGatewayAuthority(endpoint.host, endpoint.port)
 
     suspend fun connect() {
-      val scheme = if (tls != null) "wss" else "ws"
-      val url = "$scheme://${endpoint.host}:${endpoint.port}"
+      val url = buildGatewayWebSocketUrl(endpoint.host, endpoint.port, tls != null)
       val httpScheme = if (tls != null) "https" else "http"
-      val origin = "$httpScheme://${endpoint.host}:${endpoint.port}"
+      val origin = "$httpScheme://${formatGatewayAuthority(endpoint.host, endpoint.port)}"
       val request = Request.Builder()
         .url(url)
         .header("Origin", origin)
@@ -676,7 +662,7 @@ class GatewaySession(
     }
 
     private suspend fun awaitConnectNonce(): String? {
-      if (isLoopbackHost(endpoint.host)) return null
+      if (isLoopbackGatewayHost(endpoint.host)) return null
       return try {
         withTimeout(2_000) { connectNonceDeferred.await() }
       } catch (_: Throwable) {
@@ -834,6 +820,21 @@ class GatewaySession(
     return parts.joinToString("|")
   }
 
+}
+
+
+internal fun buildGatewayWebSocketUrl(host: String, port: Int, useTls: Boolean): String {
+  val scheme = if (useTls) "wss" else "ws"
+  return "$scheme://${formatGatewayAuthority(host, port)}"
+}
+
+internal fun formatGatewayAuthority(host: String, port: Int): String {
+  return "${formatGatewayAuthorityHost(host)}:$port"
+}
+
+private fun formatGatewayAuthorityHost(host: String): String {
+  val normalizedHost = host.trim().trim('[', ']')
+  return if (normalizedHost.contains(":")) "[${normalizedHost}]" else normalizedHost
 }
 
 private fun JsonElement?.asObjectOrNull(): JsonObject? = this as? JsonObject

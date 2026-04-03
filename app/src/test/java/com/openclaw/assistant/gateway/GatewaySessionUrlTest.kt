@@ -12,7 +12,7 @@ import org.junit.Test
  * Covers:
  *  - [GatewaySession.buildUrlSuffix]
  *  - [GatewaySession.buildCanvasUrl]
- *  - [GatewaySession.isLoopbackHost]
+ *  - [com.openclaw.assistant.gateway.isLoopbackGatewayHost]
  *  - [GatewaySession.resolveInvokeResultAckTimeoutMs]
  *  - [GatewaySession.normalizeCanvasHostUrl]
  */
@@ -108,25 +108,25 @@ class GatewaySessionUrlTest {
     // ---------------------------------------------------------------------------
 
     @Test
-    fun `isLoopbackHost - localhost`() = assertTrue(GatewaySession.isLoopbackHost("localhost"))
+    fun `isLoopbackHost - localhost`() = assertTrue(com.openclaw.assistant.gateway.isLoopbackGatewayHost("localhost"))
 
     @Test
-    fun `isLoopbackHost - 127_0_0_1`() = assertTrue(GatewaySession.isLoopbackHost("127.0.0.1"))
+    fun `isLoopbackHost - 127_0_0_1`() = assertTrue(com.openclaw.assistant.gateway.isLoopbackGatewayHost("127.0.0.1"))
 
     @Test
-    fun `isLoopbackHost - IPv6 loopback`() = assertTrue(GatewaySession.isLoopbackHost("::1"))
+    fun `isLoopbackHost - IPv6 loopback`() = assertTrue(com.openclaw.assistant.gateway.isLoopbackGatewayHost("::1"))
 
     @Test
-    fun `isLoopbackHost - 0_0_0_0`() = assertTrue(GatewaySession.isLoopbackHost("0.0.0.0"))
+    fun `isLoopbackHost - 0_0_0_0`() = assertFalse(com.openclaw.assistant.gateway.isLoopbackGatewayHost("0.0.0.0"))
 
     @Test
-    fun `isLoopbackHost - public domain`() = assertFalse(GatewaySession.isLoopbackHost("example.com"))
+    fun `isLoopbackHost - public domain`() = assertFalse(com.openclaw.assistant.gateway.isLoopbackGatewayHost("example.com"))
 
     @Test
-    fun `isLoopbackHost - null returns false`() = assertFalse(GatewaySession.isLoopbackHost(null))
+    fun `isLoopbackHost - null returns false`() = assertFalse(com.openclaw.assistant.gateway.isLoopbackGatewayHost(null))
 
     @Test
-    fun `isLoopbackHost - empty string returns false`() = assertFalse(GatewaySession.isLoopbackHost(""))
+    fun `isLoopbackHost - empty string returns false`() = assertFalse(com.openclaw.assistant.gateway.isLoopbackGatewayHost(""))
 
     // ---------------------------------------------------------------------------
     // resolveInvokeResultAckTimeoutMs

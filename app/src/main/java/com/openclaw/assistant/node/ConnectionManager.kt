@@ -11,6 +11,7 @@ import com.openclaw.assistant.gateway.GatewayClientInfo
 import com.openclaw.assistant.gateway.GatewayConnectOptions
 import com.openclaw.assistant.gateway.GatewayEndpoint
 import com.openclaw.assistant.gateway.GatewayTlsParams
+import com.openclaw.assistant.gateway.isLoopbackGatewayHost
 import com.openclaw.assistant.protocol.OpenClawCanvasA2UICommand
 import com.openclaw.assistant.protocol.OpenClawCanvasCommand
 import com.openclaw.assistant.protocol.OpenClawCameraCommand
@@ -49,9 +50,10 @@ class ConnectionManager(
       val stableId = endpoint.stableId
       val stored = storedFingerprint?.trim().takeIf { !it.isNullOrEmpty() }
       val isManual = stableId.startsWith("manual|")
+      val isLoopback = isLoopbackGatewayHost(endpoint.host)
 
       if (isManual) {
-        if (!manualTlsEnabled) return null
+        if (!manualTlsEnabled && isLoopback) return null
         if (!stored.isNullOrBlank()) {
           return GatewayTlsParams(
             required = true,
@@ -81,6 +83,15 @@ class ConnectionManager(
       val hinted = endpoint.tlsEnabled || !endpoint.tlsFingerprintSha256.isNullOrBlank()
       if (hinted) {
         // TXT is unauthenticated. Do not treat the advertised fingerprint as authoritative.
+        return GatewayTlsParams(
+          required = true,
+          expectedFingerprint = null,
+          allowTOFU = false,
+          stableId = stableId,
+        )
+      }
+
+      if (!isLoopback) {
         return GatewayTlsParams(
           required = true,
           expectedFingerprint = null,
