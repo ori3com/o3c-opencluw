@@ -523,7 +523,24 @@
     <string name="tab_nav_home">ホーム</string>
     <string name="tab_nav_chat">チャット</string>
     <string name="tab_nav_canvas">Canvas</string>
+    <string name="tab_nav_cron">Cron</string>
     <string name="tab_nav_settings">設定</string>
+    <!-- Cron -->
+    <string name="cron_title">Cron</string>
+    <string name="cron_refresh">更新</string>
+    <string name="cron_add">ジョブを追加</string>
+    <string name="cron_edit">編集</string>
+    <string name="cron_delete">削除</string>
+    <string name="cron_name">名前</string>
+    <string name="cron_schedule">スケジュール</string>
+    <string name="cron_command">コマンド</string>
+    <string name="cron_enabled">有効</string>
+    <string name="cron_empty">Cronジョブがありません。＋で追加してください。</string>
+    <string name="cron_not_connected">Gatewayに接続されていません</string>
+    <string name="cron_delete_confirm_title">ジョブを削除</string>
+    <string name="cron_delete_confirm_message">「%1$s」を削除しますか？</string>
+    <string name="cron_save">保存</string>
+    <string name="cron_next_run">次回: %1$s</string>
     <string name="attach_file">ファイルを添付</string>
     <string name="file">ファイル</string>
     <string name="image_attachment">画像添付</string>
@@ -552,4 +569,8 @@
     <string name="action_collapse">折りたたむ</string>
     <string name="action_expand">展開する</string>
     <string name="action_refresh">更新</string>
+
+    <!-- Microphone privacy toggle blocked -->
+    <string name="error_mic_privacy_title">マイクのアクセスがブロックされています</string>
+    <string name="error_mic_privacy_message">システムのマイクプライバシートグルがオフになっています。設定 &gt; プライバシー &gt; マイクから有効にしてください。</string>
 </resources>

@@ -519,7 +519,24 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="tab_nav_home">Startseite</string>
     <string name="tab_nav_chat">Chat</string>
     <string name="tab_nav_canvas">Canvas</string>
+    <string name="tab_nav_cron">Cron</string>
     <string name="tab_nav_settings">Einstellungen</string>
+    <!-- Cron -->
+    <string name="cron_title">Cron</string>
+    <string name="cron_refresh">Aktualisieren</string>
+    <string name="cron_add">Job hinzufügen</string>
+    <string name="cron_edit">Bearbeiten</string>
+    <string name="cron_delete">Löschen</string>
+    <string name="cron_name">Name</string>
+    <string name="cron_schedule">Zeitplan</string>
+    <string name="cron_command">Befehl</string>
+    <string name="cron_enabled">Aktiviert</string>
+    <string name="cron_empty">Keine Cron-Jobs. Tippe auf +, um einen hinzuzufügen.</string>
+    <string name="cron_not_connected">Nicht mit dem Gateway verbunden</string>
+    <string name="cron_delete_confirm_title">Job löschen</string>
+    <string name="cron_delete_confirm_message">„%1$s" löschen?</string>
+    <string name="cron_save">Speichern</string>
+    <string name="cron_next_run">Nächste: %1$s</string>
     <string name="attach_file">Datei anhängen</string>
     <string name="file">Datei</string>
     <string name="image_attachment">Bildanhang</string>
@@ -549,4 +566,8 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="action_collapse">Einklappen</string>
     <string name="action_expand">Ausklappen</string>
     <string name="action_refresh">Aktualisieren</string>
+
+    <!-- Microphone privacy toggle blocked -->
+    <string name="error_mic_privacy_title">Mikrofonzugriff blockiert</string>
+    <string name="error_mic_privacy_message">Der Mikrofon-Datenschutzschalter Ihres Geräts ist deaktiviert. Aktivieren Sie ihn unter Einstellungen &gt; Datenschutz &gt; Mikrofon.</string>
 </resources>

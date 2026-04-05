@@ -520,7 +520,24 @@
     <string name="tab_nav_home">होम</string>
     <string name="tab_nav_chat">चैट</string>
     <string name="tab_nav_canvas">Canvas</string>
+    <string name="tab_nav_cron">Cron</string>
     <string name="tab_nav_settings">सेटिंग्स</string>
+    <!-- Cron -->
+    <string name="cron_title">Cron</string>
+    <string name="cron_refresh">रीफ्रेश</string>
+    <string name="cron_add">कार्य जोड़ें</string>
+    <string name="cron_edit">संपादित करें</string>
+    <string name="cron_delete">हटाएं</string>
+    <string name="cron_name">नाम</string>
+    <string name="cron_schedule">शेड्यूल</string>
+    <string name="cron_command">कमांड</string>
+    <string name="cron_enabled">सक्षम</string>
+    <string name="cron_empty">कोई Cron कार्य नहीं। जोड़ने के लिए + दबाएं।</string>
+    <string name="cron_not_connected">गेटवे से कनेक्ट नहीं है</string>
+    <string name="cron_delete_confirm_title">कार्य हटाएं</string>
+    <string name="cron_delete_confirm_message">«%1$s» हटाएं?</string>
+    <string name="cron_save">सहेजें</string>
+    <string name="cron_next_run">अगला: %1$s</string>
     <string name="attach_file">फ़ाइल संलग्न करें</string>
     <string name="file">फ़ाइल</string>
     <string name="image_attachment">छवि अनुलग्नक</string>
@@ -550,4 +567,8 @@
     <string name="action_collapse">संकुचित करें</string>
     <string name="action_expand">विस्तारित करें</string>
     <string name="action_refresh">ताज़ा करें</string>
+
+    <!-- Microphone privacy toggle blocked -->
+    <string name="error_mic_privacy_title">माइक्रोफ़ोन एक्सेस अवरुद्ध है</string>
+    <string name="error_mic_privacy_message">आपके डिवाइस का माइक्रोफ़ोन गोपनीयता स्विच बंद है। इसे सेटिंग &gt; गोपनीयता &gt; माइक्रोफ़ोन में चालू करें।</string>
 </resources>

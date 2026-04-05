@@ -520,7 +520,24 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="tab_nav_home">Accueil</string>
     <string name="tab_nav_chat">Chat</string>
     <string name="tab_nav_canvas">Canvas</string>
+    <string name="tab_nav_cron">Cron</string>
     <string name="tab_nav_settings">Paramètres</string>
+    <!-- Cron -->
+    <string name="cron_title">Cron</string>
+    <string name="cron_refresh">Actualiser</string>
+    <string name="cron_add">Ajouter une tâche</string>
+    <string name="cron_edit">Modifier</string>
+    <string name="cron_delete">Supprimer</string>
+    <string name="cron_name">Nom</string>
+    <string name="cron_schedule">Planification</string>
+    <string name="cron_command">Commande</string>
+    <string name="cron_enabled">Activé</string>
+    <string name="cron_empty">Aucune tâche cron. Appuyez sur + pour en ajouter une.</string>
+    <string name="cron_not_connected">Non connecté à la passerelle</string>
+    <string name="cron_delete_confirm_title">Supprimer la tâche</string>
+    <string name="cron_delete_confirm_message">Supprimer «\u00a0%1$s\u00a0»\u00a0?</string>
+    <string name="cron_save">Enregistrer</string>
+    <string name="cron_next_run">Prochain\u00a0: %1$s</string>
     <string name="attach_file">Joindre un fichier</string>
     <string name="file">Fichier</string>
     <string name="image_attachment">Pièce jointe image</string>
@@ -550,4 +567,8 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="action_collapse">Réduire</string>
     <string name="action_expand">Développer</string>
     <string name="action_refresh">Actualiser</string>
+
+    <!-- Microphone privacy toggle blocked -->
+    <string name="error_mic_privacy_title">Accès au microphone bloqué</string>
+    <string name="error_mic_privacy_message">Le commutateur de confidentialité du microphone de votre appareil est désactivé. Activez-le dans Paramètres &gt; Confidentialité &gt; Microphone.</string>
 </resources>

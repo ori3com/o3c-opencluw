@@ -520,7 +520,24 @@
     <string name="tab_nav_home">Главная</string>
     <string name="tab_nav_chat">Чат</string>
     <string name="tab_nav_canvas">Canvas</string>
+    <string name="tab_nav_cron">Cron</string>
     <string name="tab_nav_settings">Настройки</string>
+    <!-- Cron -->
+    <string name="cron_title">Cron</string>
+    <string name="cron_refresh">Обновить</string>
+    <string name="cron_add">Добавить задание</string>
+    <string name="cron_edit">Изменить</string>
+    <string name="cron_delete">Удалить</string>
+    <string name="cron_name">Название</string>
+    <string name="cron_schedule">Расписание</string>
+    <string name="cron_command">Команда</string>
+    <string name="cron_enabled">Включено</string>
+    <string name="cron_empty">Нет заданий Cron. Нажмите +, чтобы добавить.</string>
+    <string name="cron_not_connected">Нет подключения к шлюзу</string>
+    <string name="cron_delete_confirm_title">Удалить задание</string>
+    <string name="cron_delete_confirm_message">Удалить «%1$s»?</string>
+    <string name="cron_save">Сохранить</string>
+    <string name="cron_next_run">Следующий: %1$s</string>
     <string name="attach_file">Прикрепить файл</string>
     <string name="file">Файл</string>
     <string name="image_attachment">Вложение изображения</string>
@@ -550,4 +567,8 @@
     <string name="action_collapse">Свернуть</string>
     <string name="action_expand">Развернуть</string>
     <string name="action_refresh">Обновить</string>
+
+    <!-- Microphone privacy toggle blocked -->
+    <string name="error_mic_privacy_title">Доступ к микрофону заблокирован</string>
+    <string name="error_mic_privacy_message">Переключатель конфиденциальности микрофона на вашем устройстве отключён. Включите его в Настройки &gt; Конфиденциальность &gt; Микрофон.</string>
 </resources>

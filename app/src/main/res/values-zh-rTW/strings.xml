@@ -519,7 +519,24 @@
     <string name="tab_nav_home">首頁</string>
     <string name="tab_nav_chat">聊天</string>
     <string name="tab_nav_canvas">Canvas</string>
+    <string name="tab_nav_cron">Cron</string>
     <string name="tab_nav_settings">設定</string>
+    <!-- Cron -->
+    <string name="cron_title">Cron</string>
+    <string name="cron_refresh">重新整理</string>
+    <string name="cron_add">新增任務</string>
+    <string name="cron_edit">編輯</string>
+    <string name="cron_delete">刪除</string>
+    <string name="cron_name">名稱</string>
+    <string name="cron_schedule">排程</string>
+    <string name="cron_command">指令</string>
+    <string name="cron_enabled">啟用</string>
+    <string name="cron_empty">沒有 Cron 任務。點選 + 新增。</string>
+    <string name="cron_not_connected">未連接到閘道器</string>
+    <string name="cron_delete_confirm_title">刪除任務</string>
+    <string name="cron_delete_confirm_message">刪除「%1$s」？</string>
+    <string name="cron_save">儲存</string>
+    <string name="cron_next_run">下次: %1$s</string>
     <string name="attach_file">附加檔案</string>
     <string name="file">檔案</string>
     <string name="image_attachment">圖片附件</string>
@@ -549,4 +566,8 @@
     <string name="action_collapse">折疊</string>
     <string name="action_expand">展開</string>
     <string name="action_refresh">重新整理</string>
+
+    <!-- Microphone privacy toggle blocked -->
+    <string name="error_mic_privacy_title">麥克風存取被封鎖</string>
+    <string name="error_mic_privacy_message">您的裝置麥克風隱私開關已關閉。請至設定 &gt; 隱私 &gt; 麥克風開啟。</string>
 </resources>

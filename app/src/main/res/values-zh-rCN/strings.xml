@@ -520,7 +520,24 @@
     <string name="tab_nav_home">主页</string>
     <string name="tab_nav_chat">聊天</string>
     <string name="tab_nav_canvas">Canvas</string>
+    <string name="tab_nav_cron">Cron</string>
     <string name="tab_nav_settings">设置</string>
+    <!-- Cron -->
+    <string name="cron_title">Cron</string>
+    <string name="cron_refresh">刷新</string>
+    <string name="cron_add">添加任务</string>
+    <string name="cron_edit">编辑</string>
+    <string name="cron_delete">删除</string>
+    <string name="cron_name">名称</string>
+    <string name="cron_schedule">计划</string>
+    <string name="cron_command">命令</string>
+    <string name="cron_enabled">启用</string>
+    <string name="cron_empty">没有 Cron 任务。点击 + 添加。</string>
+    <string name="cron_not_connected">未连接到网关</string>
+    <string name="cron_delete_confirm_title">删除任务</string>
+    <string name="cron_delete_confirm_message">删除「%1$s」？</string>
+    <string name="cron_save">保存</string>
+    <string name="cron_next_run">下次: %1$s</string>
     <string name="attach_file">附加文件</string>
     <string name="file">文件</string>
     <string name="image_attachment">图片附件</string>
@@ -550,4 +567,8 @@
     <string name="action_collapse">折叠</string>
     <string name="action_expand">展开</string>
     <string name="action_refresh">刷新</string>
+
+    <!-- Microphone privacy toggle blocked -->
+    <string name="error_mic_privacy_title">麦克风访问被阻止</string>
+    <string name="error_mic_privacy_message">您的设备麦克风隐私开关已关闭。请在设置 &gt; 隐私 &gt; 麦克风中开启。</string>
 </resources>

@@ -3,8 +3,10 @@ package com.openclaw.assistant
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Build
 import android.provider.Settings
 
 import android.util.Log
@@ -55,6 +57,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
+import android.hardware.SensorPrivacyManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.openclaw.assistant.speech.TTSUtils
@@ -159,16 +162,16 @@ class ChatActivity : ComponentActivity() {
                     onSendMessage = { viewModel.sendMessage(it) },
                     onStartListening = {
                         Log.e(TAG, "onStartListening called, permission=${checkPermission()}")
-                        if (checkPermission()) {
-                            viewModel.startListening()
-                        } else {
-                            requestMicPermissionForListening()
+                        when {
+                            !checkPermission() -> requestMicPermissionForListening()
+                            isMicPrivacyBlocked() -> showMicPrivacyDialog()
+                            else -> viewModel.startListening()
                         }
                     },
                     onStopListening = { viewModel.stopListening() },
                     onStopSpeaking = { viewModel.stopSpeaking() },
                     onInterruptAndListen = {
-                        if (checkPermission()) {
+                        if (checkPermission() && !isMicPrivacyBlocked()) {
                             viewModel.interruptAndListen()
                         }
                     },
@@ -224,6 +227,26 @@ class ChatActivity : ComponentActivity() {
 
     private fun checkPermission(): Boolean {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun isMicPrivacyBlocked(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return false
+        val spm = getSystemService(SensorPrivacyManager::class.java)
+        val supportsMicToggle = spm?.supportsSensorToggle(SensorPrivacyManager.Sensors.MICROPHONE) == true
+        if (!supportsMicToggle) return false
+        val audioManager = getSystemService(AudioManager::class.java)
+        return audioManager?.isMicrophoneMute == true
+    }
+
+    private fun showMicPrivacyDialog() {
+        android.app.AlertDialog.Builder(this)
+            .setTitle(getString(R.string.error_mic_privacy_title))
+            .setMessage(getString(R.string.error_mic_privacy_message))
+            .setPositiveButton(getString(R.string.action_open_settings)) { _, _ ->
+                startActivity(Intent(Settings.ACTION_PRIVACY_SETTINGS))
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .show()
     }
 
     private fun requestMicPermissionForListening() {

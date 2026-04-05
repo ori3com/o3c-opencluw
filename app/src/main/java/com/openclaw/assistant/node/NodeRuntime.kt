@@ -1010,6 +1010,83 @@ class NodeRuntime(context: Context) {
     }
   }
 
+  // ── Cron ────────────────────────────────────────────────────────────────────
+
+  data class CronJob(
+    val id: String,
+    val name: String,
+    val schedule: String,
+    val command: String,
+    val enabled: Boolean,
+    val lastRun: String? = null,
+    val nextRun: String? = null,
+  )
+
+  suspend fun listCronJobs(): List<CronJob> {
+    val res = operatorSession.request("cron.list", "{}")
+    val root = json.parseToJsonElement(res).asObjectOrNull() ?: return emptyList()
+    val arr = root["jobs"] as? JsonArray ?: return emptyList()
+    return arr.mapNotNull { el ->
+      val obj = el as? JsonObject ?: return@mapNotNull null
+      val id = (obj["id"] as? JsonPrimitive)?.content ?: return@mapNotNull null
+      CronJob(
+        id       = id,
+        name     = (obj["name"] as? JsonPrimitive)?.content ?: id,
+        schedule = (obj["schedule"] as? JsonPrimitive)?.content ?: "",
+        command  = (obj["command"] as? JsonPrimitive)?.content ?: "",
+        enabled  = (obj["enabled"] as? JsonPrimitive)?.content?.toBooleanStrictOrNull() ?: true,
+        lastRun  = (obj["lastRun"] as? JsonPrimitive)?.content,
+        nextRun  = (obj["nextRun"] as? JsonPrimitive)?.content,
+      )
+    }
+  }
+
+  suspend fun createCronJob(name: String, schedule: String, command: String, enabled: Boolean): CronJob {
+    val params = buildJsonObject {
+      put("name", JsonPrimitive(name))
+      put("schedule", JsonPrimitive(schedule))
+      put("command", JsonPrimitive(command))
+      put("enabled", JsonPrimitive(enabled))
+    }
+    val res = operatorSession.request("cron.create", params.toString())
+    val root = json.parseToJsonElement(res).asObjectOrNull()
+    val obj = (root?.get("job") as? JsonObject) ?: root ?: throw IllegalStateException("invalid response")
+    val id = (obj["id"] as? JsonPrimitive)?.content ?: throw IllegalStateException("missing id")
+    return CronJob(
+      id       = id,
+      name     = (obj["name"] as? JsonPrimitive)?.content ?: name,
+      schedule = (obj["schedule"] as? JsonPrimitive)?.content ?: schedule,
+      command  = (obj["command"] as? JsonPrimitive)?.content ?: command,
+      enabled  = (obj["enabled"] as? JsonPrimitive)?.content?.toBooleanStrictOrNull() ?: enabled,
+      lastRun  = (obj["lastRun"] as? JsonPrimitive)?.content,
+      nextRun  = (obj["nextRun"] as? JsonPrimitive)?.content,
+    )
+  }
+
+  suspend fun updateCronJob(id: String, name: String, schedule: String, command: String, enabled: Boolean): Boolean {
+    return try {
+      val params = buildJsonObject {
+        put("id", JsonPrimitive(id))
+        put("name", JsonPrimitive(name))
+        put("schedule", JsonPrimitive(schedule))
+        put("command", JsonPrimitive(command))
+        put("enabled", JsonPrimitive(enabled))
+      }
+      operatorSession.request("cron.update", params.toString())
+      true
+    } catch (_: Throwable) { false }
+  }
+
+  suspend fun deleteCronJob(id: String): Boolean {
+    return try {
+      val params = buildJsonObject { put("id", JsonPrimitive(id)) }
+      operatorSession.request("cron.delete", params.toString())
+      true
+    } catch (_: Throwable) { false }
+  }
+
+  // ── Camera flash / HUD ───────────────────────────────────────────────────────
+
   private fun triggerCameraFlash() {
     // Token is used as a pulse trigger; value doesn't matter as long as it changes.
     _cameraFlashToken.value = SystemClock.elapsedRealtimeNanos()
