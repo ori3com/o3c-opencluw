@@ -27,13 +27,16 @@ object NetworkUtils {
 
     private fun isLocalHost(host: String): Boolean {
         if (host.equals("localhost", ignoreCase = true)) return true
-        if (host.endsWith(".local", ignoreCase = true)) return true
-
-        // IPv4
+        if (host.endsWith(".local", ignoreCase = true)) return true        // IPv4
         val ipv4Parts = host.split(".")
         if (ipv4Parts.size == 4) {
             val p1 = ipv4Parts[0].toIntOrNull() ?: return false
             val p2 = ipv4Parts[1].toIntOrNull() ?: return false
+            val p3 = ipv4Parts[2].toIntOrNull() ?: return false
+            val p4 = ipv4Parts[3].toIntOrNull() ?: return false
+
+            // Validate all octets are within 0-255 range
+            if (p1 !in 0..255 || p2 !in 0..255 || p3 !in 0..255 || p4 !in 0..255) return false
 
             if (p1 == 127) return true // Loopback: 127.x.x.x
             if (p1 == 10) return true  // Class A Private: 10.x.x.x
