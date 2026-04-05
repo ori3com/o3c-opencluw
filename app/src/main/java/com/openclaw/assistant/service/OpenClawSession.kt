@@ -8,6 +8,7 @@ import android.service.voice.VoiceInteractionSession
 import android.speech.SpeechRecognizer
 import android.util.Log
 import android.view.LayoutInflater
+import com.openclaw.assistant.BuildConfig
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import android.view.View
 import android.view.ViewGroup

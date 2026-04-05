@@ -1,6 +1,7 @@
 package com.openclaw.assistant.utils
 
 import android.util.Log
+import com.openclaw.assistant.BuildConfig
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName

@@ -1,5 +1,6 @@
 package com.openclaw.assistant.api
 
+import com.openclaw.assistant.BuildConfig
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.JsonArray
