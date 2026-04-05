@@ -128,6 +128,7 @@ class ChatActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         settings = SettingsRepository.getInstance(this)
         screenCaptureRequester = ScreenCaptureRequester(this)
+        viewModel.attachSpeechContext(this)
 
         // Select specific session if provided via Intent (must be before setContent)
         val extraTitle = intent.getStringExtra(EXTRA_SESSION_TITLE)
@@ -171,8 +172,10 @@ class ChatActivity : ComponentActivity() {
                     onStopListening = { viewModel.stopListening() },
                     onStopSpeaking = { viewModel.stopSpeaking() },
                     onInterruptAndListen = {
-                        if (checkPermission() && !isMicPrivacyBlocked()) {
-                            viewModel.interruptAndListen()
+                        when {
+                            !checkPermission() -> requestMicPermissionForListening()
+                            isMicPrivacyBlocked() -> showMicPrivacyDialog()
+                            else -> viewModel.interruptAndListen()
                         }
                     },
                     onBack = { finish() },
@@ -194,6 +197,7 @@ class ChatActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        viewModel.attachSpeechContext(this)
         (application as OpenClawApplication).nodeRuntime.screenRecorder.attachScreenCaptureRequester(screenCaptureRequester)
         // Pause hotword detection while this activity holds the mic.
         // setPackage is required to reach NodeForegroundService (RECEIVER_NOT_EXPORTED).
@@ -221,6 +225,7 @@ class ChatActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
+        viewModel.detachSpeechContext(this)
         super.onDestroy()
         // TTSManager is managed by ViewModel
     }
