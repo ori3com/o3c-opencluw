@@ -70,7 +70,7 @@ fun StatusIndicator(
     )
 
     Row(
-        modifier = modifier,
+        modifier = modifier.semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
