@@ -14,6 +14,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -636,7 +638,7 @@ fun SettingsScreen(
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 OutlinedTextField(
                                     value = gatewayHost,
-                                    onValueChange = { gatewayHost = it; testResult = null },
+                                    onValueChange = { gatewayHost = it; testResult = null; gatewayBootstrapToken = "" },
                                     label = { Text(stringResource(R.string.gateway_host)) },
                                     modifier = Modifier.weight(2f),
                                     singleLine = true,
@@ -644,7 +646,7 @@ fun SettingsScreen(
                                 )
                                 OutlinedTextField(
                                     value = gatewayPort,
-                                    onValueChange = { gatewayPort = it.filter { char -> char.isDigit() }; testResult = null },
+                                    onValueChange = { gatewayPort = it.filter { char -> char.isDigit() }; testResult = null; gatewayBootstrapToken = "" },
                                     label = { Text(stringResource(R.string.gateway_port)) },
                                     modifier = Modifier.weight(1f),
                                     singleLine = true,
@@ -661,37 +663,37 @@ fun SettingsScreen(
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.clickable {
-                                        gatewayBootstrapToken = ""
-                                        usePasswordAuth = false
-                                        testResult = null
-                                    }
-                                ) {
-                                    RadioButton(
+                                    modifier = Modifier.selectable(
                                         selected = !usePasswordAuth,
                                         onClick = {
                                             gatewayBootstrapToken = ""
                                             usePasswordAuth = false
                                             testResult = null
-                                        }
+                                        },
+                                        role = Role.RadioButton
+                                    )
+                                ) {
+                                    RadioButton(
+                                        selected = !usePasswordAuth,
+                                        onClick = null
                                     )
                                     Text(stringResource(R.string.gateway_token))
                                 }
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.clickable {
-                                        gatewayBootstrapToken = ""
-                                        usePasswordAuth = true
-                                        testResult = null
-                                    }
-                                ) {
-                                    RadioButton(
+                                    modifier = Modifier.selectable(
                                         selected = usePasswordAuth,
                                         onClick = {
                                             gatewayBootstrapToken = ""
                                             usePasswordAuth = true
                                             testResult = null
-                                        }
+                                        },
+                                        role = Role.RadioButton
+                                    )
+                                ) {
+                                    RadioButton(
+                                        selected = usePasswordAuth,
+                                        onClick = null
                                     )
                                     Text(stringResource(R.string.gateway_password))
                                 }
@@ -758,7 +760,7 @@ fun SettingsScreen(
                                 }
                                 Switch(
                                     checked = gatewayTls,
-                                    onCheckedChange = { gatewayTls = it; testResult = null }
+                                    onCheckedChange = { gatewayTls = it; testResult = null; gatewayBootstrapToken = "" }
                                 )
                             }
                         } else if (selectedTabIndex == 1) {

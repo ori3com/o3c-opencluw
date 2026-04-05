@@ -20,6 +20,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.openclaw.assistant.MainActivity
 import com.openclaw.assistant.R
+import com.openclaw.assistant.BuildConfig
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.openclaw.assistant.data.SettingsRepository
 import kotlinx.coroutines.*
@@ -137,20 +138,25 @@ class HotwordService : Service(), VoskRecognitionListener {
             if (isVoskCrash) {
                 Log.e(TAG, "Caught uncaught Vosk exception on thread ${thread.name}", throwable)
                 if (throwable is UnsatisfiedLinkError || throwable.cause is UnsatisfiedLinkError) {
-                    FirebaseCrashlytics.getInstance().recordException(throwable)
+                    if (BuildConfig.FIREBASE_ENABLED) {
+                        FirebaseCrashlytics.getInstance().recordException(throwable)
+                    }
                     getSharedPreferences("hotword_prefs", Context.MODE_PRIVATE)
                         .edit().putBoolean("vosk_unsupported", true).apply()
                     // Don't resume - device doesn't support Vosk
                 } else if (throwable is RuntimeException && throwable.message == "error reading audio buffer") {
-                    // Transient mic unavailability - handled by recovery logic, no need to report
+                    // Mic unavailability during Vosk read — use exponential backoff to avoid
+                    // tight restart loops when the mic is persistently unavailable.
                     speechService = null
                     android.os.Handler(android.os.Looper.getMainLooper()).post {
                         if (!isSessionActive) {
-                            resumeHotwordDetection()
+                            scheduleAudioRetry()
                         }
                     }
                 } else {
-                    FirebaseCrashlytics.getInstance().recordException(throwable)
+                    if (BuildConfig.FIREBASE_ENABLED) {
+                        FirebaseCrashlytics.getInstance().recordException(throwable)
+                    }
                     speechService = null
                     android.os.Handler(android.os.Looper.getMainLooper()).post {
                         if (!isSessionActive) {
@@ -355,7 +361,9 @@ class HotwordService : Service(), VoskRecognitionListener {
             } catch (e: UnsatisfiedLinkError) {
                 Log.e(TAG, "Vosk native library not supported on this device", e)
                 debugLog("Vosk: UnsatisfiedLinkError — native lib not supported")
-                FirebaseCrashlytics.getInstance().recordException(e)
+                if (BuildConfig.FIREBASE_ENABLED) {
+                    FirebaseCrashlytics.getInstance().recordException(e)
+                }
                 prefs.edit()
                     .putBoolean("vosk_unsupported", true)
                     .putInt("vosk_unsupported_version", currentVersion)
@@ -363,7 +371,9 @@ class HotwordService : Service(), VoskRecognitionListener {
             } catch (e: Exception) {
                 Log.e(TAG, "Init error", e)
                 debugLog("Vosk: init error — ${e.message}")
-                FirebaseCrashlytics.getInstance().recordException(e)
+                if (BuildConfig.FIREBASE_ENABLED) {
+                    FirebaseCrashlytics.getInstance().recordException(e)
+                }
             }
         }
     }
@@ -647,8 +657,22 @@ class HotwordService : Service(), VoskRecognitionListener {
             val intent = Intent(this@HotwordService, OpenClawAssistantService::class.java).apply {
                 action = OpenClawAssistantService.ACTION_SHOW_ASSISTANT
             }
-            startService(intent)
-            Log.e(TAG, "startService ACTION_SHOW_ASSISTANT called")
+            try {
+                startService(intent)
+                Log.e(TAG, "startService ACTION_SHOW_ASSISTANT called")
+            } catch (e: IllegalStateException) {
+                Log.w(TAG, "Background start failed, falling back to broadcast", e)
+                val broadcastIntent = Intent(OpenClawAssistantService.ACTION_SHOW_ASSISTANT).apply {
+                    setPackage(packageName)
+                }
+                sendBroadcast(broadcastIntent)
+            } catch (e: SecurityException) {
+                Log.w(TAG, "Background start failed, falling back to broadcast", e)
+                val broadcastIntent = Intent(OpenClawAssistantService.ACTION_SHOW_ASSISTANT).apply {
+                    setPackage(packageName)
+                }
+                sendBroadcast(broadcastIntent)
+            }
         }
     }
 

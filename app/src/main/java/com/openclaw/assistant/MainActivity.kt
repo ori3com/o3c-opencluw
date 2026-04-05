@@ -118,7 +118,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
         val coarseGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
         val fineGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
-        val smsGranted = permissions[Manifest.permission.SEND_SMS] ?: false
+        val smsGranted = (permissions[Manifest.permission.SEND_SMS] ?: false) || (permissions[Manifest.permission.READ_SMS] ?: false)
 
         // Auto-enable capabilities when permission is newly granted
         val runtime = (applicationContext as OpenClawApplication).nodeRuntime
@@ -175,9 +175,27 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             super.attachBaseContext(newBase)
         }
     }
+    private fun handleIntent(intent: Intent?) {
+        if (intent?.action == "com.openclaw.assistant.action.ASK_OPENCLAW") {
+            val prompt = intent.getStringExtra("prompt")
+            if (!prompt.isNullOrBlank()) {
+                val chatIntent = Intent(this, ChatActivity::class.java).apply {
+                    putExtra("EXTRA_PREFILL_TEXT", prompt)
+                }
+                startActivity(chatIntent)
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handleIntent(intent)
         settings = SettingsRepository.getInstance(this)
         
         screenCaptureRequester = ScreenCaptureRequester(this)
@@ -812,11 +830,13 @@ fun MainScreen(
                             } else {
                                 val granted = ContextCompat.checkSelfPermission(
                                     context, Manifest.permission.SEND_SMS
+                                ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                                    context, Manifest.permission.READ_SMS
                                 ) == PackageManager.PERMISSION_GRANTED
                                 if (granted) {
                                     runtime.setSmsEnabled(true)
                                 } else {
-                                    onRequestPermissions(listOf(Manifest.permission.SEND_SMS))
+                                    onRequestPermissions(listOf(Manifest.permission.SEND_SMS, Manifest.permission.READ_SMS))
                                 }
                             }
                         },
@@ -1287,9 +1307,10 @@ fun MissingScopeCard(error: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .semantics(mergeDescendants = true) {
-                onClick(label = onClickLabel, action = null)
+                this.onClick(label = onClickLabel, action = null)
                 role = Role.Button
             },
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer), 
         onClick = { expanded = !expanded }
     ) {

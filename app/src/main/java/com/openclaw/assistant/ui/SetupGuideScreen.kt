@@ -43,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -150,7 +151,7 @@ private enum class PermissionToggle(
         R.string.capability_sms,
         R.string.permission_send_sms_desc,
         Icons.Default.Sms,
-        listOf(Manifest.permission.SEND_SMS)
+        listOf(Manifest.permission.SEND_SMS, Manifest.permission.READ_SMS)
     )
 }
 
@@ -900,6 +901,7 @@ private fun PermissionItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .semantics(mergeDescendants = true) {}
             .combinedClickable(
                 onClick = onClick,
                 onClickLabel = stringResource(R.string.permission_toggle_accessibility_label, name)
@@ -918,7 +920,7 @@ private fun PermissionItem(
         ) {
             Icon(
                 icon,
-                contentDescription = name,
+                contentDescription = null,
                 tint = if (isGranted) OnboardingGradientMid else OnboardingTextSecondary
             )
         }
@@ -928,7 +930,7 @@ private fun PermissionItem(
             Text(text = desc, style = MaterialTheme.typography.bodySmall, color = OnboardingTextSecondary)
         }
         if (isGranted) {
-            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Green)
+            Icon(Icons.Default.CheckCircle, contentDescription = stringResource(R.string.permission_status_granted), tint = Color.Green)
         }
     }
 }
@@ -1078,7 +1080,7 @@ private fun FinalCheckStep(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Default.Shield, contentDescription = stringResource(R.string.permission_summary_title), tint = OnboardingGradientMid)
+            Icon(Icons.Default.Shield, contentDescription = null, tint = OnboardingGradientMid)
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
