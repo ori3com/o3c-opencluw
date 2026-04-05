@@ -134,7 +134,7 @@ class OpenClawClient() {
         } catch (e: kotlinx.coroutines.CancellationException) {
             throw e
         } catch (e: Exception) {
-            if (!isTransientNetworkError(e)) {
+            if (!isTransientNetworkError(e) && BuildConfig.FIREBASE_ENABLED) {
                 FirebaseCrashlytics.getInstance().recordException(e)
             }
             Result.failure(e)
