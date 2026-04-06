@@ -15,6 +15,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.openclaw.assistant.BuildConfig
 
 /**
  * Voice Interaction Service
@@ -86,7 +87,7 @@ class OpenClawAssistantService : VoiceInteractionService() {
                 Log.e(TAG, "showSession() called immediately")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to call showSession immediately", e)
-                FirebaseCrashlytics.getInstance().recordException(e)
+                if (BuildConfig.FIREBASE_ENABLED) FirebaseCrashlytics.getInstance().recordException(e)
             }
         } else {
             Log.e(TAG, "Service not ready. Queuing showSession request.")
@@ -109,7 +110,7 @@ class OpenClawAssistantService : VoiceInteractionService() {
                 Log.e(TAG, "showSession() called from onReady (pending)")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to call pending showSession", e)
-                FirebaseCrashlytics.getInstance().recordException(e)
+                if (BuildConfig.FIREBASE_ENABLED) FirebaseCrashlytics.getInstance().recordException(e)
             }
         }
     }
