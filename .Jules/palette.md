@@ -1,0 +1,3 @@
+## 2024-04-07 - Accessible Modifier.clickable patterns
+**Learning:** In Jetpack Compose, applying `Modifier.clickable` directly to generic layout elements (like `Row` or `Box`) creates a focusable, clickable area, but screen readers (like TalkBack) will generically announce "Double tap to activate" without context. This is detrimental when the `Row` acts as a custom button or dropdown trigger (e.g. AgentSelector).
+**Action:** When creating custom interactable elements using `Modifier.clickable`, always add `onClickLabel` with a localized string and explicitly set `role = Role.Button` (or `Role.DropdownList`) so screen readers announce the action properly.
