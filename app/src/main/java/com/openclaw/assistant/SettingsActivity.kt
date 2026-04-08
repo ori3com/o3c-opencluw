@@ -714,7 +714,7 @@ fun SettingsScreen(
                                         IconButton(onClick = { showNodeToken = !showNodeToken }) {
                                             Icon(
                                                 if (showNodeToken) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                                contentDescription = if (showNodeToken) "Hide token" else "Show token"
+                                                contentDescription = if (showNodeToken) stringResource(R.string.hide_token_description) else stringResource(R.string.show_token_description)
                                             )
                                         }
                                     },
@@ -736,7 +736,7 @@ fun SettingsScreen(
                                         IconButton(onClick = { showGatewayPassword = !showGatewayPassword }) {
                                             Icon(
                                                 if (showGatewayPassword) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                                contentDescription = if (showGatewayPassword) "Hide password" else "Show password"
+                                                contentDescription = if (showGatewayPassword) stringResource(R.string.hide_password_description) else stringResource(R.string.show_password_description)
                                             )
                                         }
                                     },
@@ -789,7 +789,7 @@ fun SettingsScreen(
                                     IconButton(onClick = { showNodeToken = !showNodeToken }) {
                                         Icon(
                                             if (showNodeToken) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                            contentDescription = if (showNodeToken) "Hide token" else "Show token"
+                                            contentDescription = if (showNodeToken) stringResource(R.string.hide_token_description) else stringResource(R.string.show_token_description)
                                         )
                                     }
                                 },
