@@ -45,16 +45,8 @@ object OpenClawCanvasA2UIAction {
         contextJson: String?,
     ): String {
         val ctxSuffix = contextJson?.takeIf { it.isNotBlank() }?.let { " ctx=$it" }.orEmpty()
-        return listOf(
-            "CANVAS_A2UI",
-            "action=${sanitizeTagValue(actionName)}",
-            "session=${sanitizeTagValue(sessionKey)}",
-            "surface=${sanitizeTagValue(surfaceId)}",
-            "component=${sanitizeTagValue(sourceComponentId)}",
-            "host=${sanitizeTagValue(host)}",
-            "instance=${sanitizeTagValue(instanceId)}$ctxSuffix",
-            "default=update_canvas",
-        ).joinToString(separator = " ")
+        // ⚡ Bolt Optimization: Replaced dynamic listOf(...).joinToString(" ") with direct string interpolation to eliminate unnecessary list/collection allocation and garbage collection overhead on high-frequency UI updates.
+        return "CANVAS_A2UI action=${sanitizeTagValue(actionName)} session=${sanitizeTagValue(sessionKey)} surface=${sanitizeTagValue(surfaceId)} component=${sanitizeTagValue(sourceComponentId)} host=${sanitizeTagValue(host)} instance=${sanitizeTagValue(instanceId)}$ctxSuffix default=update_canvas"
     }
 
     fun jsDispatchA2UIActionStatus(actionId: String, ok: Boolean, error: String?): String {
