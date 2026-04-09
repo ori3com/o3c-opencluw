@@ -43,14 +43,18 @@ class AppHandler(
       // Note: Querying all packages requires QUERY_ALL_PACKAGES permission in Android 11+
       // For now, get installed packages, though it might be limited by package visibility rules.
       val packages = pm.getInstalledApplications(PackageManager.GET_META_DATA)
-      val apps = packages.filter { 
-          (it.flags and ApplicationInfo.FLAG_SYSTEM) == 0 || it.packageName.contains("com.google.android") 
-      }.joinToString(",") { appInfo ->
-        val label = pm.getApplicationLabel(appInfo).toString().replace("\"", "\\\"")
-        val pkg = appInfo.packageName
-        """{"packageName":"$pkg","name":"$label"}"""
+      // ⚡ Bolt Optimization: Replaced joinToString with manual StringBuilder logic to avoid string intermediate object creation and collection allocation pressure
+      val sb = StringBuilder()
+      var first = true
+      for (appInfo in packages) {
+          if ((appInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0 || appInfo.packageName.contains("com.google.android")) {
+              if (!first) sb.append(",") else first = false
+              val label = pm.getApplicationLabel(appInfo).toString().replace("\"", "\\\"")
+              val pkg = appInfo.packageName
+              sb.append("{\"packageName\":\"").append(pkg).append("\",\"name\":\"").append(label).append("\"}")
+          }
       }
-
+      val apps = sb.toString()
       GatewaySession.InvokeResult.ok("""{"apps":[$apps]}""")
     } catch (e: Throwable) {
       val (code, msg) = invokeErrorFromThrowable(e)
