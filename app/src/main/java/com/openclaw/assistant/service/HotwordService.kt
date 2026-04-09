@@ -362,7 +362,11 @@ class HotwordService : Service(), VoskRecognitionListener {
                 Log.e(TAG, "Vosk native library not supported on this device", e)
                 debugLog("Vosk: UnsatisfiedLinkError — native lib not supported")
                 if (BuildConfig.FIREBASE_ENABLED) {
-                    FirebaseCrashlytics.getInstance().recordException(e)
+                    FirebaseCrashlytics.getInstance().apply {
+                        setCustomKey("audio_retry_count", audioRetryCount)
+                        setCustomKey("is_session_active", isSessionActive)
+                        recordException(e)
+                    }
                 }
                 prefs.edit()
                     .putBoolean("vosk_unsupported", true)
@@ -372,7 +376,11 @@ class HotwordService : Service(), VoskRecognitionListener {
                 Log.e(TAG, "Init error", e)
                 debugLog("Vosk: init error — ${e.message}")
                 if (BuildConfig.FIREBASE_ENABLED) {
-                    FirebaseCrashlytics.getInstance().recordException(e)
+                    FirebaseCrashlytics.getInstance().apply {
+                        setCustomKey("audio_retry_count", audioRetryCount)
+                        setCustomKey("is_session_active", isSessionActive)
+                        recordException(e)
+                    }
                 }
             }
         }
@@ -533,6 +541,11 @@ class HotwordService : Service(), VoskRecognitionListener {
             debugLog("Mic unavailable after $MAX_AUDIO_RETRIES retries — giving up")
             audioRetryCount = 0
             showMicUnavailableNotification()
+            if (BuildConfig.FIREBASE_ENABLED) {
+                FirebaseCrashlytics.getInstance().recordException(
+                    RuntimeException("Microphone unavailable after $MAX_AUDIO_RETRIES retries")
+                )
+            }
             return
         }
         audioRetryCount++
