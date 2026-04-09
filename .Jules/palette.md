@@ -1,0 +1,3 @@
+## 2024-06-11 - Add semantics to clickable element used as Dropdown
+**Learning:** When turning a standard `Row` into a dropdown selector using `Modifier.clickable` in Jetpack Compose, screen readers (like TalkBack) will just announce it as a generic actionable item. By specifying an `onClickLabel` and `role = androidx.compose.ui.semantics.Role.DropdownList`, the screen reader can correctly announce the element's interactability and purpose.
+**Action:** Always verify if a `Modifier.clickable` is functionally a button, dropdown, or toggle, and apply the appropriate `role` and `onClickLabel` semantics.
