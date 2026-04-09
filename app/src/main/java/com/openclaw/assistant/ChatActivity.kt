@@ -655,7 +655,10 @@ fun MessageBubble(message: ChatMessage) {
                                 tint = contentColor.copy(alpha = 0.4f),
                                 modifier = Modifier
                                     .size(14.dp)
-                                    .clickable {
+                                    .clickable(
+                                        onClickLabel = stringResource(R.string.action_copy),
+                                        role = androidx.compose.ui.semantics.Role.Button
+                                    ) {
                                         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
                                         clipboard.setPrimaryClip(android.content.ClipData.newPlainText("message", message.text))
                                     }

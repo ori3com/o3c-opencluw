@@ -1139,7 +1139,8 @@ fun CapabilityCard(
             .height(72.dp)
             .clickable(
                 onClick = onClick,
-                onClickLabel = if (isActive) "Disable $label" else "Enable $label"
+                onClickLabel = if (isActive) "Disable $label" else "Enable $label",
+                role = androidx.compose.ui.semantics.Role.Button
             ),
         colors = CardDefaults.cardColors(
             containerColor = if (isActive) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
@@ -1154,7 +1155,7 @@ fun CapabilityCard(
             ) {
                 Icon(
                     imageVector = icon,
-                    contentDescription = label,
+                    contentDescription = null,
                     tint = if (isActive) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(24.dp)
                 )
