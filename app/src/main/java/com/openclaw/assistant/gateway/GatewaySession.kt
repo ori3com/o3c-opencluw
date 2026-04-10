@@ -411,9 +411,9 @@ class GatewaySession(
 
       // If no token/password but bootstrapToken is set, use bootstrapToken auth directly.
       // Avoids trying token/password which would fail and potentially rate-limit.
-      // Only use bootstrapToken when no deviceToken is stored — bootstrapToken is single-use
+      // Prioritize bootstrapToken if provided. The bootstrapToken is single-use
       // and gets invalidated after first use; the deviceToken takes over for reconnections.
-      if (trimmedToken.isEmpty() && trimmedPassword.isEmpty() && trimmedBootstrapToken.isNotEmpty() && storedToken.isNullOrBlank()) {
+      if (trimmedToken.isEmpty() && trimmedPassword.isEmpty() && trimmedBootstrapToken.isNotEmpty()) {
         Log.d(TAG, "No token/password configured, using bootstrapToken auth directly")
         val payload = buildConnectParams(identity, connectNonce, "", null, authBootstrapToken = trimmedBootstrapToken)
         val res = request("connect", payload, timeoutMs = 8_000)
