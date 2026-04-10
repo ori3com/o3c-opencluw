@@ -8,6 +8,9 @@ import com.openclaw.assistant.data.SettingsRepository
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.res.stringResource
+import com.openclaw.assistant.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -480,7 +483,11 @@ private fun SessionListItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(
+                onClick = onClick,
+                onClickLabel = stringResource(R.string.action_open_session),
+                role = Role.Button
+            )
     ) {
         Row(
             modifier = Modifier

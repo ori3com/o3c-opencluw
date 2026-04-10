@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
@@ -655,7 +656,10 @@ fun MessageBubble(message: ChatMessage) {
                                 tint = contentColor.copy(alpha = 0.4f),
                                 modifier = Modifier
                                     .size(14.dp)
-                                    .clickable {
+                                    .clickable(
+                                        onClickLabel = stringResource(R.string.action_copy),
+                                        role = Role.Button
+                                    ) {
                                         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
                                         clipboard.setPrimaryClip(android.content.ClipData.newPlainText("message", message.text))
                                     }
@@ -885,7 +889,10 @@ fun AgentSelector(
             modifier = Modifier
                 .then(
                     if (!isReadOnly && agents.isNotEmpty()) {
-                        Modifier.clickable { expanded = true }
+                        Modifier.clickable(
+                            onClickLabel = stringResource(R.string.action_expand),
+                            role = Role.DropdownList
+                        ) { expanded = true }
                     } else {
                         Modifier
                     }
