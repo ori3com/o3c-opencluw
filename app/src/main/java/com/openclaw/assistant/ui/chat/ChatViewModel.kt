@@ -1120,7 +1120,16 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun com.openclaw.assistant.chat.ChatMessage.toUiChatMessage(): ChatMessage {
-        val mergedText = content.joinToString("\n") { it.text ?: "" }.trim().ifBlank { "(thinking)" }
+        // ⚡ Bolt Optimization: Replaced joinToString with manual StringBuilder logic
+        // to avoid intermediate string iterators and implicit lambda string allocations
+        // which cause immense GC pressure during UI list reconciliation.
+        val mergedTextBuilder = StringBuilder()
+        for (i in content.indices) {
+            if (i > 0) mergedTextBuilder.append('\n')
+            val textPart = content[i].text
+            if (textPart != null) mergedTextBuilder.append(textPart)
+        }
+        val mergedText = mergedTextBuilder.toString().trim().ifBlank { "(thinking)" }
         val preprocessed = ChatMarkdownPreprocessor.preprocess(mergedText)
         val isUserMessage = role.equals("user", ignoreCase = true)
         val attachmentContents = content.filter { it.type != "text" && it.base64 != null }
