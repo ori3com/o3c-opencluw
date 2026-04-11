@@ -959,6 +959,8 @@ private fun FinalCheckStep(
     var pairingDetected by remember { mutableStateOf(false) }
     var isFinishing by remember { mutableStateOf(false) }
 
+    val isConnecting = statusText.contains("Connecting", ignoreCase = true)
+
     val finishWithHttpTest: () -> Unit = {
         scope.launch {
             isFinishing = true
@@ -1107,7 +1109,6 @@ private fun FinalCheckStep(
                 textAlign = TextAlign.Center
             )
         } else {
-            val isConnecting = statusText.contains("Connecting", ignoreCase = true)
             val state = when {
                 isConnected -> ConnectionState.Connected
                 isConnecting -> ConnectionState.Connecting
@@ -1162,9 +1163,14 @@ private fun FinalCheckStep(
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = RoundedCornerShape(16.dp),
+                enabled = !isConnecting,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
-                Text(stringResource(R.string.test_connection_button), fontSize = 18.sp)
+                if (isConnecting) {
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                } else {
+                    Text(stringResource(R.string.test_connection_button), fontSize = 18.sp)
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -1248,7 +1254,7 @@ private fun CommandBlock(command: String) {
         Spacer(modifier = Modifier.width(8.dp))
         Icon(
             imageVector = Icons.Default.ContentCopy,
-            contentDescription = stringResource(R.string.pairing_copy_command),
+            contentDescription = null,
             tint = Color(0xFF58A6FF),
             modifier = Modifier.size(16.dp)
         )
