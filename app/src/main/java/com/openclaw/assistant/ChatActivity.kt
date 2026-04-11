@@ -885,7 +885,10 @@ fun AgentSelector(
             modifier = Modifier
                 .then(
                     if (!isReadOnly && agents.isNotEmpty()) {
-                        Modifier.clickable { expanded = true }
+                        Modifier.clickable(
+                            onClickLabel = stringResource(R.string.agent_switch_accessibility),
+                            role = androidx.compose.ui.semantics.Role.DropdownList
+                        ) { expanded = true }
                     } else {
                         Modifier
                     }

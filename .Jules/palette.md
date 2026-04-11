@@ -1,0 +1,3 @@
+## 2024-04-11 - Agent Switch Accessibility Enhancement
+**Learning:** In the ChatActivity, the top app bar agent switcher was utilizing a bare `Modifier.clickable { expanded = true }`. This element functions conceptually as a dropdown selector to screen readers, but TalkBack was only announcing it as a generic, unlabelled clickable element alongside the generic assistant icon.
+**Action:** When creating custom dropdown triggers using `Modifier.clickable`, explicitly define both the `onClickLabel` and set `role = Role.DropdownList` to correctly guide assistive technologies. Additionally, prefer using fully qualified Role paths (e.g., `androidx.compose.ui.semantics.Role.DropdownList`) if `Role` isn't imported globally, to prevent compilation errors.

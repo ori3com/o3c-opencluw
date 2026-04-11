@@ -230,6 +230,7 @@
     <string name="default_agent_hint">main</string>
     <string name="agent_selector">Agent</string>
     <string name="agent_default">Default</string>
+    <string name="agent_switch_accessibility">Switch Agent</string>
 
     <!-- Session Foreground Service -->
     <string name="notification_session_channel_name">Voice Session</string>
