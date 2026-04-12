@@ -27,8 +27,8 @@ object TTSUtils {
     private val REGEX_BULLET = Regex("^\\s*[-*+]\\s+", RegexOption.MULTILINE)
     private val REGEX_NEWLINE = Regex("\n{3,}")
 
-    private val SENTENCE_ENDERS = listOf("。", "．", ". ", "! ", "? ", "！", "？")
-    private val COMMA_ENDERS = listOf("、", "，", ", ")
+    private val SENTENCE_ENDERS = arrayOf("。", "．", ". ", "! ", "? ", "！", "？")
+    private val COMMA_ENDERS = arrayOf("、", "，", ", ")
 
     /**
      * Setup locale and high-quality voice
@@ -168,8 +168,7 @@ object TTSUtils {
             }
 
             // Find the last sentence boundary within maxLength
-            val searchRange = remaining.substring(0, maxLength)
-            val splitIndex = findBestSplitPoint(searchRange)
+            val splitIndex = findBestSplitPoint(remaining, maxLength)
 
             if (splitIndex > 0) {
                 chunks.add(remaining.substring(0, splitIndex).trim())
@@ -184,29 +183,31 @@ object TTSUtils {
         return chunks.filter { it.isNotBlank() }
     }
 
-    private fun findBestSplitPoint(text: String): Int {
+    private fun findBestSplitPoint(text: String, limit: Int): Int {
         // Priority: paragraph break > sentence end > comma > space
-        val paragraphBreak = text.lastIndexOf("\n\n")
-        if (paragraphBreak > text.length / 2) return paragraphBreak + 2
+        val paragraphBreak = text.lastIndexOf("\n\n", limit - 2)
+        if (paragraphBreak > limit / 2) return paragraphBreak + 2
 
         var bestPos = -1
-        for (ender in SENTENCE_ENDERS) {
-            val pos = text.lastIndexOf(ender)
+        for (i in SENTENCE_ENDERS.indices) {
+            val ender = SENTENCE_ENDERS[i]
+            val pos = text.lastIndexOf(ender, limit - ender.length)
             if (pos > bestPos) bestPos = pos + ender.length
         }
-        if (bestPos > text.length / 3) return bestPos
+        if (bestPos > limit / 3) return bestPos
 
-        val lineBreak = text.lastIndexOf("\n")
-        if (lineBreak > text.length / 3) return lineBreak + 1
+        val lineBreak = text.lastIndexOf("\n", limit - 1)
+        if (lineBreak > limit / 3) return lineBreak + 1
 
-        for (ender in COMMA_ENDERS) {
-            val pos = text.lastIndexOf(ender)
+        for (i in COMMA_ENDERS.indices) {
+            val ender = COMMA_ENDERS[i]
+            val pos = text.lastIndexOf(ender, limit - ender.length)
             if (pos > bestPos) bestPos = pos + ender.length
         }
-        if (bestPos > text.length / 3) return bestPos
+        if (bestPos > limit / 3) return bestPos
 
-        val space = text.lastIndexOf(" ")
-        if (space > text.length / 3) return space + 1
+        val space = text.lastIndexOf(" ", limit - 1)
+        if (space > limit / 3) return space + 1
 
         return -1
     }
