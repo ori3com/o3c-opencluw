@@ -1154,7 +1154,7 @@ fun CapabilityCard(
             ) {
                 Icon(
                     imageVector = icon,
-                    contentDescription = label,
+                    contentDescription = null,
                     tint = if (isActive) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(24.dp)
                 )
