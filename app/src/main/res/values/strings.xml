@@ -634,6 +634,7 @@
 
     <string name="action_collapse">Collapse</string>
     <string name="action_expand">Expand</string>
+    <string name="action_select_agent">Select agent</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_copy">Copy</string>
     <string name="error_mic_privacy_title">Microphone Access Blocked</string>
