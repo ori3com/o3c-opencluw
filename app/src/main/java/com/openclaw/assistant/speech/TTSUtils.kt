@@ -27,8 +27,8 @@ object TTSUtils {
     private val REGEX_BULLET = Regex("^\\s*[-*+]\\s+", RegexOption.MULTILINE)
     private val REGEX_NEWLINE = Regex("\n{3,}")
 
-    private val SENTENCE_ENDERS = listOf("。", "．", ". ", "! ", "? ", "！", "？")
-    private val COMMA_ENDERS = listOf("、", "，", ", ")
+    private val SENTENCE_ENDERS = arrayOf("。", "．", ". ", "! ", "? ", "！", "？")
+    private val COMMA_ENDERS = arrayOf("、", "，", ", ")
 
     /**
      * Setup locale and high-quality voice
