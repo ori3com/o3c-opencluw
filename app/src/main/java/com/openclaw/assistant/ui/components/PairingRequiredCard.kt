@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +26,8 @@ import androidx.compose.ui.unit.sp
 import com.openclaw.assistant.OpenClawApplication
 import com.openclaw.assistant.R
 
+private const val PAIRING_AUTO_RETRY_MS = 6_000L
+
 @Composable
 fun PairingRequiredCard(deviceId: String, displayName: String = "") {
     val context = LocalContext.current
@@ -34,7 +37,16 @@ fun PairingRequiredCard(deviceId: String, displayName: String = "") {
     val approveCommand = stringResource(R.string.approve_command_format, deviceId)
     val rejectCommand = stringResource(R.string.reject_command_format, deviceId)
 
+
     var expanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(PAIRING_AUTO_RETRY_MS)
+            nodeRuntime.refreshGatewayConnection()
+        }
+    }
+
 
     Card(
         modifier = Modifier.fillMaxWidth(),
