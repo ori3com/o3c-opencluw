@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import com.google.firebase.FirebaseApp
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.openclaw.assistant.data.SettingsRepository
+import com.openclaw.assistant.utils.recordToCrashlytics
 import com.openclaw.assistant.node.NodeRuntime
 import java.security.Security
 
@@ -54,9 +54,7 @@ class OpenClawApplication : Application() {
             Security.insertProviderAt(bcProvider, 1)
         } catch (e: Throwable) {
             Log.e("OpenClawApp", "Failed to register Bouncy Castle provider", e)
-            if (BuildConfig.FIREBASE_ENABLED) {
-                FirebaseCrashlytics.getInstance().recordException(e)
-            }
+            e.recordToCrashlytics()
         }
     }
 

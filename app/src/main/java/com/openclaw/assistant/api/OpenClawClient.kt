@@ -1,8 +1,7 @@
 package com.openclaw.assistant.api
 
-import com.openclaw.assistant.BuildConfig
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
+import com.openclaw.assistant.utils.recordToCrashlytics
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
@@ -135,9 +134,7 @@ class OpenClawClient() {
         } catch (e: kotlinx.coroutines.CancellationException) {
             throw e
         } catch (e: Exception) {
-            if (!isTransientNetworkError(e) && BuildConfig.FIREBASE_ENABLED) {
-                FirebaseCrashlytics.getInstance().recordException(e)
-            }
+            if (!isTransientNetworkError(e)) e.recordToCrashlytics()
             Result.failure(e)
         }
     }
