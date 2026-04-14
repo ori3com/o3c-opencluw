@@ -17,3 +17,7 @@
 ## 2024-04-03 - Kotlin `joinToString` memory allocations inside object mapping/looping
 **Learning:** Using `collection.joinToString(separator) { ... }` with a lambda that returns interpolated strings inside frequently-invoked object mapping layers (like mapping elements into a cache key inside `ChatController.messageIdentityKey`) creates immense pressure on the Garbage Collector. It instantiates intermediate string iterators, implicit list mapping elements, and implicit string builder lambda invokes. This is particularly problematic in UI component list-reconciliation (e.g. `LazyColumn` message keys), causing jitter.
 **Action:** Replace this pattern with a manual `StringBuilder` where the items are appended via an indexed loop (e.g., `for (i in collection.indices)`), preventing mapping iterators and intermediate lambda string allocations.
+
+## 2026-04-14 - Substring allocations inside chunking loops
+**Learning:** When splitting large strings into chunks (like in TTS processing), repeatedly using `substring()` to slice the string and searching within those new substrings introduces an $O(N^2)$ memory allocation bottleneck, putting intense pressure on the garbage collector.
+**Action:** To optimize string parsing and chunking loops, avoid `substring()`. Instead, maintain a sliding window using an `offset` index. Pass the original, immutable string along with the `offset` and `limit` to the search functions. Use Kotlin's `lastIndexOf(delimiter, limit)` to correctly bound backward searches within the window in-place.

@@ -27,8 +27,8 @@ object TTSUtils {
     private val REGEX_BULLET = Regex("^\\s*[-*+]\\s+", RegexOption.MULTILINE)
     private val REGEX_NEWLINE = Regex("\n{3,}")
 
-    private val SENTENCE_ENDERS = listOf("。", "．", ". ", "! ", "? ", "！", "？")
-    private val COMMA_ENDERS = listOf("、", "，", ", ")
+    private val SENTENCE_ENDERS = arrayOf("。", "．", ". ", "! ", "? ", "！", "？")
+    private val COMMA_ENDERS = arrayOf("、", "，", ", ")
 
     /**
      * Setup locale and high-quality voice
@@ -159,54 +159,59 @@ object TTSUtils {
         if (text.length <= maxLength) return listOf(text)
 
         val chunks = mutableListOf<String>()
-        var remaining = text
+        var offset = 0
 
-        while (remaining.isNotEmpty()) {
-            if (remaining.length <= maxLength) {
-                chunks.add(remaining)
+        while (offset < text.length) {
+            if (text.length - offset <= maxLength) {
+                chunks.add(text.substring(offset).trim())
                 break
             }
 
-            // Find the last sentence boundary within maxLength
-            val searchRange = remaining.substring(0, maxLength)
-            val splitIndex = findBestSplitPoint(searchRange)
+            val limit = offset + maxLength
+            val splitIndex = findBestSplitPoint(text, offset, limit)
 
-            if (splitIndex > 0) {
-                chunks.add(remaining.substring(0, splitIndex).trim())
-                remaining = remaining.substring(splitIndex).trim()
+            if (splitIndex > offset) {
+                chunks.add(text.substring(offset, splitIndex).trim())
+                offset = splitIndex
             } else {
-                // No boundary found, force split at maxLength
-                chunks.add(remaining.substring(0, maxLength).trim())
-                remaining = remaining.substring(maxLength).trim()
+                chunks.add(text.substring(offset, limit).trim())
+                offset = limit
             }
         }
 
         return chunks.filter { it.isNotBlank() }
     }
 
-    private fun findBestSplitPoint(text: String): Int {
+    private fun findBestSplitPoint(text: String, offset: Int, limit: Int): Int {
+        val searchLength = limit - offset
         // Priority: paragraph break > sentence end > comma > space
-        val paragraphBreak = text.lastIndexOf("\n\n")
-        if (paragraphBreak > text.length / 2) return paragraphBreak + 2
+        val paragraphBreak = text.lastIndexOf("\n\n", limit - 2)
+        if (paragraphBreak >= offset && paragraphBreak - offset > searchLength / 2) return paragraphBreak + 2
 
         var bestPos = -1
         for (ender in SENTENCE_ENDERS) {
-            val pos = text.lastIndexOf(ender)
-            if (pos > bestPos) bestPos = pos + ender.length
+            val pos = text.lastIndexOf(ender, limit - ender.length)
+            if (pos >= offset) {
+                val endPos = pos + ender.length
+                if (endPos > bestPos) bestPos = endPos
+            }
         }
-        if (bestPos > text.length / 3) return bestPos
+        if (bestPos >= offset && bestPos - offset > searchLength / 3) return bestPos
 
-        val lineBreak = text.lastIndexOf("\n")
-        if (lineBreak > text.length / 3) return lineBreak + 1
+        val lineBreak = text.lastIndexOf("\n", limit - 1)
+        if (lineBreak >= offset && lineBreak - offset > searchLength / 3) return lineBreak + 1
 
         for (ender in COMMA_ENDERS) {
-            val pos = text.lastIndexOf(ender)
-            if (pos > bestPos) bestPos = pos + ender.length
+            val pos = text.lastIndexOf(ender, limit - ender.length)
+            if (pos >= offset) {
+                val endPos = pos + ender.length
+                if (endPos > bestPos) bestPos = endPos
+            }
         }
-        if (bestPos > text.length / 3) return bestPos
+        if (bestPos >= offset && bestPos - offset > searchLength / 3) return bestPos
 
-        val space = text.lastIndexOf(" ")
-        if (space > text.length / 3) return space + 1
+        val space = text.lastIndexOf(" ", limit - 1)
+        if (space >= offset && space - offset > searchLength / 3) return space + 1
 
         return -1
     }
