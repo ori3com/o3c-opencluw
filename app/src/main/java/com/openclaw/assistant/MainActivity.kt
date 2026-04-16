@@ -1304,18 +1304,21 @@ fun MissingScopeCard(error: String, onClick: () -> Unit) {
     val onClickLabel = stringResource(if (expanded) R.string.action_collapse else R.string.action_expand)
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .semantics(mergeDescendants = true) {
-                this.onClick(label = onClickLabel, action = null)
-                role = Role.Button
-            },
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer), 
-        onClick = { expanded = !expanded }
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(
+                        onClickLabel = onClickLabel,
+                        role = Role.Button
+                    ) { expanded = !expanded }
+                    .padding(16.dp)
+            ) {
                 Icon(
                     imageVector = Icons.Default.Error, 
                     contentDescription = null, 
@@ -1352,10 +1355,14 @@ fun MissingScopeCard(error: String, onClick: () -> Unit) {
             }
 
             if (expanded) {
-                Spacer(modifier = Modifier.height(16.dp))
-                // Fix Request Section
-                Text(
-                    text = stringResource(R.string.fix_request_label),
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                ) {
+                    // Fix Request Section
+                    Text(
+                        text = stringResource(R.string.fix_request_label),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onErrorContainer
@@ -1434,6 +1441,7 @@ fun MissingScopeCard(error: String, onClick: () -> Unit) {
                     ) {
                         Text(stringResource(R.string.action_open_settings))
                     }
+                }
                 }
             }
         }
