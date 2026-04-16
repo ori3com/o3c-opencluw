@@ -17,3 +17,10 @@
 ## 2024-04-03 - Kotlin `joinToString` memory allocations inside object mapping/looping
 **Learning:** Using `collection.joinToString(separator) { ... }` with a lambda that returns interpolated strings inside frequently-invoked object mapping layers (like mapping elements into a cache key inside `ChatController.messageIdentityKey`) creates immense pressure on the Garbage Collector. It instantiates intermediate string iterators, implicit list mapping elements, and implicit string builder lambda invokes. This is particularly problematic in UI component list-reconciliation (e.g. `LazyColumn` message keys), causing jitter.
 **Action:** Replace this pattern with a manual `StringBuilder` where the items are appended via an indexed loop (e.g., `for (i in collection.indices)`), preventing mapping iterators and intermediate lambda string allocations.
+## 2024-06-25 - Zero-Allocation String Traversal in Kotlin
+**Learning:** In Kotlin/Java, `substring()` in hot loops (like processing large TTS blocks) causes severe garbage collection pressure and memory thrashing, especially on Android devices.
+**Action:** Replace `substring()` usage with `offset` and `limit` boundary pointers and bounds-checking traversal logic (`regionMatches()`) when sequentially processing text to avoid unneeded allocation.
+
+## 2024-06-25 - Avoid O(N^2) backward delimiter searches
+**Learning:** `text.lastIndexOf(delimiter, startIndex)` searches all the way backward to index `0` if not found. In chunking loops where the start boundary advances, this causes O(N^2) time complexity regression.
+**Action:** Always constrain bounded backward searches (e.g., finding the last sentence delimiter in a chunk) using a custom loop counting `downTo offset` combined with `regionMatches`.
