@@ -21,8 +21,6 @@ object ChatMarkdownPreprocessor {
         """(?m)^\[[A-Za-z]{3}\s+\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}(?::\d{2})?\s+(?:GMT|UTC)[+-]?\d{0,2}\]\s*"""
     )
 
-    private val leadingNewlinesRegex = Regex("^\\n+")
-
     fun preprocess(raw: String): String {
         val withoutContextBlocks = stripInboundContextBlocks(raw)
         val withoutTimestamps = stripPrefixedTimestamps(withoutContextBlocks)
@@ -65,8 +63,7 @@ object ChatMarkdownPreprocessor {
             outputLines.add(line)
         }
 
-        return outputLines.joinToString("\n")
-            .replace(leadingNewlinesRegex, "")
+        return outputLines.joinToString("\n").trimStart('\n')
     }
 
     private fun stripPrefixedTimestamps(raw: String): String =
