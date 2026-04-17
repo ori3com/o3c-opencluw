@@ -20,6 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.openclaw.assistant.R
 import com.openclaw.assistant.chat.ChatSessionEntry
@@ -77,7 +80,7 @@ private fun SessionRow(
       } else {
         MaterialTheme.colorScheme.surfaceContainer
       },
-    modifier = Modifier.fillMaxWidth(),
+    modifier = Modifier.fillMaxWidth().semantics { role = Role.Button },
   ) {
     Row(
       modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
