@@ -89,23 +89,23 @@ class DeviceIdentity(context: Context) {
                 if (typeUrl.endsWith("Ed25519PublicKey")) {
                     val valBase64 = keyData.getString("value")
                     val protoBytes = Base64.decode(valBase64, Base64.DEFAULT)
-                    
+
                     // Ed25519PublicKey proto: [08 00 12 20 <32 bytes>]
                     // We need the last 32 bytes
                     if (protoBytes.size >= 32) {
                          val rawKey = protoBytes.copyOfRange(protoBytes.size - 32, protoBytes.size)
-                         
+
                          // Base64Url encode without padding for transport
                          publicKeyBase64Url = Base64.encodeToString(
-                             rawKey, 
+                             rawKey,
                              Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
                          )
-                         
+
                          // Device ID is SHA-256 of raw public key
                          val digest = MessageDigest.getInstance("SHA-256")
-                         val hash = digest.digest(rawKey)
+                         val hash = digest.digest(rawKey) ?: return
                          deviceId = bytesToHex(hash)
-                         
+
                          Log.d(TAG, "Initialized deviceId=$deviceId")
                     }
                 }
@@ -120,7 +120,7 @@ class DeviceIdentity(context: Context) {
 
     fun sign(data: String): String? {
         return try {
-            val signature = signer?.sign(data.toByteArray(Charsets.UTF_8))
+            val signature = signer?.sign(data.toByteArray(Charsets.UTF_8)) ?: return null
             Base64.encodeToString(
                 signature,
                 Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
