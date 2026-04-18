@@ -38,6 +38,8 @@ class SessionForegroundService : Service() {
                 } else {
                     context.startService(intent)
                 }
+            } catch (e: IllegalStateException) {
+                Log.e(TAG, "Failed to start SessionForegroundService (background restriction): ${e.message}", e)
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to start SessionForegroundService: ${e.message}", e)
             }

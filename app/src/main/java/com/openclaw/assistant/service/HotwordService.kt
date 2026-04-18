@@ -672,6 +672,12 @@ class HotwordService : Service(), VoskRecognitionListener {
                     setPackage(packageName)
                 }
                 sendBroadcast(broadcastIntent)
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected error starting service", e)
+                val broadcastIntent = Intent(OpenClawAssistantService.ACTION_SHOW_ASSISTANT).apply {
+                    setPackage(packageName)
+                }
+                sendBroadcast(broadcastIntent)
             }
         }
     }
