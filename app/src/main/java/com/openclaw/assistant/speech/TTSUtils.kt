@@ -27,8 +27,8 @@ object TTSUtils {
     private val REGEX_BULLET = Regex("^\\s*[-*+]\\s+", RegexOption.MULTILINE)
     private val REGEX_NEWLINE = Regex("\n{3,}")
 
-    private val SENTENCE_ENDERS = listOf("。", "．", ". ", "! ", "? ", "！", "？")
-    private val COMMA_ENDERS = listOf("、", "，", ", ")
+    private val SENTENCE_ENDERS = arrayOf("。", "．", ". ", "! ", "? ", "！", "？")
+    private val COMMA_ENDERS = arrayOf("、", "，", ", ")
 
     /**
      * Setup locale and high-quality voice
@@ -154,60 +154,75 @@ object TTSUtils {
     /**
      * Splits long text into chunks that fit within the TTS max input length.
      * Splits naturally at sentence boundaries (period, newline, etc.), keeping each chunk under maxLength.
+     *
+     * ⚡ Bolt Optimization: Replaced O(N^2) substring allocations with O(N) index-based bound tracking
+     * (`offset` and `limit`). This drastically reduces memory allocations and Garbage Collection (GC) pauses
+     * when processing large text inputs for TTS.
+     * Impact: Reduces GC overhead during high-frequency string splitting.
      */
     fun splitTextForTTS(text: String, maxLength: Int = 1000): List<String> {
         if (text.length <= maxLength) return listOf(text)
 
         val chunks = mutableListOf<String>()
-        var remaining = text
+        var offset = 0
+        val len = text.length
 
-        while (remaining.isNotEmpty()) {
-            if (remaining.length <= maxLength) {
-                chunks.add(remaining)
+        while (offset < len) {
+            if (len - offset <= maxLength) {
+                chunks.add(text.substring(offset).trim())
                 break
             }
 
-            // Find the last sentence boundary within maxLength
-            val searchRange = remaining.substring(0, maxLength)
-            val splitIndex = findBestSplitPoint(searchRange)
+            val limit = offset + maxLength
+            val splitIndex = findBestSplitPoint(text, offset, limit)
 
-            if (splitIndex > 0) {
-                chunks.add(remaining.substring(0, splitIndex).trim())
-                remaining = remaining.substring(splitIndex).trim()
+            if (splitIndex > offset) {
+                chunks.add(text.substring(offset, splitIndex).trim())
+                offset = splitIndex
             } else {
-                // No boundary found, force split at maxLength
-                chunks.add(remaining.substring(0, maxLength).trim())
-                remaining = remaining.substring(maxLength).trim()
+                chunks.add(text.substring(offset, limit).trim())
+                offset = limit
+            }
+
+            while (offset < len && text[offset].isWhitespace()) {
+                offset++
             }
         }
 
         return chunks.filter { it.isNotBlank() }
     }
 
-    private fun findBestSplitPoint(text: String): Int {
-        // Priority: paragraph break > sentence end > comma > space
-        val paragraphBreak = text.lastIndexOf("\n\n")
-        if (paragraphBreak > text.length / 2) return paragraphBreak + 2
+    private fun findBestSplitPoint(text: String, offset: Int, limit: Int): Int {
+        val paragraphBreak = findLastIndex(text, "\n\n", offset, limit)
+        if (paragraphBreak > offset + (limit - offset) / 2) return paragraphBreak + 2
 
         var bestPos = -1
         for (ender in SENTENCE_ENDERS) {
-            val pos = text.lastIndexOf(ender)
+            val pos = findLastIndex(text, ender, offset, limit)
             if (pos > bestPos) bestPos = pos + ender.length
         }
-        if (bestPos > text.length / 3) return bestPos
+        if (bestPos > offset + (limit - offset) / 3) return bestPos
 
-        val lineBreak = text.lastIndexOf("\n")
-        if (lineBreak > text.length / 3) return lineBreak + 1
+        val lineBreak = findLastIndex(text, "\n", offset, limit)
+        if (lineBreak > offset + (limit - offset) / 3) return lineBreak + 1
 
         for (ender in COMMA_ENDERS) {
-            val pos = text.lastIndexOf(ender)
+            val pos = findLastIndex(text, ender, offset, limit)
             if (pos > bestPos) bestPos = pos + ender.length
         }
-        if (bestPos > text.length / 3) return bestPos
+        if (bestPos > offset + (limit - offset) / 3) return bestPos
 
-        val space = text.lastIndexOf(" ")
-        if (space > text.length / 3) return space + 1
+        val space = findLastIndex(text, " ", offset, limit)
+        if (space > offset + (limit - offset) / 3) return space + 1
 
         return -1
     }
+
+    private fun findLastIndex(text: String, delimiter: String, offset: Int, limit: Int): Int {
+        for (i in limit - delimiter.length downTo offset) {
+            if (text.regionMatches(i, delimiter, 0, delimiter.length)) return i
+        }
+        return -1
+    }
+
 }
