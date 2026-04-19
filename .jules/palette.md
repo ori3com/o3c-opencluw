@@ -21,3 +21,7 @@
 ## 2025-05-18 - RadioButton Grouping Accessibility
 **Learning:** Placing a `RadioButton` inside a clickable layout element (like a `Row`) using `Modifier.clickable` creates conflicting semantics, confusing screen readers by presenting multiple disjointed click targets.
 **Action:** Replace `Modifier.clickable` on the parent layout with `Modifier.selectable(role = Role.RadioButton)` and explicitly set the inner `RadioButton`'s `onClick` parameter to `null` to ensure the group is treated as a single, cohesive radio button element.
+
+## 2025-05-20 - Interactive Surfaces Need Semantic Roles
+**Learning:** Using `Surface(onClick = ...)` in Jetpack Compose makes the element clickable but does not intrinsically apply a semantic role. Without a role, TalkBack treats the element as a generic clickable area, which is less descriptive for users than identifying it as a button.
+**Action:** When using `Surface` as a custom button or interactive row, always append `.semantics { role = Role.Button }` (or appropriate role) to its `Modifier` so screen readers announce it properly.
