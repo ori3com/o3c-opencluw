@@ -44,7 +44,11 @@ class SessionForegroundService : Service() {
         }
 
         fun stop(context: Context) {
-            context.stopService(Intent(context, SessionForegroundService::class.java))
+            try {
+                context.stopService(Intent(context, SessionForegroundService::class.java))
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to stop SessionForegroundService: ${e.message}", e)
+            }
         }
     }
 

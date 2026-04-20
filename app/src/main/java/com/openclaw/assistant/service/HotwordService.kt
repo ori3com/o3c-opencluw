@@ -59,7 +59,11 @@ class HotwordService : Service(), VoskRecognitionListener {
         }
 
         fun stop(context: Context) {
-            context.stopService(Intent(context, HotwordService::class.java))
+            try {
+                context.stopService(Intent(context, HotwordService::class.java))
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to stop HotwordService: ${e.message}", e)
+            }
         }
 
         fun shouldCopyModel(currentVersion: Int, savedVersion: Int, targetDirExists: Boolean, targetDirNotEmpty: Boolean): Boolean {
