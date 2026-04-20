@@ -45,6 +45,7 @@ fun StatusIndicator(
     state: ConnectionState,
     label: String? = null,
     dotSize: Dp = 10.dp,
+    labelColor: Color = MaterialTheme.colorScheme.onSurface,
     modifier: Modifier = Modifier
 ) {
     val dotColor = when (state) {
@@ -94,7 +95,7 @@ fun StatusIndicator(
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface
+                color = labelColor
             )
         }
     }

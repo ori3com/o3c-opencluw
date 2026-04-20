@@ -1068,20 +1068,20 @@ fun SystemStatusCard(
                     isConnecting -> ConnectionState.Connecting
                     else -> ConnectionState.Disconnected
                 }
-                StatusIndicator(state = state)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.app_name),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = statusText,
-                    fontSize = 13.sp,
-                    color = contentColor.copy(alpha = 0.8f),
-                    modifier = Modifier.weight(1f)
-                )
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    StatusIndicator(
+                        state = state,
+                        label = statusText,
+                        labelColor = contentColor.copy(alpha = 0.8f)
+                    )
+                }
                 IconButton(onClick = onOpenSettings, modifier = Modifier.size(24.dp)) {
                     Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings_title), tint = contentColor.copy(alpha = 0.6f))
                 }
