@@ -816,21 +816,15 @@ class GatewaySession(
     val scopeString = scopes.joinToString(",")
     val authToken = token.orEmpty()
     val version = if (nonce.isNullOrBlank()) "v1" else "v2"
-    val parts =
-      mutableListOf(
-        version,
-        deviceId,
-        clientId,
-        clientMode,
-        role,
-        scopeString,
-        signedAtMs.toString(),
-        authToken,
-      )
-    if (!nonce.isNullOrBlank()) {
-      parts.add(nonce)
+
+    // ⚡ Bolt Optimization: Eliminated mutableListOf().joinToString() to avoid list allocation overhead and reduce GC pressure.
+    val base = "$version|$deviceId|$clientId|$clientMode|$role|$scopeString|$signedAtMs|$authToken"
+
+    return if (!nonce.isNullOrBlank()) {
+      "$base|$nonce"
+    } else {
+      base
     }
-    return parts.joinToString("|")
   }
 
 }
