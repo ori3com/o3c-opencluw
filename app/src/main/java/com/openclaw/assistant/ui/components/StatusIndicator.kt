@@ -72,7 +72,13 @@ fun StatusIndicator(
     )
 
     Row(
-        modifier = modifier.semantics(mergeDescendants = true) {},
+        modifier = modifier.semantics(mergeDescendants = true) {
+            if (label != null) {
+                contentDescription = "$stateDesc: $label"
+            } else {
+                contentDescription = stateDesc
+            }
+        },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
@@ -81,21 +87,13 @@ fun StatusIndicator(
                 .size(dotSize)
                 .alpha(alpha)
                 .background(dotColor, CircleShape)
-                .then(
-                    if (label != null) {
-                        Modifier.clearAndSetSemantics {}
-                    } else {
-                        Modifier.semantics {
-                            contentDescription = stateDesc
-                        }
-                    }
-                )
         )
         if (label != null) {
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
-                color = labelColor
+                color = labelColor,
+                modifier = Modifier.clearAndSetSemantics {}
             )
         }
     }
