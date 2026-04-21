@@ -289,9 +289,6 @@ class NodeForegroundService : Service() {
       } catch (e: SecurityException) {
         android.util.Log.w(TAG, "Failed to send ACTION_STOP via startService, falling back to stopService", e)
         context.stopService(intent)
-      } catch (e: Exception) {
-        android.util.Log.w(TAG, "Failed to send ACTION_STOP via startService, falling back to stopService", e)
-        context.stopService(intent)
       }
     }
 

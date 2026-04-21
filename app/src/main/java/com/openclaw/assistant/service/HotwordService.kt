@@ -672,12 +672,6 @@ class HotwordService : Service(), VoskRecognitionListener {
                     setPackage(packageName)
                 }
                 sendBroadcast(broadcastIntent)
-            } catch (e: Exception) {
-                Log.w(TAG, "Background start failed, falling back to broadcast", e)
-                val broadcastIntent = Intent(OpenClawAssistantService.ACTION_SHOW_ASSISTANT).apply {
-                    setPackage(packageName)
-                }
-                sendBroadcast(broadcastIntent)
             }
         }
     }
