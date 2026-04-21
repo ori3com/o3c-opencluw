@@ -422,7 +422,7 @@ class GatewaySession(
           return
         }
         val msg = res.error?.message ?: "connect failed"
-        Log.w(TAG, "BootstrapToken auth failed: $msg")
+        Log.w(TAG, "BootstrapToken auth failed (code=${res.error?.code})")
         // The server consumed the bootstrapToken on first use. Clear it from the desired connection
         // so subsequent retries don't loop on the same expired token. The consumer is notified via
         // onBootstrapTokenInvalid to also clear it from persistent storage.
@@ -438,13 +438,13 @@ class GatewaySession(
         Log.d(TAG, "No token configured, using password auth directly")
         val passwordPayload = buildConnectParams(identity, connectNonce, "", trimmedPassword)
         val passwordRes = request("connect", passwordPayload, timeoutMs = 8_000)
-        Log.d(TAG, "Password auth response: ok=${passwordRes.ok} error=${passwordRes.error?.message}")
+        Log.d(TAG, "Password auth response: ok=${passwordRes.ok} error_code=${passwordRes.error?.code}")
         if (passwordRes.ok) {
           handleConnectSuccess(passwordRes, canFallbackToShared, identityId)
           return
         }
         val msg = passwordRes.error?.message ?: "connect failed"
-        Log.w(TAG, "Password auth failed: $msg (code=${passwordRes.error?.code})")
+        Log.w(TAG, "Password auth failed (code=${passwordRes.error?.code})")
         throw IllegalStateException(msg)
       }
 
@@ -469,7 +469,7 @@ class GatewaySession(
           Log.d(TAG, "Token auth failed, trying password auth...")
           val passwordPayload = buildConnectParams(identity, connectNonce, "", trimmedPassword)
           val passwordRes = request("connect", passwordPayload, timeoutMs = 8_000)
-          Log.d(TAG, "Password auth response: ok=${passwordRes.ok} error=${passwordRes.error?.message}")
+          Log.d(TAG, "Password auth response: ok=${passwordRes.ok} error_code=${passwordRes.error?.code}")
 
           if (passwordRes.ok) {
             handleConnectSuccess(passwordRes, canFallbackToShared, identityId)
@@ -478,7 +478,7 @@ class GatewaySession(
 
           // Both failed
           val msg = passwordRes.error?.message ?: "connect failed"
-          Log.w(TAG, "Password auth failed: $msg (code=${passwordRes.error?.code})")
+          Log.w(TAG, "Password auth failed (code=${passwordRes.error?.code})")
           if (canFallbackToShared || !storedToken.isNullOrBlank()) {
             deviceAuthStore.clearToken(identityId, options.role)
           }
