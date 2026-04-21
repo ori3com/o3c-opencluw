@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.openclaw.assistant.OpenClawApplication
 import com.openclaw.assistant.R
 
-private const val PAIRING_AUTO_RETRY_MS = 6_000L
+internal const val PAIRING_AUTO_RETRY_MS = 6_000L
 
 @Composable
 fun PairingRequiredCard(deviceId: String, displayName: String = "") {
@@ -37,7 +37,6 @@ fun PairingRequiredCard(deviceId: String, displayName: String = "") {
     val approveCommand = stringResource(R.string.approve_command_format, deviceId)
     val rejectCommand = stringResource(R.string.reject_command_format, deviceId)
 
-
     var expanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -46,7 +45,6 @@ fun PairingRequiredCard(deviceId: String, displayName: String = "") {
             nodeRuntime.refreshGatewayConnection()
         }
     }
-
 
     Card(
         modifier = Modifier.fillMaxWidth(),

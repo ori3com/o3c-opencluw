@@ -33,6 +33,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import kotlinx.coroutines.delay
 import androidx.compose.runtime.saveable.rememberSaveable
+import com.openclaw.assistant.ui.components.PAIRING_AUTO_RETRY_MS
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -195,8 +196,6 @@ private fun canInstallUnknownApps(context: Context): Boolean {
         true
     }
 }
-
-private const val PAIRING_AUTO_RETRY_MS = 6_000L
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -993,8 +992,6 @@ private fun FinalCheckStep(
             runtime.refreshGatewayConnection()
         }
     }
-
-
 
     val gatewayUrl = remember(manualHost, manualPort, manualTls) {
         "${if (manualTls) "https" else "http"}://$manualHost:$manualPort"
