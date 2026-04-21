@@ -43,6 +43,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -885,7 +886,10 @@ fun AgentSelector(
             modifier = Modifier
                 .then(
                     if (!isReadOnly && agents.isNotEmpty()) {
-                        Modifier.clickable { expanded = true }
+                        Modifier.clickable(
+                            onClickLabel = stringResource(R.string.agent_selector),
+                            role = Role.DropdownList
+                        ) { expanded = true }
                     } else {
                         Modifier
                     }

@@ -1040,7 +1040,7 @@ fun SystemStatusCard(
     onDisconnect: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
-    val isConnecting = statusText.contains("Connecting", ignoreCase = true)
+    val isConnecting = statusText.contains("Connecting", ignoreCase = true) || statusText.contains("Verify gateway TLS fingerprint", ignoreCase = true)
 
     val backgroundColor = when {
         connected -> Color(0xFFE8F5E9)
@@ -1139,7 +1139,8 @@ fun CapabilityCard(
             .height(72.dp)
             .clickable(
                 onClick = onClick,
-                onClickLabel = if (isActive) "Disable $label" else "Enable $label"
+                onClickLabel = if (isActive) "Disable $label" else "Enable $label",
+                role = Role.Button
             ),
         colors = CardDefaults.cardColors(
             containerColor = if (isActive) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
@@ -1154,7 +1155,7 @@ fun CapabilityCard(
             ) {
                 Icon(
                     imageVector = icon,
-                    contentDescription = label,
+                    contentDescription = null,
                     tint = if (isActive) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(24.dp)
                 )
@@ -1285,7 +1286,7 @@ fun CompactActionCard(modifier: Modifier = Modifier, icon: ImageVector, title: S
             Column(modifier = Modifier.weight(1f).fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 Row(modifier = Modifier.fillMaxWidth().height(32.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                     Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(28.dp))
-                    if (showInfoIcon) Icon(imageVector = Icons.AutoMirrored.Filled.HelpOutline, contentDescription = "More information about $title", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp).clickable { onInfoClick?.invoke() })
+                    if (showInfoIcon) Icon(imageVector = Icons.AutoMirrored.Filled.HelpOutline, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp).clickable(onClickLabel = "More information about $title", role = Role.Button) { onInfoClick?.invoke() })
                     if (showSwitch) Switch(checked = switchValue, onCheckedChange = onSwitchChange, modifier = Modifier.scale(0.8f).offset(y = (-8).dp))
                 }
                 Spacer(modifier = Modifier.height(8.dp))
@@ -1304,18 +1305,22 @@ fun MissingScopeCard(error: String, onClick: () -> Unit) {
     val onClickLabel = stringResource(if (expanded) R.string.action_collapse else R.string.action_expand)
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .semantics(mergeDescendants = true) {
-                this.onClick(label = onClickLabel, action = null)
-                role = Role.Button
-            },
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer), 
-        onClick = { expanded = !expanded }
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(
+                        onClick = { expanded = !expanded },
+                        onClickLabel = onClickLabel,
+                        role = Role.Button
+                    )
+                    .padding(16.dp)
+            ) {
                 Icon(
                     imageVector = Icons.Default.Error, 
                     contentDescription = null, 
@@ -1352,7 +1357,7 @@ fun MissingScopeCard(error: String, onClick: () -> Unit) {
             }
 
             if (expanded) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Column(modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
                 // Fix Request Section
                 Text(
                     text = stringResource(R.string.fix_request_label),
@@ -1434,6 +1439,7 @@ fun MissingScopeCard(error: String, onClick: () -> Unit) {
                     ) {
                         Text(stringResource(R.string.action_open_settings))
                     }
+                }
                 }
             }
         }
@@ -1571,7 +1577,13 @@ fun TroubleshootingDialog(onDismiss: () -> Unit) {
                 BulletPoint(stringResource(titleId), stringResource(descId)) 
             }
             Spacer(modifier = Modifier.height(8.dp)); HorizontalDivider(); Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { context.startService(Intent(context, OpenClawAssistantService::class.java).apply { action = OpenClawAssistantService.ACTION_SHOW_ASSISTANT }) }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)) { Text(stringResource(R.string.debug_force_start)) }
+            Button(onClick = {
+                try {
+                    context.startService(Intent(context, OpenClawAssistantService::class.java).apply { action = OpenClawAssistantService.ACTION_SHOW_ASSISTANT })
+                } catch (e: Exception) {
+                    android.widget.Toast.makeText(context, "Failed to start service: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                }
+            }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)) { Text(stringResource(R.string.debug_force_start)) }
         }
     }, confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.got_it)) } })
 }
