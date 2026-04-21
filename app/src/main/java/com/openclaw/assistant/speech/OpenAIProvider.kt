@@ -91,8 +91,7 @@ class OpenAIProvider(private val context: Context) : TTSProvider {
                 if (response.isSuccessful) {
                     response.body?.bytes()
                 } else {
-                    val errorBody = response.body?.string()
-                    Log.e(TAG, "API error: ${response.code}, $errorBody")
+                    Log.e(TAG, "API error: ${response.code}")
                     null
                 }
             }
