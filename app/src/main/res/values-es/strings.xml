@@ -553,4 +553,5 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="action_copy">Copiar</string>
     <string name="error_mic_privacy_title">Acceso al micrófono bloqueado</string>
     <string name="error_mic_privacy_message">El interruptor de privacidad del micrófono de tu dispositivo está desactivado. Actívalo en Ajustes &gt; Privacidad &gt; Micrófono.</string>
+    <string name="action_open_session">Abrir sesión</string>
 </resources>

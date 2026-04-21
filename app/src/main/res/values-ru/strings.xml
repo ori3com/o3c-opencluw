@@ -553,4 +553,5 @@
     <string name="action_copy">Копировать</string>
     <string name="error_mic_privacy_title">Доступ к микрофону заблокирован</string>
     <string name="error_mic_privacy_message">Переключатель конфиденциальности микрофона на вашем устройстве отключён. Включите его в Настройки &gt; Конфиденциальность &gt; Микрофон.</string>
+    <string name="action_open_session">Открыть сеанс</string>
 </resources>
