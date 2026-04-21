@@ -98,7 +98,18 @@ class GatewaySession(
       if (host == "localhost") return true
       if (host == "::1") return true
       if (host == "0.0.0.0" || host == "::") return true
-      return host.startsWith("127.")
+
+      val parts = host.split(".")
+      if (parts.size == 4) {
+          val p1 = parts[0].toIntOrNull() ?: return false
+          val p2 = parts[1].toIntOrNull() ?: return false
+          val p3 = parts[2].toIntOrNull() ?: return false
+          val p4 = parts[3].toIntOrNull() ?: return false
+          if (p1 in 0..255 && p2 in 0..255 && p3 in 0..255 && p4 in 0..255) {
+              return p1 == 127
+          }
+      }
+      return false
     }
 
     internal fun normalizeCanvasHostUrl(
@@ -411,9 +422,9 @@ class GatewaySession(
 
       // If no token/password but bootstrapToken is set, use bootstrapToken auth directly.
       // Avoids trying token/password which would fail and potentially rate-limit.
-      // Only use bootstrapToken when no deviceToken is stored — bootstrapToken is single-use
+      // Prioritize bootstrapToken if provided. The bootstrapToken is single-use
       // and gets invalidated after first use; the deviceToken takes over for reconnections.
-      if (trimmedToken.isEmpty() && trimmedPassword.isEmpty() && trimmedBootstrapToken.isNotEmpty() && storedToken.isNullOrBlank()) {
+      if (trimmedToken.isEmpty() && trimmedPassword.isEmpty() && trimmedBootstrapToken.isNotEmpty()) {
         Log.d(TAG, "No token/password configured, using bootstrapToken auth directly")
         val payload = buildConnectParams(identity, connectNonce, "", null, authBootstrapToken = trimmedBootstrapToken)
         val res = request("connect", payload, timeoutMs = 8_000)
@@ -422,7 +433,7 @@ class GatewaySession(
           return
         }
         val msg = res.error?.message ?: "connect failed"
-        Log.w(TAG, "BootstrapToken auth failed: $msg")
+        Log.w(TAG, "BootstrapToken auth failed (code=${res.error?.code})")
         // The server consumed the bootstrapToken on first use. Clear it from the desired connection
         // so subsequent retries don't loop on the same expired token. The consumer is notified via
         // onBootstrapTokenInvalid to also clear it from persistent storage.
@@ -438,13 +449,13 @@ class GatewaySession(
         Log.d(TAG, "No token configured, using password auth directly")
         val passwordPayload = buildConnectParams(identity, connectNonce, "", trimmedPassword)
         val passwordRes = request("connect", passwordPayload, timeoutMs = 8_000)
-        Log.d(TAG, "Password auth response: ok=${passwordRes.ok} error=${passwordRes.error?.message}")
+        Log.d(TAG, "Password auth response: ok=${passwordRes.ok} error_code=${passwordRes.error?.code}")
         if (passwordRes.ok) {
           handleConnectSuccess(passwordRes, canFallbackToShared, identityId)
           return
         }
         val msg = passwordRes.error?.message ?: "connect failed"
-        Log.w(TAG, "Password auth failed: $msg (code=${passwordRes.error?.code})")
+        Log.w(TAG, "Password auth failed (code=${passwordRes.error?.code})")
         throw IllegalStateException(msg)
       }
 
@@ -469,7 +480,7 @@ class GatewaySession(
           Log.d(TAG, "Token auth failed, trying password auth...")
           val passwordPayload = buildConnectParams(identity, connectNonce, "", trimmedPassword)
           val passwordRes = request("connect", passwordPayload, timeoutMs = 8_000)
-          Log.d(TAG, "Password auth response: ok=${passwordRes.ok} error=${passwordRes.error?.message}")
+          Log.d(TAG, "Password auth response: ok=${passwordRes.ok} error_code=${passwordRes.error?.code}")
 
           if (passwordRes.ok) {
             handleConnectSuccess(passwordRes, canFallbackToShared, identityId)
@@ -478,7 +489,7 @@ class GatewaySession(
 
           // Both failed
           val msg = passwordRes.error?.message ?: "connect failed"
-          Log.w(TAG, "Password auth failed: $msg (code=${passwordRes.error?.code})")
+          Log.w(TAG, "Password auth failed (code=${passwordRes.error?.code})")
           if (canFallbackToShared || !storedToken.isNullOrBlank()) {
             deviceAuthStore.clearToken(identityId, options.role)
           }
@@ -676,7 +687,6 @@ class GatewaySession(
     }
 
     private suspend fun awaitConnectNonce(): String? {
-      if (isLoopbackHost(endpoint.host)) return null
       return try {
         withTimeout(2_000) { connectNonceDeferred.await() }
       } catch (_: Throwable) {
@@ -817,21 +827,15 @@ class GatewaySession(
     val scopeString = scopes.joinToString(",")
     val authToken = token.orEmpty()
     val version = if (nonce.isNullOrBlank()) "v1" else "v2"
-    val parts =
-      mutableListOf(
-        version,
-        deviceId,
-        clientId,
-        clientMode,
-        role,
-        scopeString,
-        signedAtMs.toString(),
-        authToken,
-      )
-    if (!nonce.isNullOrBlank()) {
-      parts.add(nonce)
+
+    // ⚡ Bolt Optimization: Eliminated mutableListOf().joinToString() to avoid list allocation overhead and reduce GC pressure.
+    val base = "$version|$deviceId|$clientId|$clientMode|$role|$scopeString|$signedAtMs|$authToken"
+
+    return if (!nonce.isNullOrBlank()) {
+      "$base|$nonce"
+    } else {
+      base
     }
-    return parts.joinToString("|")
   }
 
 }
