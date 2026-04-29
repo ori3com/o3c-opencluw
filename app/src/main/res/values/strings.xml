@@ -310,8 +310,8 @@
     <string name="pairing_copy_command">Copy Command</string>
     <string name="pairing_command_copied">Command copied to clipboard</string>
     <string name="pairing_device_id">Device ID: %s</string>
-    <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
-    <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
+    <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | jq -r \'.pending[] | select(.deviceId == \"%s\") | .requestId\')</string>
+    <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | jq -r \'.pending[] | select(.deviceId == \"%s\") | .requestId\')</string>
     <string name="pairing_approve_command">Approve Command (Copy)</string>
     <string name="pairing_reject_command">Reject Command (Copy)</string>
     <string name="pairing_refresh_status">Refresh Status</string>
@@ -635,6 +635,14 @@
     <string name="action_collapse">Collapse</string>
     <string name="action_expand">Expand</string>
     <string name="action_refresh">Refresh</string>
+    <string name="action_hide_token">Hide token</string>
+    <string name="action_show_token">Show token</string>
+    <string name="action_hide_password">Hide password</string>
+    <string name="action_show_password">Show password</string>
+    <string name="action_hide_api_key">Hide API Key</string>
+    <string name="action_show_api_key">Show API Key</string>
+    <string name="action_refresh_agents">Refresh Agents</string>
+
     <string name="action_copy">Copy</string>
     <string name="error_mic_privacy_title">Microphone Access Blocked</string>
     <string name="error_mic_privacy_message">Your device\'s microphone privacy toggle is off. Enable it in Settings &gt; Privacy &gt; Microphone.</string>

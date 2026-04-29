@@ -53,6 +53,12 @@ class HotwordService : Service(), VoskRecognitionListener {
                 } else {
                     context.startService(intent)
                 }
+            } catch (e: IllegalStateException) {
+                Log.e(TAG, "Background execution limits prevented starting HotwordService: ${e.message}", e)
+                context.stopService(intent)
+            } catch (e: SecurityException) {
+                Log.e(TAG, "Security limits prevented starting HotwordService: ${e.message}", e)
+                context.stopService(intent)
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to start HotwordService: ${e.message}", e)
             }
@@ -362,7 +368,11 @@ class HotwordService : Service(), VoskRecognitionListener {
                 Log.e(TAG, "Vosk native library not supported on this device", e)
                 debugLog("Vosk: UnsatisfiedLinkError — native lib not supported")
                 if (BuildConfig.FIREBASE_ENABLED) {
-                    FirebaseCrashlytics.getInstance().recordException(e)
+                    FirebaseCrashlytics.getInstance().apply {
+                        setCustomKey("audio_retry_count", audioRetryCount)
+                        setCustomKey("is_session_active", isSessionActive)
+                        recordException(e)
+                    }
                 }
                 prefs.edit()
                     .putBoolean("vosk_unsupported", true)
@@ -372,7 +382,11 @@ class HotwordService : Service(), VoskRecognitionListener {
                 Log.e(TAG, "Init error", e)
                 debugLog("Vosk: init error — ${e.message}")
                 if (BuildConfig.FIREBASE_ENABLED) {
-                    FirebaseCrashlytics.getInstance().recordException(e)
+                    FirebaseCrashlytics.getInstance().apply {
+                        setCustomKey("audio_retry_count", audioRetryCount)
+                        setCustomKey("is_session_active", isSessionActive)
+                        recordException(e)
+                    }
                 }
             }
         }
@@ -533,6 +547,11 @@ class HotwordService : Service(), VoskRecognitionListener {
             debugLog("Mic unavailable after $MAX_AUDIO_RETRIES retries — giving up")
             audioRetryCount = 0
             showMicUnavailableNotification()
+            if (BuildConfig.FIREBASE_ENABLED) {
+                FirebaseCrashlytics.getInstance().recordException(
+                    RuntimeException("Microphone unavailable after $MAX_AUDIO_RETRIES retries")
+                )
+            }
             return
         }
         audioRetryCount++
@@ -667,6 +686,12 @@ class HotwordService : Service(), VoskRecognitionListener {
                 }
                 sendBroadcast(broadcastIntent)
             } catch (e: SecurityException) {
+                Log.w(TAG, "Background start failed, falling back to broadcast", e)
+                val broadcastIntent = Intent(OpenClawAssistantService.ACTION_SHOW_ASSISTANT).apply {
+                    setPackage(packageName)
+                }
+                sendBroadcast(broadcastIntent)
+            } catch (e: Exception) {
                 Log.w(TAG, "Background start failed, falling back to broadcast", e)
                 val broadcastIntent = Intent(OpenClawAssistantService.ACTION_SHOW_ASSISTANT).apply {
                     setPackage(packageName)

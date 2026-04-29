@@ -115,7 +115,7 @@ class OpenClawClient() {
 
             client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
-                    val errorBody = response.body?.string() ?: response.message
+                    val errorBody = response.message
                     return@withContext Result.failure(
                         IOException("HTTP ${response.code}: $errorBody")
                     )
@@ -212,7 +212,7 @@ class OpenClawClient() {
                 if (response.isSuccessful) {
                     Result.success(true)
                 } else {
-                    val errorBody = response.body?.string() ?: response.message
+                    val errorBody = response.message
                     Result.failure(IOException("HTTP ${response.code}: $errorBody"))
                 }
             }

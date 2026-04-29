@@ -503,7 +503,7 @@
 <string name="permission_summary_title">Permissions Summary</string>
 <string name="permission_summary_format">%1$d standard permissions, %2$d special access granted</string>
     <!-- Missing translations -->
-    <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
+    <string name="approve_command_format">openclaw devices approve $(openclaw devices list --json | jq -r \'.pending[] | select(.deviceId == \"%s\") | .requestId\')</string>
     <string name="credits_support_description">このアプリが役に立った場合は、Ko-fiでの支援をご検討ください。</string>
     <string name="credits_support_kofi_button">Support the Developer</string>
     <string name="credits_support_title">開発をサポートする</string>
@@ -511,7 +511,7 @@
     <string name="qr_scan_desc">Align the QR code within the frame to scan it</string>
     <string name="qr_scan_prompt">Scan QR Code</string>
     <string name="qr_scan_unavailable">QR 掃描無法使用。請更新 Google Play 服務。</string>
-    <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | tr \'{\' \'\\n\' | grep \'\"deviceId\":\"%s\"\' | grep -o \'\"requestId\":\"[^\"]*\"\' | cut -d\'\"\' -f4)</string>
+    <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | jq -r \'.pending[] | select(.deviceId == \"%s\") | .requestId\')</string>
     <string name="setup_guide_qr_scan_title">方式 1：掃描 QR 碼</string>
     <string name="setup_guide_qr_scan_cmd_label">在閘道主機上執行以下命令以顯示 QR 碼：</string>
     <string name="setup_guide_code_input_title">方式 2：輸入設定碼</string>
@@ -552,4 +552,11 @@
     <string name="action_copy">複製</string>
     <string name="error_mic_privacy_title">麥克風存取被封鎖</string>
     <string name="error_mic_privacy_message">您的裝置麥克風隱私開關已關閉。請至設定 &gt; 隱私 &gt; 麥克風開啟。</string>
+    <string name="action_hide_token">隱藏令牌</string>
+    <string name="action_show_token">顯示令牌</string>
+    <string name="action_hide_password">隱藏密碼</string>
+    <string name="action_show_password">顯示密碼</string>
+    <string name="action_hide_api_key">隱藏 API 金鑰</string>
+    <string name="action_show_api_key">顯示 API 金鑰</string>
+    <string name="action_refresh_agents">重新整理代理程式</string>
 </resources>

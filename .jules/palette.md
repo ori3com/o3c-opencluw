@@ -21,3 +21,7 @@
 ## 2025-05-18 - RadioButton Grouping Accessibility
 **Learning:** Placing a `RadioButton` inside a clickable layout element (like a `Row`) using `Modifier.clickable` creates conflicting semantics, confusing screen readers by presenting multiple disjointed click targets.
 **Action:** Replace `Modifier.clickable` on the parent layout with `Modifier.selectable(role = Role.RadioButton)` and explicitly set the inner `RadioButton`'s `onClick` parameter to `null` to ensure the group is treated as a single, cohesive radio button element.
+
+## 2025-10-24 - Dropdown Trigger Accessibility
+**Learning:** Using `Modifier.clickable` without a specific role and label for a row that opens a dropdown causes screen readers to misidentify its function.
+**Action:** When a clickable element opens a dropdown menu, always use `Modifier.clickable(onClickLabel = "...", role = Role.DropdownList)` to ensure proper screen reader announcement.
