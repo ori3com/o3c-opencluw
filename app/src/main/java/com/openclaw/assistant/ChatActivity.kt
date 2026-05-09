@@ -47,6 +47,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -730,6 +732,7 @@ fun ChatAttachmentPreview(attachment: com.openclaw.assistant.chat.ChatMessageCon
 
 @Composable
 fun ThinkingIndicator() {
+    val desc = stringResource(R.string.thinking)
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.CenterStart
@@ -739,7 +742,7 @@ fun ThinkingIndicator() {
                 .padding(vertical = 8.dp)
                 .background(MaterialTheme.colorScheme.surface, CircleShape)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .semantics(mergeDescendants = true) {},
+                .semantics(mergeDescendants = true) { contentDescription = desc },
             verticalAlignment = Alignment.CenterVertically
         ) {
             CircularProgressIndicator(
@@ -750,6 +753,7 @@ fun ThinkingIndicator() {
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 stringResource(R.string.thinking),
+                modifier = Modifier.clearAndSetSemantics {},
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
@@ -760,6 +764,7 @@ fun ThinkingIndicator() {
 
 @Composable
 fun SpeakingIndicator(onStop: () -> Unit) {
+    val desc = stringResource(R.string.speaking)
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.CenterStart
@@ -769,13 +774,14 @@ fun SpeakingIndicator(onStop: () -> Unit) {
                 .padding(vertical = 8.dp)
                 .background(MaterialTheme.colorScheme.errorContainer, CircleShape)
                 .padding(horizontal = 12.dp, vertical = 6.dp)
-                .semantics(mergeDescendants = true) {},
+                .semantics(mergeDescendants = true) { contentDescription = desc },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(Icons.Default.Mic, contentDescription = null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onErrorContainer)
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 stringResource(R.string.speaking),
+                modifier = Modifier.clearAndSetSemantics {},
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onErrorContainer,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
@@ -790,6 +796,7 @@ fun SpeakingIndicator(onStop: () -> Unit) {
 
 @Composable
 fun PreparingSpeechIndicator() {
+    val desc = stringResource(R.string.preparing_speech)
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.CenterStart
@@ -798,7 +805,8 @@ fun PreparingSpeechIndicator() {
             modifier = Modifier
                 .padding(vertical = 8.dp)
                 .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .semantics(mergeDescendants = true) { contentDescription = desc },
             verticalAlignment = Alignment.CenterVertically
         ) {
             CircularProgressIndicator(
@@ -809,6 +817,7 @@ fun PreparingSpeechIndicator() {
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 stringResource(R.string.preparing_speech),
+                modifier = Modifier.clearAndSetSemantics {},
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
