@@ -183,14 +183,10 @@ private fun HermesQrCard() {
             Text(stringResource(R.string.av_hermes_card_title), style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
             Text(stringResource(R.string.av_hermes_card_step1), style = MaterialTheme.typography.bodyMedium)
-            CodeBlock("pip install qrcode    # one-time")
+            CodeBlock("curl -fsSL https://raw.githubusercontent.com/Codename-11/hermes-relay/main/install.sh | bash")
             Spacer(Modifier.height(8.dp))
             Text(stringResource(R.string.av_hermes_card_step2), style = MaterialTheme.typography.bodyMedium)
-            CodeBlock(
-                "python hermes_pair.py \\\n" +
-                    "  --url http://192.168.1.42:8642 \\\n" +
-                    "  --key sk-…",
-            )
+            CodeBlock("hermes-pair")
             Spacer(Modifier.height(8.dp))
             Text(stringResource(R.string.av_hermes_card_step3), style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(8.dp))

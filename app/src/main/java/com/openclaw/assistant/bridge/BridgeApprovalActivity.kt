@@ -61,7 +61,7 @@ private fun ApprovalPane(
     onDeny: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize().padding(24.dp)) {
-        Text("AgentVoice — " + androidx.compose.ui.res.stringResource(com.openclaw.assistant.R.string.mobile_bridge_title), style = MaterialTheme.typography.titleLarge)
+        Text("Agent Voice - " + androidx.compose.ui.res.stringResource(com.openclaw.assistant.R.string.mobile_bridge_title), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(8.dp))
         if (destructive) {
             Text(

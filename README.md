@@ -47,8 +47,8 @@
 >
 > **Wear OS** uses its own per-watch backend URL + auth token. Point the
 > watch at the same Hermes (`http://host:8642`, Bearer = your API key) or
-> OpenClaw endpoint you use on the phone. Both backends are
-> OpenAI-compatible, so the same Wear payload reaches whichever is Primary.
+> OpenClaw endpoint you use on the phone. The phone's Primary backend is not
+> automatically synced to the watch yet.
 >
 > **Build:** `./gradlew testDebugUnitTest assembleDebug`.
 

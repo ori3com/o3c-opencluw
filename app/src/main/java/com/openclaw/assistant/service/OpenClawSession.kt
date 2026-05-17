@@ -548,6 +548,36 @@ class OpenClawSession(context: Context) : VoiceInteractionSession(context),
         }
 
         scope.launch {
+            val agentId = settings.defaultAgentId.takeIf { it.isNotBlank() && it != "main" }
+            val primaryReply = try {
+                com.openclaw.assistant.backend.PrimaryBackendDispatcher.sendPrimary(
+                    context = context,
+                    userText = message,
+                    sessionId = settings.sessionId,
+                    agentId = agentId,
+                )
+            } catch (e: Throwable) {
+                cancelInitialFillerPhrase()
+                cancelWaitPhraseTimer()
+                stopThinkingSound()
+                currentState.value = AssistantState.ERROR
+                errorMessage.value = e.message ?: context.getString(R.string.error_network)
+                return@launch
+            }
+            if (primaryReply != null) {
+                val text = primaryReply.text
+                if (text.isNotBlank()) {
+                    displayText.value = text
+                    handleResponseReceived(text)
+                } else {
+                    cancelInitialFillerPhrase()
+                    stopThinkingSound()
+                    currentState.value = AssistantState.ERROR
+                    errorMessage.value = context.getString(R.string.error_no_response)
+                }
+                return@launch
+            }
+
             // Save user message to local DB only for HTTP mode
             if (settings.wakewordConnectionType != SettingsRepository.CONNECTION_TYPE_GATEWAY) {
                 currentSessionId?.let { sessionId ->
@@ -702,21 +732,24 @@ class OpenClawSession(context: Context) : VoiceInteractionSession(context),
 
         startWaitPhraseTimer()
 
-        // Route through the Primary backend when it is a Hermes API Server. For
-        // OpenClaw HTTP / Gateway primaries (or when no Hermes is configured)
-        // fall through to the legacy OpenClaw HTTP pipeline so existing
-        // installs are byte-for-byte compatible.
-        val hermesReply = try {
-            com.openclaw.assistant.backend.PrimaryBackendDispatcher.sendIfHermesPrimary(context, message)
+        // Route through the configured Primary backend first. Older installs
+        // without migrated backend records fall through to the legacy HTTP path.
+        val primaryReply = try {
+            com.openclaw.assistant.backend.PrimaryBackendDispatcher.sendPrimary(
+                context = context,
+                userText = message,
+                sessionId = settings.sessionId,
+                agentId = agentId,
+            )
         } catch (e: Throwable) {
             cancelWaitPhraseTimer(); cancelInitialFillerPhrase(); stopThinkingSound()
             currentState.value = AssistantState.ERROR
             errorMessage.value = e.message ?: context.getString(R.string.error_network)
             return
         }
-        if (hermesReply != null) {
+        if (primaryReply != null) {
             cancelWaitPhraseTimer()
-            val text = hermesReply.text
+            val text = primaryReply.text
             if (text.isNotBlank()) {
                 displayText.value = text
                 handleResponseReceived(text)

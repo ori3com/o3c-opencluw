@@ -141,8 +141,8 @@ class PermissionRequester(private val activity: ComponentActivity) {
         AlertDialog.Builder(activity)
           .setTitle("Notification Access Required")
           .setMessage(
-            "OpenClaw needs notification access to read and manage your notifications. " +
-              "Tap \"Open Settings\", enable OpenClaw Assistant, then return to the app."
+            "Agent Voice needs notification access to read and manage your notifications. " +
+              "Tap \"Open Settings\", enable Agent Voice, then return to the app."
           )
           .setPositiveButton("Open Settings") { _, _ ->
             activity.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))

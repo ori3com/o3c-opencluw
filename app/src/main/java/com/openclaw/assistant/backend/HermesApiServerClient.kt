@@ -88,7 +88,16 @@ class HermesApiServerClient(
                     val healthReq = authed(Request.Builder().url(HermesUrl.healthUrl(baseUrl)).get()).build()
                     httpClient.newCall(healthReq).execute().use { h ->
                         if (h.isSuccessful) ConnectionTestResult(true, "OK (via /health)", System.currentTimeMillis() - started)
-                        else ConnectionTestResult(false, "HTTP ${h.code}")
+                        else {
+                            val rootHealthReq = authed(Request.Builder().url(HermesUrl.rootHealthUrl(baseUrl)).get()).build()
+                            httpClient.newCall(rootHealthReq).execute().use { root ->
+                                if (root.isSuccessful) {
+                                    ConnectionTestResult(true, "OK (via root /health)", System.currentTimeMillis() - started)
+                                } else {
+                                    ConnectionTestResult(false, "HTTP ${root.code}")
+                                }
+                            }
+                        }
                     }
                 } else ConnectionTestResult(false, "HTTP ${resp.code}")
             }

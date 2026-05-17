@@ -776,6 +776,8 @@ private fun HermesSetupGuideContent() {
     var url by rememberSaveable { mutableStateOf("") }
     var key by rememberSaveable { mutableStateOf("") }
     var model by rememberSaveable { mutableStateOf("hermes-agent") }
+    var useRunsApi by rememberSaveable { mutableStateOf(false) }
+    var useStreaming by rememberSaveable { mutableStateOf(true) }
     var status by rememberSaveable { mutableStateOf<String?>(null) }
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -783,15 +785,41 @@ private fun HermesSetupGuideContent() {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(stringResource(R.string.av_hermes_card_title), style = MaterialTheme.typography.titleMedium)
                 Text(stringResource(R.string.av_hermes_card_step1), style = MaterialTheme.typography.bodyMedium)
-                CommandBlock("pip install qrcode")
+                CommandBlock("curl -fsSL https://raw.githubusercontent.com/Codename-11/hermes-relay/main/install.sh | bash")
                 Text(stringResource(R.string.av_hermes_card_step2), style = MaterialTheme.typography.bodyMedium)
-                CommandBlock(
-                    "python hermes_pair.py \\\n" +
-                        "  --url http://192.168.1.42:8642 \\\n" +
-                        "  --key sk-..."
-                )
+                CommandBlock("hermes-pair")
                 Text(stringResource(R.string.av_hermes_card_step3), style = MaterialTheme.typography.bodyMedium)
                 Text(stringResource(R.string.av_hermes_card_note), style = MaterialTheme.typography.bodySmall)
+                OutlinedButton(
+                    onClick = {
+                        val options = GmsBarcodeScannerOptions.Builder()
+                            .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+                            .build()
+                        val scanner = GmsBarcodeScanning.getClient(context, options)
+                        scanner.startScan()
+                            .addOnSuccessListener { barcode ->
+                                val raw = barcode.rawValue?.trim().orEmpty()
+                                if (raw.startsWith("agentvoice://")) {
+                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(raw)))
+                                } else if (raw.startsWith("http://") || raw.startsWith("https://")) {
+                                    url = raw
+                                } else {
+                                    android.widget.Toast.makeText(
+                                        context,
+                                        context.getString(R.string.qr_scan_unavailable),
+                                        android.widget.Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                            .addOnFailureListener { /* scan cancelled or unavailable */ }
+                    },
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                ) {
+                    Icon(Icons.Default.QrCodeScanner, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.qr_scan_prompt))
+                }
             }
         }
 
@@ -822,6 +850,14 @@ private fun HermesSetupGuideContent() {
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = useRunsApi, onCheckedChange = { useRunsApi = it })
+                    Text(stringResource(R.string.av_hermes_use_runs_api))
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = useStreaming, onCheckedChange = { useStreaming = it })
+                    Text(stringResource(R.string.av_hermes_stream_responses))
+                }
                 Button(
                     enabled = url.startsWith("http://") || url.startsWith("https://"),
                     onClick = {
@@ -831,6 +867,8 @@ private fun HermesSetupGuideContent() {
                             baseUrl = url.trim(),
                             apiKeyOrToken = key.trim().ifEmpty { null },
                             modelName = model.ifBlank { "hermes-agent" },
+                            useRunsApi = useRunsApi,
+                            useStreaming = useStreaming,
                             isPrimary = repo.backends.value.isEmpty(),
                         )
                         repo.upsert(config)

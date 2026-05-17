@@ -12,7 +12,7 @@ class BackendManager private constructor(private val repo: BackendRepository) {
 
     val backends: StateFlow<List<AgentBackendConfig>> = repo.backends
 
-    /** Highest-priority backend, used by wake word / Voice Overlay / Wear. */
+    /** Highest-priority backend for non-Android-runtime clients. Android voice paths use [PrimaryBackendDispatcher]. */
     fun primaryClient(): AgentClient? = repo.primary?.let { AgentClientFactory.create(it) }
 
     /** Looks up an explicit backend (used by the Chat backend selector). */

@@ -114,7 +114,7 @@ private fun ImportScreen(uri: Uri?, onFinish: () -> Unit, onCancel: () -> Unit) 
                 repo.upsert(config)
                 if (config.isPrimary) repo.setPrimary(config.id)
                 onFinish()
-            }) { Text("Add & open AgentVoice") }
+            }) { Text("Add & open Agent Voice") }
             OutlinedButton(onClick = {
                 val repo = BackendRepository.getInstance(context)
                 val config = AgentBackendConfig(
@@ -178,4 +178,3 @@ internal fun parsePairingUri(uri: Uri): PairingPayload? {
         displayName = uri.getQueryParameter("n"),
     )
 }
-

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AgentVoice</string>
+    <string name="app_name">Agent Voice</string>
     <string name="notification_channel_name">Wake Word Service</string>
     <string name="notification_channel_description">Always-on voice detection service</string>
-    <string name="notification_title">AgentVoice</string>
+    <string name="notification_title">Agent Voice</string>
     <string name="agent_voice_subtitle">Voice client for OpenClaw and Hermes Agent</string>
     <string name="backends_title">Backends</string>
     <string name="backends_empty">No backends configured yet</string>
@@ -18,9 +18,9 @@
     <string name="bridge_approval_required">Agent Voice action approval</string>
     <string name="accessibility_bridge_description">Lets Agent Voice tap, swipe, type, and read on-screen content on behalf of a paired Hermes agent. Off by default. Every gesture requires an explicit, time-limited grant from you.</string>
 
-    <!-- AgentVoice setup wizard -->
-    <string name="av_setup_title">Set up AgentVoice</string>
-    <string name="av_setup_welcome_title">Welcome to AgentVoice</string>
+    <!-- Agent Voice setup wizard -->
+    <string name="av_setup_title">Set up Agent Voice</string>
+    <string name="av_setup_welcome_title">Welcome to Agent Voice</string>
     <string name="av_setup_welcome_body">A native Android voice client for Hermes Agent and OpenClaw. Setup takes about 30 seconds — tick the backends you have, scan a QR per backend, done.</string>
     <string name="av_setup_choose_title">Which backends will you use?</string>
     <string name="av_setup_choose_hint">Tick at least one. You can add more later in Settings → Backends.</string>
@@ -42,7 +42,7 @@
     <string name="av_hermes_card_title">Hermes Agent · scan a QR from your PC</string>
     <string name="av_hermes_card_step1">1. On the PC that runs your Hermes API Server, install the helper tool:</string>
     <string name="av_hermes_card_step2">2. Run it, pointing at your Hermes server:</string>
-    <string name="av_hermes_card_step3">3. It prints a QR. Open your phone\'s camera (or any QR scanner) and point at it. AgentVoice opens with the config pre-filled — tap Add.</string>
+    <string name="av_hermes_card_step3">3. It prints a QR. Scan it with this app, your camera, or any QR scanner. Agent Voice opens with the config pre-filled — tap Add.</string>
     <string name="av_hermes_card_note">The QR encodes an agentvoice:// deep link, so any QR scanner works — no separate scanner app needed.</string>
 
     <!-- Manual Hermes fallback -->
@@ -50,6 +50,8 @@
     <string name="av_hermes_manual_url">URL (http://host:8642)</string>
     <string name="av_hermes_manual_key">API key</string>
     <string name="av_hermes_manual_model">Model</string>
+    <string name="av_hermes_use_runs_api">Use Runs API</string>
+    <string name="av_hermes_stream_responses">Stream responses</string>
     <string name="av_hermes_manual_add">Add Hermes</string>
     <string name="av_hermes_manual_added">Added</string>
 
@@ -93,7 +95,7 @@
 
     <!-- Self-check -->
     <string name="av_selfcheck_title">Self-check</string>
-    <string name="av_selfcheck_intro">Health snapshot of AgentVoice. Tap Re-run after fixing anything below.</string>
+    <string name="av_selfcheck_intro">Health snapshot of Agent Voice. Tap Re-run after fixing anything below.</string>
     <string name="av_selfcheck_rerun">Re-run</string>
 
     <!-- Pairing -->
@@ -216,7 +218,7 @@
     <string name="google_app_setting_title">Google App Setting</string>
     <string name="google_app_setting_desc">Open Google App → Tap Profile → Settings → Google Assistant → General → Turn off \'Google Assistant\' if it still interferes.</string>
     <string name="refresh_binding_title">Refresh Binding</string>
-    <string name="refresh_binding_desc">If status is \'Active\' but it still won\'t work, try changing \'Digital assistant app\' to \'None\' and then back to \'OpenClaw Assistant\'.</string>
+    <string name="refresh_binding_desc">If status is \'Active\' but it still won\'t work, try changing \'Digital assistant app\' to \'None\' and then back to \'Agent Voice\'.</string>
     <string name="debug_force_start">Debug: Force Start Session</string>
     
     <!-- Settings Screen -->
@@ -587,7 +589,7 @@
 
     <!-- Setup Guide -->
     <string name="setup_guide_first_run">FIRST RUN</string>
-    <string name="setup_guide_title">OpenClaw Assistant\nMobile Setup</string>
+    <string name="setup_guide_title">Agent Voice\nMobile Setup</string>
     <string name="setup_guide_step_format">Step %1$d of %2$d</string>
     <string name="setup_guide_welcome_title">What You Get</string>
     <string name="setup_guide_welcome_bullet_1">Control the gateway and operator chat from one mobile surface.</string>

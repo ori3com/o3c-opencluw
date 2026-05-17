@@ -118,7 +118,7 @@ private fun SelfCheckScreen() {
     Scaffold(topBar = { TopAppBar(title = { Text(androidx.compose.ui.res.stringResource(com.openclaw.assistant.R.string.av_selfcheck_title)) }) }) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState())) {
             Text(
-                "Health snapshot of AgentVoice. Tap “Re-run” after fixing anything below.",
+                "Health snapshot of Agent Voice. Tap Re-run after fixing anything below.",
                 style = MaterialTheme.typography.bodyMedium,
             )
             Spacer(Modifier.height(12.dp))

@@ -2,6 +2,7 @@ package com.openclaw.assistant.backend
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import com.openclaw.assistant.api.OpenClawClient
 
 /**
  * Adapter wrappers exposing the existing OpenClaw clients through [AgentClient].
@@ -12,11 +13,9 @@ import kotlinx.coroutines.flow.flow
  * Agent Voice surface (Settings UI, Backend list, connection test) can treat all
  * backends uniformly.
  *
- * `sendMessage` deliberately throws — callers that target an OpenClaw backend
- * must continue to drive the legacy pipeline. Tests and the Mobile Bridge never
- * need this code path. When the UI migration lands, wire `sendMessage` to the
- * existing [com.openclaw.assistant.gateway.GatewaySession] /
- * [com.openclaw.assistant.api.OpenClawClient] here without breaking any caller.
+ * OpenClaw HTTP can send directly through [OpenClawClient]. OpenClaw Gateway is
+ * Android-runtime bound, so Primary/Chat dispatch routes it through
+ * [PrimaryBackendDispatcher] where a [android.content.Context] is available.
  */
 class OpenClawGatewayAdapter(override val config: AgentBackendConfig) : AgentClient {
     override suspend fun testConnection(): ConnectionTestResult {
@@ -29,20 +28,53 @@ class OpenClawGatewayAdapter(override val config: AgentBackendConfig) : AgentCli
         }
     }
     override fun sendMessage(messages: List<AgentMessage>, options: AgentSendOptions): Flow<AgentEvent> = flow {
-        emit(AgentEvent.Error("OpenClaw Gateway uses the native voice pipeline, not AgentClient.sendMessage"))
+        emit(AgentEvent.Error("OpenClaw Gateway requires PrimaryBackendDispatcher because it needs the Android NodeRuntime"))
     }
 }
 
 class OpenClawHttpAdapter(override val config: AgentBackendConfig) : AgentClient {
+    private val client = OpenClawClient()
+
     override suspend fun testConnection(): ConnectionTestResult {
         val url = config.baseUrl?.trim().orEmpty()
         return if (url.startsWith("http://") || url.startsWith("https://")) {
-            ConnectionTestResult(true, "Configured")
+            val started = System.currentTimeMillis()
+            client.testConnection(url, config.apiKeyOrToken).fold(
+                onSuccess = { ConnectionTestResult(true, "OK", System.currentTimeMillis() - started) },
+                onFailure = { ConnectionTestResult(false, it.message ?: it.javaClass.simpleName) },
+            )
         } else {
             ConnectionTestResult(false, "Invalid baseUrl")
         }
     }
+
     override fun sendMessage(messages: List<AgentMessage>, options: AgentSendOptions): Flow<AgentEvent> = flow {
-        emit(AgentEvent.Error("OpenClaw HTTP uses ChatController, not AgentClient.sendMessage"))
+        val url = config.baseUrl?.trim().orEmpty()
+        if (url.isBlank()) {
+            emit(AgentEvent.Error("OpenClaw HTTP baseUrl is not configured"))
+            return@flow
+        }
+        val text = messages.lastOrNull { it.role.equals("user", ignoreCase = true) }?.content.orEmpty()
+        if (text.isBlank()) {
+            emit(AgentEvent.Error("OpenClaw HTTP message is empty"))
+            return@flow
+        }
+        emit(AgentEvent.Started())
+        val result = client.sendMessage(
+            httpUrl = url,
+            message = text,
+            sessionId = options.sessionId ?: "agent-voice",
+            authToken = config.apiKeyOrToken?.takeIf { it.isNotBlank() },
+            agentId = options.extra["agentId"]?.takeIf { it.isNotBlank() },
+        )
+        result.fold(
+            onSuccess = { response ->
+                val finalText = response.getResponseText().orEmpty()
+                emit(AgentEvent.Completed(finalText))
+            },
+            onFailure = { error ->
+                emit(AgentEvent.Error(error.message ?: error.javaClass.simpleName, error))
+            },
+        )
     }
 }

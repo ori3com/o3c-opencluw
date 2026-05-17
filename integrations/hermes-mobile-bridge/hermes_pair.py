@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""hermes-pair — print a QR code that adds this Hermes server to AgentVoice.
+"""hermes-pair — print a QR code that adds this Hermes server to Agent Voice.
 
 Mirrors the `hermes-pair` pattern from hermes-relay
 (https://codename-11.github.io/hermes-relay/). Run on the PC that hosts your
 Hermes API Server, point it at the URL + API key, and it prints a QR. Scan
 that QR from your phone (the stock camera app on modern Android works) and
-AgentVoice opens with the connection pre-filled.
+Agent Voice opens with the connection pre-filled.
 
 Install:
     pip install qrcode
@@ -17,7 +17,7 @@ Usage:
                 --url https://relay.example.com \\
                 --key sk-xxxx --model hermes-agent --runs
 
-`--url` may be repeated. AgentVoice's HermesEndpointRacer probes them in
+`--url` may be repeated. Agent Voice's HermesEndpointRacer probes them in
 parallel on every connect and uses whichever responds first, so the same
 pairing works at home / Tailscale / public.
 """
@@ -72,7 +72,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     p.add_argument("--model", default="hermes-agent", help="Model name (default: hermes-agent)")
     p.add_argument("--runs", action="store_true", help="Default to Runs API mode instead of /v1/chat/completions")
     p.add_argument("--no-stream", dest="streaming", action="store_false", help="Disable streaming responses")
-    p.add_argument("--name", help="Backend display name shown in AgentVoice (default: 'Hermes Agent')")
+    p.add_argument("--name", help="Backend display name shown in Agent Voice (default: 'Hermes Agent')")
     p.set_defaults(streaming=True)
     args = p.parse_args(argv)
 
@@ -90,7 +90,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     print("\nOr open this link on the phone directly:")
     print(f"  {payload}\n")
     if not args.key:
-        print("note: no --key was provided, so AgentVoice will store this Hermes backend without auth.\n", file=sys.stderr)
+        print("note: no --key was provided, so Agent Voice will store this Hermes backend without auth.\n", file=sys.stderr)
     return 0
 
 

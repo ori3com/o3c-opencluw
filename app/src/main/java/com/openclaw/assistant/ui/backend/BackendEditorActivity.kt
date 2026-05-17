@@ -120,10 +120,10 @@ fun BackendEditorScreen(existingId: String?, onDone: () -> Unit) {
                     OutlinedTextField(value = modelName, onValueChange = { modelName = it }, label = { Text("Model (default hermes-agent)") }, modifier = Modifier.fillMaxWidth())
                     Spacer(Modifier.height(8.dp))
                     Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                        Checkbox(checked = useRunsApi, onCheckedChange = { useRunsApi = it }); Text("Use Runs API (otherwise /v1/chat/completions)")
+                        Checkbox(checked = useRunsApi, onCheckedChange = { useRunsApi = it }); Text(androidx.compose.ui.res.stringResource(com.openclaw.assistant.R.string.av_hermes_use_runs_api))
                     }
                     Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                        Checkbox(checked = useStreaming, onCheckedChange = { useStreaming = it }); Text("Stream responses")
+                        Checkbox(checked = useStreaming, onCheckedChange = { useStreaming = it }); Text(androidx.compose.ui.res.stringResource(com.openclaw.assistant.R.string.av_hermes_stream_responses))
                     }
                 }
                 BackendType.OPENCLAW_GATEWAY -> {

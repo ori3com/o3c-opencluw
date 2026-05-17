@@ -1,7 +1,10 @@
 package com.openclaw.assistant.backend
 
 import android.content.Context
+import com.openclaw.assistant.OpenClawApplication
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeout
 
 /**
  * Single entry point used by voice (wake word, Voice Overlay, Assistant
@@ -15,28 +18,61 @@ object PrimaryBackendDispatcher {
     data class Reply(val text: String, val sourceDisplayName: String)
 
     /**
-     * Returns:
-     *   - `null` if the user has not configured any Hermes Primary backend
-     *     (the caller should then fall back to the legacy OpenClaw HTTP
-     *     pipeline so existing setups behave exactly as before).
-     *   - A [Reply] with the assistant text if a Hermes Primary handled it.
-     *
-     * The function deliberately swallows nothing: callers must propagate
-     * thrown exceptions so they show up in the UI / wake-word error state.
+     * Sends to the selected enabled backend. If [backendId] is null, the
+     * persisted Primary is used. Returns null only when there is no configured
+     * target, allowing legacy installs without migrated backends to fall back to
+     * the original settings-driven pipeline.
+     */
+    suspend fun send(
+        context: Context,
+        userText: String,
+        backendId: String? = null,
+        sessionId: String? = null,
+        agentId: String? = null,
+    ): Reply? {
+        val manager = BackendManager.getInstance(context)
+        val backends = manager.backends.first()
+        val target = (backendId?.let { id -> backends.firstOrNull { it.id == id && it.enabled } }
+            ?: backends.firstOrNull { it.enabled && it.isPrimary })
+            ?: return null
+        return when (target.type) {
+            BackendType.HERMES_API_SERVER,
+            BackendType.OPENCLAW_HTTP -> sendViaAgentClient(target, userText, sessionId, agentId)
+            BackendType.OPENCLAW_GATEWAY -> sendViaGateway(context, target, userText)
+        }
+    }
+
+    suspend fun sendPrimary(
+        context: Context,
+        userText: String,
+        sessionId: String? = null,
+        agentId: String? = null,
+    ): Reply? = send(context, userText, backendId = null, sessionId = sessionId, agentId = agentId)
+
+    /**
+     * Backwards-compatible alias retained for older call sites during the
+     * migration. It now sends to any Primary backend, not only Hermes.
      */
     suspend fun sendIfHermesPrimary(
         context: Context,
         userText: String,
-    ): Reply? {
-        val manager = BackendManager.getInstance(context)
-        val primary = manager.backends.first().firstOrNull { it.enabled && it.isPrimary }
-            ?: return null
-        if (primary.type != BackendType.HERMES_API_SERVER) return null
-        val client = AgentClientFactory.create(primary)
+    ): Reply? = sendPrimary(context, userText)
+
+    private suspend fun sendViaAgentClient(
+        target: AgentBackendConfig,
+        userText: String,
+        sessionId: String?,
+        agentId: String?,
+    ): Reply {
+        val client = AgentClientFactory.create(target)
         val collected = StringBuilder()
         client.sendMessage(
             messages = listOf(AgentMessage.user(userText)),
-            options = AgentSendOptions(stream = primary.useStreaming),
+            options = AgentSendOptions(
+                sessionId = sessionId,
+                stream = target.useStreaming,
+                extra = mapOf("agentId" to agentId.orEmpty()),
+            ),
         ).collect { event ->
             when (event) {
                 is AgentEvent.TokenDelta -> collected.append(event.text)
@@ -49,6 +85,36 @@ object PrimaryBackendDispatcher {
                 else -> Unit
             }
         }
-        return Reply(text = collected.toString(), sourceDisplayName = primary.displayName)
+        return Reply(text = collected.toString(), sourceDisplayName = target.displayName)
+    }
+
+    private suspend fun sendViaGateway(
+        context: Context,
+        target: AgentBackendConfig,
+        userText: String,
+    ): Reply {
+        val runtime = (context.applicationContext as OpenClawApplication).nodeRuntime
+        if (!runtime.chatHealthOk.value) {
+            throw IllegalStateException("OpenClaw Gateway is not connected")
+        }
+
+        val assistantCountBefore = runtime.chatMessages.value.count { it.role == "assistant" }
+        runtime.sendChat(message = userText, thinking = "low", attachments = emptyList())
+
+        val responseText = try {
+            withTimeout(60_000L) {
+                runtime.chatMessages
+                    .first { messages -> messages.count { it.role == "assistant" } > assistantCountBefore }
+                    .lastOrNull { it.role == "assistant" }
+                    ?.content?.firstOrNull { it.type == "text" }?.text
+            }
+        } catch (_: TimeoutCancellationException) {
+            null
+        }
+
+        if (responseText.isNullOrBlank()) {
+            throw IllegalStateException("No response from OpenClaw Gateway")
+        }
+        return Reply(text = responseText, sourceDisplayName = target.displayName)
     }
 }

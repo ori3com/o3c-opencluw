@@ -1,6 +1,6 @@
 # hermes-pair (PC helper)
 
-The fastest way to add a Hermes backend to AgentVoice on your phone:
+The fastest way to add a Hermes backend to Agent Voice on your phone:
 
 ```bash
 pip install qrcode
@@ -10,9 +10,9 @@ python integrations/hermes-mobile-bridge/hermes_pair.py \
 ```
 
 It prints an ASCII QR encoding `agentvoice://hermes/setup?…`. Point your
-phone's stock camera at it — AgentVoice opens with the connection
+phone's stock camera at it; Agent Voice opens with the connection
 pre-filled, you tap **Add**, done. Multi-network: pass `--url` more than
-once (LAN + Tailscale + public) and AgentVoice will race them on every
+once (LAN + Tailscale + public) and Agent Voice will race them on every
 connect.
 
 ---

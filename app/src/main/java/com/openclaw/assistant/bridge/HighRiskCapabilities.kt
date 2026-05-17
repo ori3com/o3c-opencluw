@@ -191,7 +191,7 @@ object CameraCapturePhotoCapability : BridgeCapability {
     override val group = "camera"
     override val riskLevel = RiskLevel.HIGH
     override val requiresPermissions = listOf(Manifest.permission.CAMERA)
-    override fun isAvailable(context: Context) = permissionOk(context, Manifest.permission.CAMERA)
+    override fun isAvailable(context: Context) = false
     override suspend fun execute(context: Context, arguments: JsonObject): JsonObject = buildJsonObject {
         put("captured", false)
         put("reason", "interactive capture must be triggered from the Agent Voice UI")

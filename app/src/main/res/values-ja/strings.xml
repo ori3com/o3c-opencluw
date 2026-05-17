@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string name="app_name">AgentVoice</string>
+<string name="app_name">Agent Voice</string>
 <string name="notification_channel_name">ホットワードサービス</string>
 <string name="notification_channel_description">常時音声検知サービス</string>
-<string name="notification_title">OpenClaw Assistant</string>
+    <string name="notification_title">Agent Voice</string>
 <string name="notification_content">「%s」と話しかけてください</string>
 <string name="default_session_title_format">音声セッション %s</string>
 <string name="chat_session_title_format">チャット %s</string>
@@ -92,7 +92,7 @@
 <string name="google_app_setting_title">Googleアプリの設定</string>
 <string name="google_app_setting_desc">Googleアプリを開く → プロフィールをタップ → 設定 → Googleアシスタント → 一般 → 干渉が続く場合は「Googleアシスタント」をオフにする</string>
 <string name="refresh_binding_title">バインドの更新</string>
-<string name="refresh_binding_desc">ステータスが「有効」なのに動作しない場合、「デジタルアシスタントアプリ」を「なし」に変更してから「OpenClaw Assistant」に戻してみてください。</string>
+<string name="refresh_binding_desc">ステータスが「有効」なのに動作しない場合、「デジタルアシスタントアプリ」を「なし」に変更してから「Agent Voice」に戻してみてください。</string>
 <string name="debug_force_start">デバッグ: 強制セッション開始</string>
 <string name="connection">接続</string>
 <string name="voice">音声</string>
@@ -398,7 +398,7 @@
 <string name="up_to_date">最新バージョンです</string>
 <string name="update_action">更新</string>
 <string name="setup_guide_first_run">初回起動</string>
-<string name="setup_guide_title">OpenClaw Assistant\nセットアップガイド</string>
+<string name="setup_guide_title">Agent Voice\nセットアップガイド</string>
 <string name="setup_guide_step_format">ステップ %1$d / %2$d</string>
 <string name="setup_guide_welcome_title">できること</string>
 <string name="setup_guide_welcome_bullet_1">モバイルからGatewayの操作やAIとのチャットが可能です。</string>
@@ -563,9 +563,9 @@
     <string name="action_show_api_key">APIキーを表示</string>
     <string name="action_refresh_agents">エージェントを更新</string>
 
-    <!-- AgentVoice setup wizard -->
-    <string name="av_setup_title">AgentVoice のセットアップ</string>
-    <string name="av_setup_welcome_title">AgentVoice へようこそ</string>
+    <!-- Agent Voice setup wizard -->
+    <string name="av_setup_title">Agent Voice のセットアップ</string>
+    <string name="av_setup_welcome_title">Agent Voice へようこそ</string>
     <string name="av_setup_welcome_body">Hermes Agent と OpenClaw に対応した Android ネイティブ音声クライアントです。使う backend にチェックを入れ、それぞれの QR を読み取れば 30 秒ほどで完了します。</string>
     <string name="av_setup_choose_title">どの backend を使いますか?</string>
     <string name="av_setup_choose_hint">最低 1 つ選んでください。後から「設定 → Backends」で追加もできます。</string>
@@ -585,13 +585,15 @@
     <string name="av_hermes_card_title">Hermes Agent · PC の QR をスキャン</string>
     <string name="av_hermes_card_step1">1. Hermes API Server を動かしている PC でツールをインストール:</string>
     <string name="av_hermes_card_step2">2. サーバーを指定して実行:</string>
-    <string name="av_hermes_card_step3">3. QR が表示されます。スマホのカメラ(または任意の QR スキャナ)で読み取ると、AgentVoice が設定済みの状態で開きます。「追加」を押すだけです。</string>
+    <string name="av_hermes_card_step3">3. QR が表示されます。このアプリ、スマホのカメラ、または任意の QR スキャナで読み取ると、Agent Voice が設定済みの状態で開きます。「追加」を押すだけです。</string>
     <string name="av_hermes_card_note">QR は agentvoice:// のディープリンクなので、専用スキャナアプリは不要です。</string>
 
     <string name="av_hermes_manual_title">手入力で追加</string>
     <string name="av_hermes_manual_url">URL (http://host:8642)</string>
     <string name="av_hermes_manual_key">API キー</string>
     <string name="av_hermes_manual_model">モデル名</string>
+    <string name="av_hermes_use_runs_api">Runs API を使う</string>
+    <string name="av_hermes_stream_responses">レスポンスをストリーミングする</string>
     <string name="av_hermes_manual_add">Hermes を追加</string>
     <string name="av_hermes_manual_added">追加しました</string>
 
@@ -631,7 +633,7 @@
     <string name="av_bridge_play_warning">このビルドは Play 配布向けのため、Accessibility Bridge と SMS は無効化されています。</string>
 
     <string name="av_selfcheck_title">セルフチェック</string>
-    <string name="av_selfcheck_intro">AgentVoice の状態スナップショットです。問題を解消したら「再実行」を押してください。</string>
+    <string name="av_selfcheck_intro">Agent Voice の状態スナップショットです。問題を解消したら「再実行」を押してください。</string>
     <string name="av_selfcheck_rerun">再実行</string>
 
     <string name="av_pair_title">リモートをペアリング</string>
