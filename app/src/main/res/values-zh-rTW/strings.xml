@@ -581,7 +581,7 @@
 
     <string name="av_hermes_card_title">Hermes Agent · 掃描 PC 上的 QR</string>
     <string name="av_hermes_card_step1">1. 於執行 Hermes API Server 的 PC 安裝輔助工具:</string>
-    <string name="av_hermes_card_step2">2. 指定伺服器並執行:</string>
+    <string name="av_hermes_card_step2">2. 執行 helper。它會讀取本機 Hermes/OpenClaw 設定，偵測 Tailscale，然後顯示一個 QR:</string>
     <string name="av_hermes_card_step3">3. 工具會顯示 QR。以手機相機(或任何 QR 掃描器)掃描後,AgentVoice 會自動開啟並預填設定,點「新增」即可。</string>
     <string name="av_hermes_card_note">QR 編碼為 agentvoice:// 深連結,無須額外掃描 App。</string>
 

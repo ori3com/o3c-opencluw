@@ -582,7 +582,7 @@
 
     <string name="av_hermes_card_title">Hermes Agent · PC से QR स्कैन करें</string>
     <string name="av_hermes_card_step1">1. जिस PC पर Hermes API Server चल रहा है उस पर हेल्पर टूल इंस्टॉल करें:</string>
-    <string name="av_hermes_card_step2">2. अपने Hermes सर्वर की ओर इंगित करते हुए इसे चलाएँ:</string>
+    <string name="av_hermes_card_step2">2. helper चलाएँ। यह स्थानीय Hermes/OpenClaw सेटिंग पढ़ेगा, Tailscale का पता लगाएगा और एक QR दिखाएगा:</string>
     <string name="av_hermes_card_step3">3. एक QR दिखेगा। फ़ोन के कैमरे (या किसी भी QR स्कैनर) से उसे स्कैन करें। AgentVoice पहले से भरी कॉन्फ़िगरेशन के साथ खुलेगा। «जोड़ें» पर टैप करें।</string>
     <string name="av_hermes_card_note">QR में agentvoice:// डीप लिंक एन्कोड किया गया है, इसलिए कोई भी QR स्कैनर काम करता है। अलग ऐप की ज़रूरत नहीं।</string>
 

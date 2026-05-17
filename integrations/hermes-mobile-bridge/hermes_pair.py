@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """agentvoice-pair / hermes-pair — print one QR for Agent Voice setup.
 
-The helper is intentionally host-side and interactive:
+The helper is intentionally host-side and mostly automatic:
 
 1. Detect whether Hermes, OpenClaw, and Tailscale are installed locally.
-2. Ask which backends to include in this pairing QR.
-3. Optionally add Tailscale/VPN endpoint candidates for use away from home.
+2. Read common env vars, .env files, and config JSON files before asking.
+3. Include detected Hermes/OpenClaw/Tailscale candidates automatically.
 4. Print one Agent Voice setup JSON QR. Scanning that single QR in Agent Voice
    can configure both Hermes Agent and OpenClaw. A deep-link fallback is also
    printed for external camera apps.
@@ -18,13 +18,14 @@ import argparse
 import getpass
 import json
 import os
+import re
 import shutil
 import socket
 import subprocess
 import sys
 import urllib.parse
 from pathlib import Path
-from typing import Iterable, List, Optional
+from typing import Any, Iterable, List, Optional
 
 
 def truthy(value: str) -> bool:
@@ -45,6 +46,14 @@ def run(cmd: List[str], timeout: int = 8) -> Optional[str]:
         return out.stdout.strip()
     except Exception:
         return None
+
+
+def is_port_open(host: str, port: int, timeout: float = 0.25) -> bool:
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except Exception:
+        return False
 
 
 def first_lan_ip() -> Optional[str]:
@@ -70,38 +79,183 @@ def read_json(path: Path) -> dict:
         return {}
 
 
-def discover_hermes_url() -> Optional[str]:
-    for key in ("HERMES_API_SERVER_URL", "HERMES_URL", "AGENT_VOICE_HERMES_URL"):
+def unquote_env_value(value: str) -> str:
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in ("'", '"'):
+        return value[1:-1]
+    return value
+
+
+def read_env_file(path: Path) -> dict:
+    try:
+        lines = path.read_text().splitlines()
+    except Exception:
+        return {}
+    result = {}
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in stripped:
+            continue
+        if stripped.startswith("export "):
+            stripped = stripped[len("export "):].lstrip()
+        key, value = stripped.split("=", 1)
+        key = key.strip()
+        if re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", key):
+            result[key] = unquote_env_value(value.split(" #", 1)[0])
+    return result
+
+
+def iter_config_values(value: Any) -> Iterable[tuple[str, Any]]:
+    if isinstance(value, dict):
+        for key, child in value.items():
+            yield str(key), child
+            yield from iter_config_values(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from iter_config_values(child)
+
+
+def unique_append(values: List[str], value: Optional[str]) -> None:
+    if value and value not in values:
+        values.append(value)
+
+
+def readable_existing(paths: Iterable[Path]) -> List[Path]:
+    result = []
+    for path in paths:
+        try:
+            if path.expanduser().is_file():
+                result.append(path.expanduser())
+        except Exception:
+            pass
+    return result
+
+
+HERMES_JSON_PATHS = (
+    Path.home() / ".config" / "hermes" / "config.json",
+    Path.home() / ".config" / "hermes" / "settings.json",
+    Path.home() / ".hermes" / "config.json",
+    Path.home() / ".hermes" / "settings.json",
+    Path.home() / "Library" / "Application Support" / "Hermes" / "config.json",
+    Path.cwd() / "hermes.json",
+)
+
+HERMES_ENV_PATHS = (
+    Path.home() / ".config" / "hermes" / ".env",
+    Path.home() / ".hermes" / ".env",
+    Path.home() / ".hermes" / "env",
+    Path.cwd() / ".env",
+    Path.cwd() / ".env.local",
+    Path.cwd() / ".env.hermes",
+)
+
+OPENCLAW_JSON_PATHS = (
+    Path.home() / ".config" / "openclaw" / "config.json",
+    Path.home() / ".config" / "openclaw" / "settings.json",
+    Path.home() / ".openclaw" / "config.json",
+    Path.home() / ".openclaw" / "settings.json",
+    Path.home() / ".openclaw" / "gateway.json",
+    Path.cwd() / "openclaw.json",
+)
+
+OPENCLAW_ENV_PATHS = (
+    Path.home() / ".config" / "openclaw" / ".env",
+    Path.home() / ".openclaw" / ".env",
+    Path.cwd() / ".env",
+    Path.cwd() / ".env.local",
+    Path.cwd() / ".env.openclaw",
+)
+
+
+def env_lookup(keys: Iterable[str], envs: Iterable[dict] = ()) -> Optional[str]:
+    for key in keys:
         if os.environ.get(key):
             return os.environ[key].strip()
-    for path in (
-        Path.home() / ".config" / "hermes" / "config.json",
-        Path.home() / ".hermes" / "config.json",
-        Path.cwd() / "hermes.json",
-    ):
-        cfg = read_json(path)
-        for key in ("apiServerUrl", "api_server_url", "url", "baseUrl", "base_url"):
-            value = str(cfg.get(key, "")).strip()
-            if value.startswith(("http://", "https://")):
+    for env in envs:
+        for key in keys:
+            value = str(env.get(key, "")).strip()
+            if value:
                 return value
+    return None
+
+
+def json_lookup(paths: Iterable[Path], keys: set[str]) -> Optional[str]:
+    lowered = {key.lower() for key in keys}
+    for path in readable_existing(paths):
+        cfg = read_json(path)
+        for key, value in iter_config_values(cfg):
+            if key.lower() in lowered:
+                text = str(value).strip()
+                if text:
+                    return text
+    return None
+
+
+def discover_hermes_url() -> Optional[str]:
+    envs = [read_env_file(path) for path in readable_existing(HERMES_ENV_PATHS)]
+    value = env_lookup(
+        ("HERMES_API_SERVER_URL", "HERMES_URL", "AGENT_VOICE_HERMES_URL", "HERMES_BASE_URL"),
+        envs,
+    )
+    if value:
+        return value
+    value = json_lookup(
+        HERMES_JSON_PATHS,
+        {"apiServerUrl", "api_server_url", "url", "baseUrl", "base_url", "serverUrl", "server_url"},
+    )
+    if value and value.startswith(("http://", "https://")):
+        return value
     return None
 
 
 def discover_hermes_key() -> Optional[str]:
-    for key in ("HERMES_API_KEY", "HERMES_API_SERVER_KEY", "API_SERVER_KEY", "AGENT_VOICE_HERMES_KEY"):
-        if os.environ.get(key):
-            return os.environ[key].strip()
-    for path in (
-        Path.home() / ".config" / "hermes" / "config.json",
-        Path.home() / ".hermes" / "config.json",
-        Path.cwd() / "hermes.json",
-    ):
-        cfg = read_json(path)
-        for key in ("apiKey", "api_key", "apiServerKey", "api_server_key", "key", "token"):
-            value = str(cfg.get(key, "")).strip()
-            if value:
-                return value
-    return None
+    envs = [read_env_file(path) for path in readable_existing(HERMES_ENV_PATHS)]
+    return env_lookup(
+        ("HERMES_API_KEY", "HERMES_API_SERVER_KEY", "API_SERVER_KEY", "AGENT_VOICE_HERMES_KEY"),
+        envs,
+    ) or json_lookup(
+        HERMES_JSON_PATHS,
+        {"apiKey", "api_key", "apiServerKey", "api_server_key", "key", "token", "bearerToken"},
+    )
+
+
+def discover_hermes_model() -> Optional[str]:
+    envs = [read_env_file(path) for path in readable_existing(HERMES_ENV_PATHS)]
+    return env_lookup(("HERMES_MODEL", "HERMES_MODEL_NAME", "AGENT_VOICE_HERMES_MODEL"), envs) or json_lookup(
+        HERMES_JSON_PATHS,
+        {"model", "modelName", "model_name", "defaultModel", "default_model"},
+    )
+
+
+def discover_hermes_runs_api() -> Optional[bool]:
+    envs = [read_env_file(path) for path in readable_existing(HERMES_ENV_PATHS)]
+    value = env_lookup(("HERMES_USE_RUNS_API", "HERMES_RUNS_API", "AGENT_VOICE_HERMES_RUNS"), envs) or json_lookup(
+        HERMES_JSON_PATHS,
+        {"useRunsApi", "use_runs_api", "runsApi", "runs_api"},
+    )
+    if value is None:
+        return None
+    return truthy(value)
+
+
+def discover_hermes_streaming() -> Optional[bool]:
+    envs = [read_env_file(path) for path in readable_existing(HERMES_ENV_PATHS)]
+    value = env_lookup(("HERMES_STREAMING", "HERMES_USE_STREAMING", "AGENT_VOICE_HERMES_STREAMING"), envs) or json_lookup(
+        HERMES_JSON_PATHS,
+        {"streaming", "useStreaming", "use_streaming"},
+    )
+    if value is None:
+        return None
+    return truthy(value)
+
+
+def discover_openclaw_setup_code() -> Optional[str]:
+    envs = [read_env_file(path) for path in readable_existing(OPENCLAW_ENV_PATHS)]
+    value = env_lookup(("OPENCLAW_SETUP_CODE", "AGENT_VOICE_OPENCLAW_SETUP_CODE"), envs) or json_lookup(
+        OPENCLAW_JSON_PATHS,
+        {"setupCode", "setup_code", "gatewaySetupCode", "gateway_setup_code", "pairingCode", "pairing_code"},
+    )
+    return value.strip() if value else None
 
 
 def normalize_url(raw: str) -> str:
@@ -475,73 +629,121 @@ def main(argv: Optional[List[str]] = None) -> int:
     p = argparse.ArgumentParser(prog="agentvoice-pair", description=__doc__.splitlines()[0])
     p.add_argument("--url", action="append", default=[], help="Hermes URL. Repeat or comma-separate for LAN/Tailscale/public.")
     p.add_argument("--key", help="Hermes API key. Defaults to common env/config values, then prompts.")
-    p.add_argument("--model", default="hermes-agent", help="Hermes model name.")
+    p.add_argument("--model", help="Hermes model name. Defaults to detected config, then hermes-agent.")
     p.add_argument("--runs", action="store_true", help="Use Hermes Runs API mode.")
+    p.add_argument("--chat", dest="runs", action="store_false", help="Use Hermes Chat Completions mode.")
     p.add_argument("--no-stream", dest="streaming", action="store_false", help="Disable Hermes streaming responses.")
+    p.add_argument("--stream", dest="streaming", action="store_true", help="Enable Hermes streaming responses.")
     p.add_argument("--name", help="Hermes backend display name.")
     p.add_argument("--openclaw-setup-code", help="OpenClaw setup code from `openclaw qr --setup-code-only`.")
     p.add_argument("--hermes-only", action="store_true", help="Only include Hermes.")
     p.add_argument("--openclaw-only", action="store_true", help="Only include OpenClaw.")
-    p.add_argument("--yes", action="store_true", help="Accept defaults for prompts.")
-    p.set_defaults(streaming=True)
+    p.add_argument("--interactive", action="store_true", help="Ask before including detected candidates.")
+    p.add_argument("--yes", action="store_true", help="Accept detected defaults without prompts. This is the normal behavior.")
+    p.add_argument("--no-lan", action="store_true", help="Do not add LAN endpoint candidates automatically.")
+    p.add_argument("--no-tailscale", action="store_true", help="Do not add Tailscale endpoint candidates automatically.")
+    p.set_defaults(runs=None, streaming=None)
     args = p.parse_args(argv)
 
     hermes_installed = bool(shutil.which("hermes"))
     openclaw_installed = bool(shutil.which("openclaw"))
     tailscale_installed = bool(shutil.which("tailscale"))
+    hermes_port_open = is_port_open("127.0.0.1", 8642)
+    openclaw_port_open = is_port_open("127.0.0.1", 18789)
+    hermes_key = args.key or discover_hermes_key()
+    hermes_model = args.model or discover_hermes_model() or "hermes-agent"
+    hermes_runs = args.runs if args.runs is not None else (discover_hermes_runs_api() or False)
+    discovered_streaming = discover_hermes_streaming()
+    hermes_streaming = args.streaming if args.streaming is not None else (
+        True if discovered_streaming is None else discovered_streaming
+    )
+    discovered_hermes_url = discover_hermes_url()
+    discovered_openclaw_setup_code = args.openclaw_setup_code or discover_openclaw_setup_code()
 
     print("Agent Voice pairing helper")
-    print(f"  Hermes:   {'found' if hermes_installed else 'not found'}")
-    print(f"  OpenClaw: {'found' if openclaw_installed else 'not found'}")
+    print(f"  Hermes:   {'found' if hermes_installed else 'not found'}; API port {'open' if hermes_port_open else 'not detected'}")
+    print(f"  OpenClaw: {'found' if openclaw_installed else 'not found'}; gateway port {'open' if openclaw_port_open else 'not detected'}")
     print(f"  Tailscale:{' found' if tailscale_installed else ' not found'}")
+    if discovered_hermes_url:
+        print(f"  Hermes URL: detected {normalize_url(discovered_hermes_url)}")
+    if hermes_key:
+        print("  Hermes key: detected")
+    if discovered_openclaw_setup_code:
+        print("  OpenClaw setup code: detected")
     print()
 
-    include_hermes = not args.openclaw_only and (args.hermes_only or args.yes or ask_yes_no("Include Hermes Agent in this QR?", hermes_installed or bool(args.url)))
-    include_openclaw = not args.hermes_only and (args.openclaw_only or args.yes or ask_yes_no("Include OpenClaw in this QR?", openclaw_installed))
-    include_tailscale = tailscale_installed and (args.yes or ask_yes_no("Include Tailscale/VPN endpoint candidates?", True))
+    auto_hermes = bool(args.url or discovered_hermes_url or hermes_key or hermes_installed or hermes_port_open)
+    auto_openclaw = bool(discovered_openclaw_setup_code or openclaw_installed or openclaw_port_open)
+    if args.hermes_only:
+        include_hermes = True
+        include_openclaw = False
+    elif args.openclaw_only:
+        include_hermes = False
+        include_openclaw = True
+    elif args.interactive:
+        include_hermes = ask_yes_no("Include detected Hermes Agent settings in this QR?", auto_hermes)
+        include_openclaw = ask_yes_no("Include detected OpenClaw settings in this QR?", auto_openclaw)
+    else:
+        include_hermes = auto_hermes
+        include_openclaw = auto_openclaw
+    include_tailscale = tailscale_installed and not args.no_tailscale and (not args.interactive or ask_yes_no("Include Tailscale/VPN endpoint candidates?", True))
 
     hermes_urls: List[str] = []
-    hermes_key: Optional[str] = None
     if include_hermes:
         hermes_urls = comma_urls(args.url)
-        discovered_url = discover_hermes_url()
-        if discovered_url and discovered_url not in hermes_urls:
-            hermes_urls.append(normalize_url(discovered_url))
+        if discovered_hermes_url:
+            unique_append(hermes_urls, normalize_url(discovered_hermes_url))
+        if hermes_port_open:
+            unique_append(hermes_urls, "http://127.0.0.1:8642")
         if not hermes_urls:
-            raw = input("Hermes API Server URL [http://127.0.0.1:8642]: ").strip() or "http://127.0.0.1:8642"
-            hermes_urls.append(normalize_url(raw))
+            if hermes_installed:
+                unique_append(hermes_urls, "http://127.0.0.1:8642")
+            elif args.interactive:
+                raw = input("Hermes API Server URL [http://127.0.0.1:8642]: ").strip() or "http://127.0.0.1:8642"
+                unique_append(hermes_urls, normalize_url(raw))
         if include_tailscale:
             append_host_variant(hermes_urls, tailscale_ip(), 8642)
         lan = first_lan_ip()
-        if lan and (args.yes or ask_yes_no(f"Also include LAN URL http://{lan}:8642?", True)):
+        if lan and not args.no_lan and (not args.interactive or ask_yes_no(f"Also include LAN URL http://{lan}:8642?", True)):
             append_host_variant(hermes_urls, lan, 8642)
-        hermes_key = args.key or discover_hermes_key()
-        if hermes_key is None and not args.yes:
+        if hermes_key is None and args.interactive:
             hermes_key = getpass.getpass("Hermes API key (blank if none): ").strip() or None
+        if not hermes_urls:
+            print("Hermes was detected, but no URL could be resolved. Skipping Hermes; run with --interactive to enter it manually.", file=sys.stderr)
+            include_hermes = False
 
     openclaw_setup_code: Optional[str] = None
     if include_openclaw:
-        openclaw_setup_code = args.openclaw_setup_code or openclaw_setup_code_from_cli()
-        if not openclaw_setup_code and not args.yes:
+        openclaw_setup_code = discovered_openclaw_setup_code or openclaw_setup_code_from_cli()
+        if not openclaw_setup_code and args.interactive:
             print("Could not read OpenClaw setup code automatically.")
             print("Run `openclaw qr --setup-code-only` and paste the setup code below.")
             openclaw_setup_code = input("OpenClaw setup code: ").strip() or None
+        if not openclaw_setup_code:
+            print("OpenClaw was detected, but no setup code could be resolved. Skipping OpenClaw.", file=sys.stderr)
+            include_openclaw = False
+
+    if not include_hermes and not include_openclaw:
+        raise SystemExit(
+            "No pairable backend was found automatically. "
+            "Start Hermes/OpenClaw or run `agentvoice-pair --interactive` to enter values manually."
+        )
 
     qr_payload = build_pairing_json(
         hermes_urls=hermes_urls,
         hermes_key=hermes_key,
-        model=args.model,
-        use_runs_api=args.runs,
-        streaming=args.streaming,
+        model=hermes_model,
+        use_runs_api=hermes_runs,
+        streaming=hermes_streaming,
         display_name=args.name,
         openclaw_setup_code=openclaw_setup_code,
     )
     deep_link = build_pairing_uri(
         hermes_urls=hermes_urls,
         hermes_key=hermes_key,
-        model=args.model,
-        use_runs_api=args.runs,
-        streaming=args.streaming,
+        model=hermes_model,
+        use_runs_api=hermes_runs,
+        streaming=hermes_streaming,
         display_name=args.name,
         openclaw_setup_code=openclaw_setup_code,
     )

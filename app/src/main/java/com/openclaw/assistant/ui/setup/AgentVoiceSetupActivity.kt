@@ -52,8 +52,8 @@ import com.openclaw.assistant.backend.BackendRepository
  *   Step 2 — Tick the backends you want to set up (Hermes / OpenClaw)
  *   Step 3 — Per-backend setup, only for ticked options:
  *              • Agent Voice helper: run `agentvoice-pair` on the host. It
- *                detects Hermes, OpenClaw, and Tailscale, asks what to include,
- *                and prints one QR for this app to scan.
+ *                auto-detects Hermes, OpenClaw, and Tailscale, then prints one
+ *                QR for this app to scan.
  *   Step 4 — Done
  */
 class AgentVoiceSetupActivity : ComponentActivity() {

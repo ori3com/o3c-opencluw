@@ -582,7 +582,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 
     <string name="av_hermes_card_title">Hermes Agent · scannez un QR depuis votre PC</string>
     <string name="av_hermes_card_step1">1. Sur le PC qui héberge Hermes API Server, installez l\'outil :</string>
-    <string name="av_hermes_card_step2">2. Lancez-le en pointant vers votre serveur Hermes :</string>
+    <string name="av_hermes_card_step2">2. Lancez l’assistant. Il lit les réglages locaux Hermes/OpenClaw, détecte Tailscale, puis affiche un QR code :</string>
     <string name="av_hermes_card_step3">3. Un QR s\'affiche. Pointez l\'appareil photo (ou tout scanner QR) de votre téléphone vers lui. AgentVoice s\'ouvre avec la configuration pré-remplie — tapez sur Ajouter.</string>
     <string name="av_hermes_card_note">Le QR encode un lien profond agentvoice://, donc n\'importe quel scanner QR fonctionne — pas besoin d\'application séparée.</string>
 

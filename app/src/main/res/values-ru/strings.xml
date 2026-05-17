@@ -582,7 +582,7 @@
 
     <string name="av_hermes_card_title">Hermes Agent · отсканируйте QR с ПК</string>
     <string name="av_hermes_card_step1">1. На ПК с Hermes API Server установите вспомогательный инструмент:</string>
-    <string name="av_hermes_card_step2">2. Запустите его, указав ваш сервер Hermes:</string>
+    <string name="av_hermes_card_step2">2. Запустите helper. Он прочитает локальные настройки Hermes/OpenClaw, обнаружит Tailscale и покажет один QR:</string>
     <string name="av_hermes_card_step3">3. Будет показан QR. Наведите камеру телефона (или любой сканер QR) — AgentVoice откроется с уже заполненной конфигурацией, нажмите «Добавить».</string>
     <string name="av_hermes_card_note">QR кодирует deep link agentvoice://, поэтому подойдёт любой сканер — отдельное приложение не нужно.</string>
 

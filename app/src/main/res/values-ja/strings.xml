@@ -584,7 +584,7 @@
 
     <string name="av_hermes_card_title">Agent Voice · 1つのQRでセットアップ</string>
     <string name="av_hermes_card_step1">1. Hermes/OpenClaw を動かしているマシンでAgent Voiceのペアリングhelperをインストール:</string>
-    <string name="av_hermes_card_step2">2. helperを実行します。ローカルのHermes、OpenClaw、Tailscaleを確認し、含める対象を聞いてから1つのQRを表示します:</string>
+    <string name="av_hermes_card_step2">2. helperを実行します。ローカルのHermes/OpenClaw設定を読み取り、Tailscaleを検出して、1つのQRを表示します:</string>
     <string name="av_hermes_card_step3">3. Agent Voice内でQRを読み取ります。HermesとOpenClawを両方含めた場合は、両方の設定がまとめて適用されます。</string>
     <string name="av_hermes_card_note">外出先でも使う場合は、Tailscale/VPNを含める質問で「はい」を選んでください。LAN + Tailscale候補をQRに入れられます。</string>
     <string name="av_hermes_use_runs_api">Runs API を使う</string>

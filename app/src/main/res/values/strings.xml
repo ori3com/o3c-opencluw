@@ -41,7 +41,7 @@
     <!-- Hermes QR card -->
     <string name="av_hermes_card_title">Agent Voice · one QR setup</string>
     <string name="av_hermes_card_step1">1. On the machine running Hermes/OpenClaw, install the Agent Voice pairing helper:</string>
-    <string name="av_hermes_card_step2">2. Run the helper. It checks local Hermes, OpenClaw, and Tailscale, asks what to include, then prints one QR:</string>
+    <string name="av_hermes_card_step2">2. Run the helper. It reads local Hermes/OpenClaw settings, detects Tailscale, and prints one QR:</string>
     <string name="av_hermes_card_step3">3. Scan that QR in Agent Voice. Hermes and OpenClaw settings are applied together when both are included.</string>
     <string name="av_hermes_card_note">For use away from home, answer yes to the Tailscale/VPN prompt so the QR includes LAN + Tailscale endpoint candidates.</string>
     <string name="av_hermes_use_runs_api">Use Runs API</string>
