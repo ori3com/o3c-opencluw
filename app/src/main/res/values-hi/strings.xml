@@ -564,7 +564,7 @@
     <!-- AgentVoice setup wizard -->
     <string name="av_setup_title">AgentVoice सेट करें</string>
     <string name="av_setup_welcome_title">AgentVoice में आपका स्वागत है</string>
-    <string name="av_setup_welcome_body">Hermes Agent और OpenClaw के लिए Android नेटिव वॉइस क्लाइंट। सेटअप लगभग 30 सेकंड में — जो बैकएंड उपयोग करना हो उन्हें टिक करें, प्रत्येक के लिए QR स्कैन करें, हो गया।</string>
+    <string name="av_setup_welcome_body">Hermes Agent और OpenClaw के लिए Android नेटिव वॉइस क्लाइंट। जो बैकएंड उपयोग करना हो उन्हें टिक करें और प्रत्येक के लिए QR स्कैन करें। सेटअप लगभग 30 सेकंड में पूरा हो जाता है।</string>
     <string name="av_setup_choose_title">कौन-कौन से बैकएंड उपयोग करेंगे?</string>
     <string name="av_setup_choose_hint">कम से कम एक चुनें। बाद में «सेटिंग्स → Backends» से और जोड़ सकते हैं।</string>
     <string name="av_setup_get_started">शुरू करें</string>
@@ -583,8 +583,8 @@
     <string name="av_hermes_card_title">Hermes Agent · PC से QR स्कैन करें</string>
     <string name="av_hermes_card_step1">1. जिस PC पर Hermes API Server चल रहा है उस पर हेल्पर टूल इंस्टॉल करें:</string>
     <string name="av_hermes_card_step2">2. अपने Hermes सर्वर की ओर इंगित करते हुए इसे चलाएँ:</string>
-    <string name="av_hermes_card_step3">3. एक QR दिखेगा। फ़ोन के कैमरे (या किसी भी QR स्कैनर) से उस पर टैप करें। AgentVoice पहले से भरी कॉन्फ़िगरेशन के साथ खुलेगा — «जोड़ें» पर टैप करें।</string>
-    <string name="av_hermes_card_note">QR में agentvoice:// डीप लिंक एन्कोड किया गया है, इसलिए कोई भी QR स्कैनर काम करता है — अलग ऐप की ज़रूरत नहीं।</string>
+    <string name="av_hermes_card_step3">3. एक QR दिखेगा। फ़ोन के कैमरे (या किसी भी QR स्कैनर) से उसे स्कैन करें। AgentVoice पहले से भरी कॉन्फ़िगरेशन के साथ खुलेगा। «जोड़ें» पर टैप करें।</string>
+    <string name="av_hermes_card_note">QR में agentvoice:// डीप लिंक एन्कोड किया गया है, इसलिए कोई भी QR स्कैनर काम करता है। अलग ऐप की ज़रूरत नहीं।</string>
 
     <string name="av_hermes_manual_title">या मैन्युअल रूप से दर्ज करें</string>
     <string name="av_hermes_manual_url">URL (http://host:8642)</string>
@@ -611,7 +611,7 @@
     <string name="av_bridge_pair_remote">रिमोट जोड़ी बनाएँ</string>
     <string name="av_bridge_a11y_section">सुलभता ब्रिज</string>
     <string name="av_bridge_a11y_on">सेवा सक्रिय</string>
-    <string name="av_bridge_a11y_off">बंद — «सेटिंग्स → सुलभता» से चालू करें</string>
+    <string name="av_bridge_a11y_off">बंद है। «सेटिंग्स → सुलभता» से चालू करें।</string>
     <string name="av_bridge_open_a11y_settings">सुलभता सेटिंग्स खोलें</string>
     <string name="av_bridge_rotate">पुनः बनाएँ</string>
     <string name="av_bridge_copy">कॉपी करें</string>
@@ -643,7 +643,7 @@
 
     <string name="av_approval_intro">एक बाहरी एजेंट इसे चलाने की अनुमति माँग रहा है:</string>
     <string name="av_approval_args">तर्क:</string>
-    <string name="av_approval_destructive_warning">यह क्रिया विनाशकारी लगती है। हर बार पुष्टि माँगी जाएगी — पिछली अनुमति का पुनः उपयोग नहीं होगा।</string>
+    <string name="av_approval_destructive_warning">यह क्रिया विनाशकारी लगती है। हर बार पुष्टि माँगी जाएगी। पिछली अनुमति का पुनः उपयोग नहीं होगा।</string>
     <string name="av_approval_deny">अस्वीकार</string>
     <string name="av_approval_once">केवल एक बार अनुमति</string>
     <string name="av_approval_10min">अनुमति · 10 मिनट</string>

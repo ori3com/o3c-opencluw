@@ -224,21 +224,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                 val hasAnyBackend by backendRepo.backends.collectAsState()
                 var showSetupGuide by remember { mutableStateOf(!hasCompletedSetup && hasAnyBackend.isEmpty()) }
 
-                // Track whether the user has been offered (or dismissed) the
-                // AgentVoice wizard for this process — if they intentionally
-                // back out, we fall through to the legacy OpenClaw guide so
-                // they still have a path to a classic pairing setup.
-                var didOfferAgentVoiceWizard by rememberSaveable { mutableStateOf(false) }
-                if (showSetupGuide && !didOfferAgentVoiceWizard) {
-                    val ctx = LocalContext.current
-                    androidx.compose.runtime.LaunchedEffect(Unit) {
-                        didOfferAgentVoiceWizard = true
-                        ctx.startActivity(android.content.Intent(ctx, com.openclaw.assistant.ui.setup.AgentVoiceSetupActivity::class.java))
-                    }
-                    // While we hand off, render nothing to avoid flashing the
-                    // legacy OpenClaw guide behind the new wizard.
-                    androidx.compose.foundation.layout.Box(modifier = androidx.compose.ui.Modifier.fillMaxSize()) {}
-                } else if (showSetupGuide) {
+                if (showSetupGuide) {
                     SetupGuideScreen(
                         settings = settings,
                         onComplete = {

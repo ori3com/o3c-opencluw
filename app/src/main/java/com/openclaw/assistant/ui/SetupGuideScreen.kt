@@ -56,6 +56,9 @@ import androidx.core.content.ContextCompat
 import com.openclaw.assistant.OpenClawApplication
 import com.openclaw.assistant.R
 import com.openclaw.assistant.api.OpenClawClient
+import com.openclaw.assistant.backend.AgentBackendConfig
+import com.openclaw.assistant.backend.BackendRepository
+import com.openclaw.assistant.backend.BackendType
 import com.openclaw.assistant.data.SettingsRepository
 import com.openclaw.assistant.ui.components.ConnectionState
 import com.openclaw.assistant.ui.components.StatusIndicator
@@ -63,6 +66,7 @@ import com.openclaw.assistant.ui.GatewayTrustDialog
 import com.openclaw.assistant.ui.theme.*
 import com.openclaw.assistant.utils.GatewayConfigUtils
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.font.FontFamily
 import kotlinx.coroutines.launch
 
 private enum class SetupStep(val index: Int) {
@@ -73,6 +77,7 @@ private enum class SetupStep(val index: Int) {
 }
 
 private enum class ConnectionMode {
+    Hermes,
     SetupCode,
     Manual
 }
@@ -211,7 +216,7 @@ fun SetupGuideScreen(
     var currentStep by rememberSaveable { mutableStateOf(SetupStep.Welcome) }
 
     // UI State for Connection step
-    var connectionMode by rememberSaveable { mutableStateOf(ConnectionMode.SetupCode) }
+    var connectionMode by rememberSaveable { mutableStateOf(ConnectionMode.Hermes) }
     var setupCode by rememberSaveable { mutableStateOf("") }
     var manualHost by rememberSaveable { mutableStateOf(runtime.manualHost.value) }
     var manualPort by rememberSaveable { mutableStateOf(runtime.manualPort.value.toString()) }
@@ -301,7 +306,12 @@ fun SetupGuideScreen(
                     onAuthTokenChange = { authToken = it },
                     onManualPasswordChange = { manualPassword = it },
                     onNext = {
-                        // Apply settings
+                        if (connectionMode == ConnectionMode.Hermes) {
+                            currentStep = SetupStep.Permissions
+                            return@ConnectionStep
+                        }
+
+                        // Apply OpenClaw Gateway settings.
                         if (connectionMode == ConnectionMode.SetupCode) {
                             val decoded = GatewayConfigUtils.decodeGatewaySetupCode(setupCode)
                             Log.d("SetupGuide", "Setup code decoded: decoded=${decoded != null}, hasToken=${decoded?.token != null}, hasPassword=${decoded?.password != null}")
@@ -385,6 +395,7 @@ fun SetupGuideScreen(
                 )
                 SetupStep.FinalCheck -> FinalCheckStep(
                     settings = settings,
+                    isHermesSetup = connectionMode == ConnectionMode.Hermes,
                     onFinish = {
                         settings.hasCompletedSetup = true
                         onComplete()
@@ -397,7 +408,6 @@ fun SetupGuideScreen(
 
 @Composable
 private fun WelcomeStep(onNext: () -> Unit) {
-    val context = androidx.compose.ui.platform.LocalContext.current
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Column(
             modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
@@ -419,25 +429,6 @@ private fun WelcomeStep(onNext: () -> Unit) {
                 lineHeight = 40.sp
             )
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Agent Voice fast-path — for users coming here to set up Hermes,
-            // skip the OpenClaw pairing flow entirely.
-            androidx.compose.material3.OutlinedButton(
-                onClick = {
-                    context.startActivity(android.content.Intent(context, com.openclaw.assistant.ui.setup.AgentVoiceSetupActivity::class.java))
-                },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-            ) {
-                Text("Set up Agent Voice (Hermes-first) →")
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "If you're configuring OpenClaw with QR / pairing / TLS, continue below.",
-                style = MaterialTheme.typography.bodySmall,
-                color = OnboardingTextPrimary,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(modifier = Modifier.height(24.dp))
 
             BulletPoint(stringResource(R.string.setup_guide_welcome_bullet_1))
             BulletPoint(stringResource(R.string.setup_guide_welcome_bullet_2))
@@ -512,11 +503,20 @@ private fun ConnectionStep(
 
         // Mode Selector
         TabRow(
-            selectedTabIndex = if (mode == ConnectionMode.SetupCode) 0 else 1,
+            selectedTabIndex = when (mode) {
+                ConnectionMode.Hermes -> 0
+                ConnectionMode.SetupCode -> 1
+                ConnectionMode.Manual -> 2
+            },
             containerColor = Color.Transparent,
             contentColor = OnboardingGradientMid,
             divider = {}
         ) {
+            Tab(
+                selected = mode == ConnectionMode.Hermes,
+                onClick = { onModeChange(ConnectionMode.Hermes) },
+                text = { Text(stringResource(R.string.av_backend_hermes), color = if (mode == ConnectionMode.Hermes) OnboardingGradientMid else OnboardingTextSecondary) }
+            )
             Tab(
                 selected = mode == ConnectionMode.SetupCode,
                 onClick = { onModeChange(ConnectionMode.SetupCode) },
@@ -531,7 +531,9 @@ private fun ConnectionStep(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        if (mode == ConnectionMode.SetupCode) {
+        if (mode == ConnectionMode.Hermes) {
+            HermesSetupGuideContent()
+        } else if (mode == ConnectionMode.SetupCode) {
             val decodedSetupCode = GatewayConfigUtils.decodeGatewaySetupCode(setupCode)
             val isCodeValid = decodedSetupCode != null
             val hasBootstrapOnly = isCodeValid &&
@@ -749,10 +751,10 @@ private fun ConnectionStep(
         } // end of scrollable Column
 
         // --- 次へボタン・画面下部に固定 ---
-        val canContinue = if (mode == ConnectionMode.SetupCode) {
-            GatewayConfigUtils.decodeGatewaySetupCode(setupCode) != null
-        } else {
-            manualHost.isNotBlank() && manualPort.toIntOrNull() != null
+        val canContinue = when (mode) {
+            ConnectionMode.Hermes -> true
+            ConnectionMode.SetupCode -> GatewayConfigUtils.decodeGatewaySetupCode(setupCode) != null
+            ConnectionMode.Manual -> manualHost.isNotBlank() && manualPort.toIntOrNull() != null
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -765,6 +767,87 @@ private fun ConnectionStep(
             Text(stringResource(R.string.setup_guide_next), fontSize = 18.sp)
         }
     } // end of Column(fillMaxSize)
+}
+
+@Composable
+private fun HermesSetupGuideContent() {
+    val context = LocalContext.current
+    val repo = remember { BackendRepository.getInstance(context) }
+    var url by rememberSaveable { mutableStateOf("") }
+    var key by rememberSaveable { mutableStateOf("") }
+    var model by rememberSaveable { mutableStateOf("hermes-agent") }
+    var status by rememberSaveable { mutableStateOf<String?>(null) }
+
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.av_hermes_card_title), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.av_hermes_card_step1), style = MaterialTheme.typography.bodyMedium)
+                CommandBlock("pip install qrcode")
+                Text(stringResource(R.string.av_hermes_card_step2), style = MaterialTheme.typography.bodyMedium)
+                CommandBlock(
+                    "python hermes_pair.py \\\n" +
+                        "  --url http://192.168.1.42:8642 \\\n" +
+                        "  --key sk-..."
+                )
+                Text(stringResource(R.string.av_hermes_card_step3), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.av_hermes_card_note), style = MaterialTheme.typography.bodySmall)
+            }
+        }
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.av_hermes_manual_title), style = MaterialTheme.typography.titleSmall)
+                OutlinedTextField(
+                    value = url,
+                    onValueChange = { url = it },
+                    label = { Text(stringResource(R.string.av_hermes_manual_url)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    value = key,
+                    onValueChange = { key = it },
+                    label = { Text(stringResource(R.string.av_hermes_manual_key)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    value = model,
+                    onValueChange = { model = it },
+                    label = { Text(stringResource(R.string.av_hermes_manual_model)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+                Button(
+                    enabled = url.startsWith("http://") || url.startsWith("https://"),
+                    onClick = {
+                        val config = AgentBackendConfig(
+                            displayName = "Hermes Agent",
+                            type = BackendType.HERMES_API_SERVER,
+                            baseUrl = url.trim(),
+                            apiKeyOrToken = key.trim().ifEmpty { null },
+                            modelName = model.ifBlank { "hermes-agent" },
+                            isPrimary = repo.backends.value.isEmpty(),
+                        )
+                        repo.upsert(config)
+                        if (config.isPrimary) repo.setPrimary(config.id)
+                        status = context.getString(R.string.av_hermes_manual_added)
+                    },
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(stringResource(R.string.av_hermes_manual_add))
+                }
+                status?.let {
+                    Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -960,9 +1043,15 @@ private fun PermissionItem(
 @Composable
 private fun FinalCheckStep(
     settings: SettingsRepository,
+    isHermesSetup: Boolean,
     onFinish: () -> Unit
 ) {
     val context = LocalContext.current
+    if (isHermesSetup) {
+        HermesFinalStep(onFinish = onFinish)
+        return
+    }
+
     val runtime = remember(context.applicationContext) {
         (context.applicationContext as OpenClawApplication).nodeRuntime
     }
@@ -1212,6 +1301,70 @@ private fun FinalCheckStep(
             }
         }
     } // end of Column(fillMaxSize)
+}
+
+@Composable
+private fun HermesFinalStep(onFinish: () -> Unit) {
+    val context = LocalContext.current
+    val repo = remember { BackendRepository.getInstance(context) }
+    val backends by repo.backends.collectAsState()
+    val hermesBackends = backends.filter { it.type == BackendType.HERMES_API_SERVER }
+
+    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                imageVector = Icons.Default.CheckCircle,
+                contentDescription = null,
+                modifier = Modifier.size(72.dp),
+                tint = OnboardingGradientMid
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(R.string.av_setup_done_title),
+                style = MaterialTheme.typography.headlineSmall,
+                color = OnboardingTextPrimary,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            if (hermesBackends.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.av_setup_done_empty),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = OnboardingTextSecondary,
+                    textAlign = TextAlign.Center
+                )
+            } else {
+                hermesBackends.forEach { backend ->
+                    Text(
+                        text = backend.displayName,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = OnboardingTextPrimary,
+                        fontWeight = FontWeight.Medium
+                    )
+                    backend.baseUrl?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+                            color = OnboardingTextSecondary
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+        }
+
+        Button(
+            onClick = onFinish,
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Text(stringResource(R.string.setup_guide_finish), fontSize = 18.sp)
+        }
+    }
 }
 
 @Composable
