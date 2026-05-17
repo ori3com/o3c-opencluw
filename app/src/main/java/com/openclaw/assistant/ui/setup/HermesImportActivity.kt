@@ -39,10 +39,12 @@ import com.openclaw.assistant.utils.GatewayConfigUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 /**
- * Deep-link target for Agent Voice setup QR URIs. The desktop helper prints one
- * QR that can include Hermes plus OpenClaw settings:
+ * Deep-link target for external-camera Agent Voice setup links. App-internal QR
+ * scanning uses the JSON form directly, while this Activity keeps deep-link
+ * compatibility:
  *
  *   agentvoice://setup?hu=...&hk=...&oc=...
  *
@@ -175,6 +177,42 @@ internal fun parsePairingUri(uri: Uri): PairingPayload? {
     )
 }
 
+internal fun parsePairingPayload(raw: String): PairingPayload? {
+    val trimmed = raw.trim()
+    if (trimmed.startsWith("agentvoice://")) {
+        return runCatching { parsePairingUri(Uri.parse(trimmed)) }.getOrNull()
+    }
+    return runCatching {
+        val obj = JSONObject(trimmed)
+        if (obj.optString("type") != "agent_voice_setup") return@runCatching null
+        val hermesObj = obj.optJSONObject("hermes")
+        val hermes = hermesObj?.let { h ->
+            val urls = h.optJSONArray("urls")?.let { arr ->
+                (0 until arr.length()).mapNotNull { i ->
+                    arr.optString(i).takeIf { it.startsWith("http://") || it.startsWith("https://") }
+                }
+            }.orEmpty()
+            val base = urls.firstOrNull() ?: h.optString("url").takeIf { it.startsWith("http://") || it.startsWith("https://") }
+            base?.let {
+                HermesPairingPayload(
+                    baseUrl = it,
+                    secondaryUrls = urls.drop(1),
+                    apiKey = h.optString("key").trim().ifEmpty { null },
+                    modelName = h.optString("model").trim().ifEmpty { "hermes-agent" },
+                    useRunsApi = h.optBoolean("runs", false),
+                    streaming = h.optBoolean("streaming", true),
+                    displayName = h.optString("name").trim().ifEmpty { null },
+                )
+            }
+        }
+        val openClawSetupCode = obj.optJSONObject("openclaw")
+            ?.optString("setupCode")
+            ?.trim()
+            ?.ifEmpty { null }
+        if (hermes == null && openClawSetupCode == null) null else PairingPayload(hermes, openClawSetupCode)
+    }.getOrNull()
+}
+
 private fun parseHermesParams(uri: Uri, prefix: String): HermesPairingPayload? {
     val urls = uri.getQueryParameters("${prefix}u")
     val base = urls.firstOrNull()?.takeIf { it.startsWith("http://") || it.startsWith("https://") } ?: return null
@@ -202,7 +240,7 @@ private fun HermesPairingPayload.toBackendConfig(isPrimary: Boolean): AgentBacke
     isPrimary = isPrimary,
 )
 
-private fun applyPairingPayload(context: android.content.Context, payload: PairingPayload) {
+internal fun applyPairingPayload(context: android.content.Context, payload: PairingPayload) {
     val repo = BackendRepository.getInstance(context)
     payload.hermes?.let { hermes ->
         val config = hermes.toBackendConfig(isPrimary = repo.backends.value.isEmpty())

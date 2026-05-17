@@ -63,6 +63,8 @@ import com.openclaw.assistant.data.SettingsRepository
 import com.openclaw.assistant.ui.components.ConnectionState
 import com.openclaw.assistant.ui.components.StatusIndicator
 import com.openclaw.assistant.ui.GatewayTrustDialog
+import com.openclaw.assistant.ui.setup.applyPairingPayload
+import com.openclaw.assistant.ui.setup.parsePairingPayload
 import com.openclaw.assistant.ui.theme.*
 import com.openclaw.assistant.utils.GatewayConfigUtils
 import androidx.compose.ui.graphics.Brush
@@ -691,7 +693,7 @@ private fun HermesSetupGuideContent() {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(stringResource(R.string.av_hermes_card_title), style = MaterialTheme.typography.titleMedium)
                 Text(stringResource(R.string.av_hermes_card_step1), style = MaterialTheme.typography.bodyMedium)
-                CommandBlock("curl -fsSL https://raw.githubusercontent.com/Codename-11/hermes-relay/main/install.sh | bash")
+                CommandBlock("curl -fsSL https://raw.githubusercontent.com/yuga-hashimoto/openclaw-assistant/main/integrations/agentvoice-pair/install.sh | bash")
                 Text(stringResource(R.string.av_hermes_card_step2), style = MaterialTheme.typography.bodyMedium)
                 CommandBlock("agentvoice-pair")
                 Text(stringResource(R.string.av_hermes_card_step3), style = MaterialTheme.typography.bodyMedium)
@@ -705,7 +707,11 @@ private fun HermesSetupGuideContent() {
                         scanner.startScan()
                             .addOnSuccessListener { barcode ->
                                 val raw = barcode.rawValue?.trim().orEmpty()
-                                if (raw.startsWith("agentvoice://")) {
+                                val pairingPayload = parsePairingPayload(raw)
+                                if (pairingPayload != null) {
+                                    applyPairingPayload(context, pairingPayload)
+                                    status = context.getString(R.string.setup_code_applied)
+                                } else if (raw.startsWith("agentvoice://")) {
                                     context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(raw)))
                                 } else if (raw.startsWith("http://") || raw.startsWith("https://")) {
                                     url = raw

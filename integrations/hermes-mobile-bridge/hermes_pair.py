@@ -6,8 +6,9 @@ The helper is intentionally host-side and interactive:
 1. Detect whether Hermes, OpenClaw, and Tailscale are installed locally.
 2. Ask which backends to include in this pairing QR.
 3. Optionally add Tailscale/VPN endpoint candidates for use away from home.
-4. Print one `agentvoice://setup?...` QR. Scanning that single QR in Agent
-   Voice can configure both Hermes Agent and OpenClaw.
+4. Print one Agent Voice setup JSON QR. Scanning that single QR in Agent Voice
+   can configure both Hermes Agent and OpenClaw. A deep-link fallback is also
+   printed for external camera apps.
 
 It keeps the older Hermes-only CLI options for scripted use.
 """
@@ -171,12 +172,41 @@ def build_pairing_uri(
     return "agentvoice://setup?" + urllib.parse.urlencode(params)
 
 
+def build_pairing_json(
+    hermes_urls: List[str],
+    hermes_key: Optional[str],
+    model: Optional[str],
+    use_runs_api: bool,
+    streaming: bool,
+    display_name: Optional[str],
+    openclaw_setup_code: Optional[str],
+) -> str:
+    payload: dict = {"type": "agent_voice_setup", "version": 1}
+    if hermes_urls:
+        hermes: dict = {
+            "urls": hermes_urls,
+            "model": model or "hermes-agent",
+            "runs": use_runs_api,
+            "streaming": streaming,
+        }
+        if hermes_key:
+            hermes["key"] = hermes_key
+        if display_name:
+            hermes["name"] = display_name
+        payload["hermes"] = hermes
+    if openclaw_setup_code:
+        payload["openclaw"] = {"setupCode": openclaw_setup_code}
+    if len(payload) <= 2:
+        raise SystemExit("Nothing to pair. Include Hermes, OpenClaw, or both.")
+    return json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
+
+
 def render_qr(payload: str) -> bool:
     try:
         import qrcode  # type: ignore
     except ImportError:
         print("warning: QR support was not installed. Re-run:", file=sys.stderr)
-        print("  curl -fsSL https://raw.githubusercontent.com/Codename-11/hermes-relay/main/install.sh | bash", file=sys.stderr)
+        print("  curl -fsSL https://raw.githubusercontent.com/yuga-hashimoto/openclaw-assistant/main/integrations/agentvoice-pair/install.sh | bash", file=sys.stderr)
         return False
     qr = qrcode.QRCode(border=1)
     qr.add_data(payload)
@@ -251,7 +281,16 @@ def main(argv: Optional[List[str]] = None) -> int:
             print("Run `openclaw qr --setup-code-only` and paste the setup code below.")
             openclaw_setup_code = input("OpenClaw setup code: ").strip() or None
 
-    payload = build_pairing_uri(
+    qr_payload = build_pairing_json(
+        hermes_urls=hermes_urls,
+        hermes_key=hermes_key,
+        model=args.model,
+        use_runs_api=args.runs,
+        streaming=args.streaming,
+        display_name=args.name,
+        openclaw_setup_code=openclaw_setup_code,
+    )
+    deep_link = build_pairing_uri(
         hermes_urls=hermes_urls,
         hermes_key=hermes_key,
         model=args.model,
@@ -262,11 +301,13 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
 
     print("\nScan this one QR inside Agent Voice:\n")
-    rendered = render_qr(payload)
+    rendered = render_qr(qr_payload)
     if not rendered:
         print("(QR rendering unavailable on this machine.)")
-    print("\nOr open this link on the phone directly:")
-    print(f"  {payload}\n")
+    print("\nQR payload for Agent Voice in-app scanner:")
+    print(f"  {qr_payload}\n")
+    print("External-camera fallback link:")
+    print(f"  {deep_link}\n")
     return 0
 
 

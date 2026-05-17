@@ -168,12 +168,13 @@ private fun ConfigurePane() {
 @Composable
 private fun UnifiedPairingCard() {
     val context = LocalContext.current
+    var status by remember { mutableStateOf<String?>(null) }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(stringResource(R.string.av_hermes_card_title), style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
             Text(stringResource(R.string.av_hermes_card_step1), style = MaterialTheme.typography.bodyMedium)
-            CodeBlock("curl -fsSL https://raw.githubusercontent.com/Codename-11/hermes-relay/main/install.sh | bash")
+            CodeBlock("curl -fsSL https://raw.githubusercontent.com/yuga-hashimoto/openclaw-assistant/main/integrations/agentvoice-pair/install.sh | bash")
             Spacer(Modifier.height(8.dp))
             Text(stringResource(R.string.av_hermes_card_step2), style = MaterialTheme.typography.bodyMedium)
             CodeBlock("agentvoice-pair")
@@ -191,7 +192,11 @@ private fun UnifiedPairingCard() {
                         .startScan()
                         .addOnSuccessListener { barcode ->
                             val raw = barcode.rawValue?.trim().orEmpty()
-                            if (raw.startsWith("agentvoice://")) {
+                            val pairingPayload = parsePairingPayload(raw)
+                            if (pairingPayload != null) {
+                                applyPairingPayload(context, pairingPayload)
+                                status = context.getString(R.string.setup_code_applied)
+                            } else if (raw.startsWith("agentvoice://")) {
                                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(raw)))
                             } else {
                                 android.widget.Toast.makeText(
@@ -205,6 +210,10 @@ private fun UnifiedPairingCard() {
                 },
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(stringResource(R.string.qr_scan_prompt)) }
+            status?.let {
+                Spacer(Modifier.height(8.dp))
+                Text(it, style = MaterialTheme.typography.bodySmall)
+            }
         }
     }
 }

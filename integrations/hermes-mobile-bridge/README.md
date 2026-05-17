@@ -4,12 +4,12 @@ The fastest way to set up Agent Voice is to install the host-side helper, then
 scan the one QR it prints:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Codename-11/hermes-relay/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/yuga-hashimoto/openclaw-assistant/main/integrations/agentvoice-pair/install.sh | bash
 agentvoice-pair
 ```
 
 The helper checks whether Hermes, OpenClaw, and Tailscale are installed locally,
-asks which backends to include, and prints one `agentvoice://setup?...` QR.
+asks which backends to include, and prints one Agent Voice setup JSON QR.
 Scanning that single QR in Agent Voice can configure both Hermes and OpenClaw.
 If you want the phone to work outside your LAN, answer yes when it asks about
 Tailscale/VPN endpoint candidates.
