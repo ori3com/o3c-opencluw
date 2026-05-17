@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string name="app_name">AgentVoice</string>
+<string name="app_name">Agent Voice</string>
 <string name="notification_channel_name">जागो वर्ड सर्विस</string>
 <string name="notification_channel_description">हमेशा चालू रहने वाली ध्वनि पहचान सेवा</string>
 <string name="notification_title">ओपनक्ला सहायक</string>
@@ -403,13 +403,13 @@
 <string name="setup_guide_welcome_bullet_2">सेटअप कोड से कनेक्ट करें और सीएलआई कमांड के साथ पेयरिंग पुनर्प्राप्त करें।</string>
 <string name="setup_guide_welcome_bullet_3">केवल वही अनुमतियाँ और क्षमताएँ सक्षम करें जो आप चाहते हैं।</string>
 <string name="setup_guide_welcome_bullet_4">ऐप में प्रवेश करने से पहले वास्तविक कनेक्शन जांच के साथ समाप्त करें।</string>
-<string name="setup_guide_connection_title">गेटवे कनेक्शन</string>
+<string name="setup_guide_connection_title">बैकएंड कनेक्शन सेटअप</string>
 <string name="setup_guide_connection_guide_title">सेटअप कोड + गेटवे यूआरएल प्राप्त करें</string>
 <string name="setup_guide_connection_guide_cmd_1">इन्हें गेटवे होस्ट पर चलाएँ:</string>
 <string name="setup_guide_connection_guide_json_desc">`--json` `setupCode` और `gatewayUrl` प्रिंट करता है।</string>
 <string name="setup_guide_connection_discovery_desc">ऑटो यूआरएल खोज अभी तक वायर्ड नहीं है। एंड्रॉइड एमुलेटर `10.0.2.2` का उपयोग करता है; वास्तविक उपकरणों को LAN/टेलस्केल होस्ट की आवश्यकता होती है।</string>
-<string name="setup_guide_mode_setup_code">सेटअप कोड</string>
-<string name="setup_guide_mode_manual">नियमावली</string>
+<string name="setup_guide_mode_setup_code">OpenClaw</string>
+<string name="setup_guide_mode_manual">मैनुअल</string>
 <string name="setup_guide_setup_code_label">सेटअप कोड</string>
 <string name="setup_guide_setup_code_hint">`openclaw qr --setup-code-only` से कोड चिपकाएँ</string>
 <string name="setup_guide_manual_host">मेज़बान</string>
@@ -513,8 +513,8 @@
     <string name="qr_scan_prompt">Scan QR Code</string>
     <string name="qr_scan_unavailable">QR स्कैनिंग उपलब्ध नहीं है। कृपया Google Play Services अपडेट करें।</string>
     <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | jq -r \'.pending[] | select(.deviceId == \"%s\") | .requestId\')</string>
-    <string name="setup_guide_qr_scan_title">विकल्प 1: QR कोड स्कैन करें</string>
-    <string name="setup_guide_qr_scan_cmd_label">QR कोड दिखाने के लिए गेटवे होस्ट पर यह चलाएं:</string>
+    <string name="setup_guide_qr_scan_title">OpenClaw QR पेयरिंग</string>
+    <string name="setup_guide_qr_scan_cmd_label">इसे OpenClaw होस्ट पर चलाएँ, फिर इस ऐप में QR स्कैन करें:</string>
     <string name="setup_guide_code_input_title">विकल्प 2: सेटअप कोड दर्ज करें</string>
     <!-- Bottom Navigation Tabs -->
     <string name="tab_nav_home">होम</string>
@@ -561,10 +561,10 @@
     <string name="action_show_api_key">API कुंजी दिखाएं</string>
     <string name="action_refresh_agents">एजेंट अपडेट करें</string>
 
-    <!-- AgentVoice setup wizard -->
-    <string name="av_setup_title">AgentVoice सेट करें</string>
-    <string name="av_setup_welcome_title">AgentVoice में आपका स्वागत है</string>
-    <string name="av_setup_welcome_body">Hermes Agent और OpenClaw के लिए Android नेटिव वॉइस क्लाइंट। जो बैकएंड उपयोग करना हो उन्हें टिक करें और प्रत्येक के लिए QR स्कैन करें। सेटअप लगभग 30 सेकंड में पूरा हो जाता है।</string>
+    <!-- Agent Voice setup wizard -->
+    <string name="av_setup_title">Agent Voice सेट करें</string>
+    <string name="av_setup_welcome_title">Agent Voice में आपका स्वागत है</string>
+    <string name="av_setup_welcome_body">Hermes Agent और OpenClaw के लिए Android नेटिव वॉइस क्लाइंट। कंप्यूटर पर pairing helper चलाएँ, Hermes, OpenClaw और Tailscale को शामिल करना है या नहीं चुनें, फिर इस ऐप में एक QR स्कैन करें।</string>
     <string name="av_setup_choose_title">कौन-कौन से बैकएंड उपयोग करेंगे?</string>
     <string name="av_setup_choose_hint">कम से कम एक चुनें। बाद में «सेटिंग्स → Backends» से और जोड़ सकते हैं।</string>
     <string name="av_setup_get_started">शुरू करें</string>
@@ -576,15 +576,15 @@
 
     <string name="av_backend_hermes">Hermes Agent</string>
     <string name="av_backend_openclaw">OpenClaw</string>
-    <string name="av_backend_hermes_subtitle">आधुनिक Hermes API सर्वर। PC से QR स्कैन करके सेट करें।</string>
-    <string name="av_backend_openclaw_subtitle">क्लासिक OpenClaw Gateway / HTTP। अपने सर्वर पर «openclaw qr» चलाएँ।</string>
+    <string name="av_backend_hermes_subtitle">Hermes API Server। pairing helper Hermes को पहचानता है, स्थानीय config/env पढ़ता है, और उसे साझा QR में शामिल करता है।</string>
+    <string name="av_backend_openclaw_subtitle">OpenClaw Gateway / HTTP। वही helper OpenClaw को पहचानता है और उसके setup code को साझा QR में जोड़ता है।</string>
     <string name="av_backend_open_openclaw_setup">OpenClaw सेटअप खोलें</string>
 
-    <string name="av_hermes_card_title">Hermes Agent · PC से QR स्कैन करें</string>
-    <string name="av_hermes_card_step1">1. जिस PC पर Hermes API Server चल रहा है उस पर हेल्पर टूल इंस्टॉल करें:</string>
+    <string name="av_hermes_card_title">Agent Voice · एक QR से सेटअप</string>
+    <string name="av_hermes_card_step1">1. Hermes/OpenClaw चलाने वाली मशीन पर Agent Voice pairing helper इंस्टॉल करें:</string>
     <string name="av_hermes_card_step2">2. helper चलाएँ। यह स्थानीय Hermes/OpenClaw सेटिंग पढ़ेगा, Tailscale का पता लगाएगा और एक QR दिखाएगा:</string>
-    <string name="av_hermes_card_step3">3. एक QR दिखेगा। फ़ोन के कैमरे (या किसी भी QR स्कैनर) से उसे स्कैन करें। AgentVoice पहले से भरी कॉन्फ़िगरेशन के साथ खुलेगा। «जोड़ें» पर टैप करें।</string>
-    <string name="av_hermes_card_note">QR में agentvoice:// डीप लिंक एन्कोड किया गया है, इसलिए कोई भी QR स्कैनर काम करता है। अलग ऐप की ज़रूरत नहीं।</string>
+    <string name="av_hermes_card_step3">3. उस QR को Agent Voice में स्कैन करें। यदि Hermes और OpenClaw दोनों शामिल हैं, तो दोनों सेटिंग एक साथ लागू होंगी।</string>
+    <string name="av_hermes_card_note">घर से बाहर उपयोग के लिए Tailscale/VPN वाले सवाल में हाँ चुनें, ताकि QR में LAN + Tailscale endpoint candidates शामिल हों।</string>
 
     <string name="av_openclaw_card_title">OpenClaw · सर्वर से QR स्कैन करें</string>
     <string name="av_openclaw_card_step1">1. अपने OpenClaw सर्वर पर:</string>
@@ -622,7 +622,7 @@
     <string name="av_bridge_play_warning">यह बिल्ड Play वितरण के लिए कॉन्फ़िगर है: सुलभता ब्रिज और SMS छिपे हैं।</string>
 
     <string name="av_selfcheck_title">स्व-जाँच</string>
-    <string name="av_selfcheck_intro">AgentVoice की स्थिति का स्नैपशॉट। नीचे के किसी मुद्दे को ठीक करने के बाद «पुनः चलाएँ» दबाएँ।</string>
+    <string name="av_selfcheck_intro">Agent Voice की स्थिति का स्नैपशॉट। नीचे के किसी मुद्दे को ठीक करने के बाद «पुनः चलाएँ» दबाएँ।</string>
     <string name="av_selfcheck_rerun">पुनः चलाएँ</string>
 
     <string name="av_pair_title">रिमोट जोड़ी बनाएँ</string>

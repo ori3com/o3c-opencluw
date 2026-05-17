@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string name="app_name">AgentVoice</string>
+<string name="app_name">Agent Voice</string>
 <string name="notification_channel_name">Wake-Word-Dienst</string>
 <string name="notification_channel_description">Ständig verfügbarer Spracherkennungsdienst</string>
 <string name="notification_title">OpenClaw-Assistent</string>
@@ -402,13 +402,13 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
 <string name="setup_guide_welcome_bullet_2">Stellen Sie eine Verbindung mit dem Setup-Code her und stellen Sie die Kopplung mit CLI-Befehlen wieder her.</string>
 <string name="setup_guide_welcome_bullet_3">Aktivieren Sie nur die gewünschten Berechtigungen und Funktionen.</string>
 <string name="setup_guide_welcome_bullet_4">Führen Sie zum Abschluss eine echte Verbindungsprüfung durch, bevor Sie die App aufrufen.</string>
-<string name="setup_guide_connection_title">Gateway-Verbindung</string>
+<string name="setup_guide_connection_title">Backend-Verbindung</string>
 <string name="setup_guide_connection_guide_title">Rufen Sie den Setup-Code und die Gateway-URL ab</string>
 <string name="setup_guide_connection_guide_cmd_1">Führen Sie diese auf dem Gateway-Host aus:</string>
 <string name="setup_guide_connection_guide_json_desc">„--json“ gibt „setupCode“ und „gatewayUrl“ aus.</string>
 <string name="setup_guide_connection_discovery_desc">Die automatische URL-Erkennung ist noch nicht aktiviert. Der Android-Emulator verwendet „10.0.2.2“; Echte Geräte benötigen LAN/Tailscale-Host.</string>
-<string name="setup_guide_mode_setup_code">Setup-Code</string>
-<string name="setup_guide_mode_manual">Handbuch</string>
+<string name="setup_guide_mode_setup_code">OpenClaw</string>
+<string name="setup_guide_mode_manual">Manuell</string>
 <string name="setup_guide_setup_code_label">SETUP-CODE</string>
 <string name="setup_guide_setup_code_hint">Fügen Sie Code aus „openclaw qr --setup-code-only“ ein</string>
 <string name="setup_guide_manual_host">GASTGEBER</string>
@@ -512,8 +512,8 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="qr_scan_prompt">Scan QR Code</string>
     <string name="qr_scan_unavailable">QR-Scan ist nicht verfügbar. Bitte aktualisieren Sie die Google Play-Dienste.</string>
     <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | jq -r \'.pending[] | select(.deviceId == \"%s\") | .requestId\')</string>
-    <string name="setup_guide_qr_scan_title">Option 1: QR-Code scannen</string>
-    <string name="setup_guide_qr_scan_cmd_label">Führen Sie dies auf dem Gateway-Host aus, um einen QR-Code anzuzeigen:</string>
+    <string name="setup_guide_qr_scan_title">OpenClaw QR-Pairing</string>
+    <string name="setup_guide_qr_scan_cmd_label">Führen Sie dies auf dem OpenClaw-Host aus und scannen Sie den QR in dieser App:</string>
     <string name="setup_guide_code_input_title">Option 2: Setup-Code eingeben</string>
     <!-- Bottom Navigation Tabs -->
     <string name="tab_nav_home">Startseite</string>
@@ -560,10 +560,10 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="action_show_api_key">API-Schlüssel anzeigen</string>
     <string name="action_refresh_agents">Agenten aktualisieren</string>
 
-    <!-- AgentVoice setup wizard -->
-    <string name="av_setup_title">AgentVoice einrichten</string>
-    <string name="av_setup_welcome_title">Willkommen bei AgentVoice</string>
-    <string name="av_setup_welcome_body">Ein nativer Android-Sprachclient für Hermes Agent und OpenClaw. Die Einrichtung dauert etwa 30 Sekunden — gewünschte Backends auswählen, je einen QR scannen, fertig.</string>
+    <!-- Agent Voice setup wizard -->
+    <string name="av_setup_title">Agent Voice einrichten</string>
+    <string name="av_setup_welcome_title">Willkommen bei Agent Voice</string>
+    <string name="av_setup_welcome_body">Ein nativer Android-Sprachclient für Hermes Agent und OpenClaw. Führen Sie den Pairing-Helper auf dem Computer aus, wählen Sie Hermes, OpenClaw und Tailscale aus und scannen Sie einen einzigen QR in dieser App.</string>
     <string name="av_setup_choose_title">Welche Backends nutzt du?</string>
     <string name="av_setup_choose_hint">Mindestens eines auswählen. Weitere kannst du später unter Einstellungen → Backends hinzufügen.</string>
     <string name="av_setup_get_started">Loslegen</string>
@@ -575,15 +575,15 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
 
     <string name="av_backend_hermes">Hermes Agent</string>
     <string name="av_backend_openclaw">OpenClaw</string>
-    <string name="av_backend_hermes_subtitle">Moderner Hermes-API-Server. Einrichten per QR-Scan vom PC.</string>
-    <string name="av_backend_openclaw_subtitle">Klassisches OpenClaw Gateway / HTTP. Auf dem Server \"openclaw qr\" ausführen.</string>
+    <string name="av_backend_hermes_subtitle">Hermes API Server. Der Helper erkennt Hermes, liest lokale Konfiguration/env und nimmt es in den gemeinsamen QR auf.</string>
+    <string name="av_backend_openclaw_subtitle">OpenClaw Gateway / HTTP. Derselbe Helper erkennt OpenClaw und fügt den Setup-Code zum gemeinsamen QR hinzu.</string>
     <string name="av_backend_open_openclaw_setup">OpenClaw-Einrichtung öffnen</string>
 
-    <string name="av_hermes_card_title">Hermes Agent · QR vom PC scannen</string>
-    <string name="av_hermes_card_step1">1. Auf dem PC, der den Hermes-API-Server betreibt, das Helfer-Tool installieren:</string>
+    <string name="av_hermes_card_title">Agent Voice · Einrichtung mit einem QR</string>
+    <string name="av_hermes_card_step1">1. Auf dem Computer mit Hermes/OpenClaw den Agent Voice Pairing-Helper installieren:</string>
     <string name="av_hermes_card_step2">2. Starte den Helper. Er liest lokale Hermes/OpenClaw-Einstellungen, erkennt Tailscale und zeigt einen QR-Code:</string>
-    <string name="av_hermes_card_step3">3. Ein QR erscheint. Mit der Handy-Kamera (oder jedem QR-Scanner) scannen. AgentVoice öffnet sich mit vorausgefüllter Konfiguration — auf „Hinzufügen“ tippen.</string>
-    <string name="av_hermes_card_note">Der QR enthält einen agentvoice://-Deeplink — jeder QR-Scanner reicht, keine separate App nötig.</string>
+    <string name="av_hermes_card_step3">3. Scannen Sie diesen QR in Agent Voice. Wenn Hermes und OpenClaw enthalten sind, werden beide Einstellungen gemeinsam angewendet.</string>
+    <string name="av_hermes_card_note">Für Nutzung unterwegs die Tailscale/VPN-Frage mit Ja beantworten, damit der QR LAN- und Tailscale-Endpunkte enthält.</string>
 
     <string name="av_openclaw_card_title">OpenClaw · QR vom Server scannen</string>
     <string name="av_openclaw_card_step1">1. Auf deinem OpenClaw-Server:</string>
@@ -621,7 +621,7 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="av_bridge_play_warning">Dieser Build ist für Play konfiguriert: Accessibility-Bridge und SMS sind ausgeblendet.</string>
 
     <string name="av_selfcheck_title">Selbsttest</string>
-    <string name="av_selfcheck_intro">Zustands-Snapshot von AgentVoice. Nach Behebung eines Punktes „Erneut ausführen“ antippen.</string>
+    <string name="av_selfcheck_intro">Zustands-Snapshot von Agent Voice. Nach Behebung eines Punktes „Erneut ausführen“ antippen.</string>
     <string name="av_selfcheck_rerun">Erneut ausführen</string>
 
     <string name="av_pair_title">Remote pairen</string>

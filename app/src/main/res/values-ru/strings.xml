@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string name="app_name">AgentVoice</string>
+<string name="app_name">Agent Voice</string>
 <string name="notification_channel_name">Служба Wake Word</string>
 <string name="notification_channel_description">Постоянная служба распознавания голоса</string>
 <string name="notification_title">OpenClaw Assistant</string>
@@ -403,13 +403,13 @@
 <string name="setup_guide_welcome_bullet_2">Подключитесь с помощью кода настройки и восстановите сопряжение с помощью команд CLI.</string>
 <string name="setup_guide_welcome_bullet_3">Включите только те разрешения и возможности, которые вам нужны.</string>
 <string name="setup_guide_welcome_bullet_4">Завершите проверку реального соединения перед входом в приложение.</string>
-<string name="setup_guide_connection_title">Соединение шлюза</string>
+<string name="setup_guide_connection_title">Подключение backend</string>
 <string name="setup_guide_connection_guide_title">Получите код настройки + URL-адрес шлюза</string>
 <string name="setup_guide_connection_guide_cmd_1">Запустите их на узле шлюза:</string>
 <string name="setup_guide_connection_guide_json_desc">`--json` печатает `setupCode` и `gatewayUrl`.</string>
 <string name="setup_guide_connection_discovery_desc">Автоматическое обнаружение URL-адресов еще не подключено. Эмулятор Android использует `10.0.2.2`; реальным устройствам требуется хост LAN/Tailscale.</string>
-<string name="setup_guide_mode_setup_code">Код установки</string>
-<string name="setup_guide_mode_manual">Руководство</string>
+<string name="setup_guide_mode_setup_code">OpenClaw</string>
+<string name="setup_guide_mode_manual">Вручную</string>
 <string name="setup_guide_setup_code_label">КОД НАСТРОЙКИ</string>
 <string name="setup_guide_setup_code_hint">Вставьте код из `openclaw qr --setup-code-only`</string>
 <string name="setup_guide_manual_host">ХОСТ</string>
@@ -513,8 +513,8 @@
     <string name="qr_scan_prompt">Scan QR Code</string>
     <string name="qr_scan_unavailable">Сканирование QR недоступно. Пожалуйста, обновите сервисы Google Play.</string>
     <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | jq -r \'.pending[] | select(.deviceId == \"%s\") | .requestId\')</string>
-    <string name="setup_guide_qr_scan_title">Вариант 1: Сканировать QR-код</string>
-    <string name="setup_guide_qr_scan_cmd_label">Запустите это на хосте шлюза для отображения QR-кода:</string>
+    <string name="setup_guide_qr_scan_title">QR-сопряжение OpenClaw</string>
+    <string name="setup_guide_qr_scan_cmd_label">Запустите это на хосте OpenClaw, затем отсканируйте QR в этом приложении:</string>
     <string name="setup_guide_code_input_title">Вариант 2: Введите код настройки</string>
     <!-- Bottom Navigation Tabs -->
     <string name="tab_nav_home">Главная</string>
@@ -561,10 +561,10 @@
     <string name="action_show_api_key">Показать ключ API</string>
     <string name="action_refresh_agents">Обновить агентов</string>
 
-    <!-- AgentVoice setup wizard -->
-    <string name="av_setup_title">Настройка AgentVoice</string>
-    <string name="av_setup_welcome_title">Добро пожаловать в AgentVoice</string>
-    <string name="av_setup_welcome_body">Нативный голосовой клиент Android для Hermes Agent и OpenClaw. Настройка занимает около 30 секунд — отметьте нужные бэкенды, отсканируйте QR для каждого, готово.</string>
+    <!-- Agent Voice setup wizard -->
+    <string name="av_setup_title">Настройка Agent Voice</string>
+    <string name="av_setup_welcome_title">Добро пожаловать в Agent Voice</string>
+    <string name="av_setup_welcome_body">Нативный голосовой клиент Android для Hermes Agent и OpenClaw. Запустите helper сопряжения на компьютере, выберите Hermes, OpenClaw и Tailscale, затем отсканируйте один QR в этом приложении.</string>
     <string name="av_setup_choose_title">Какие бэкенды вы будете использовать?</string>
     <string name="av_setup_choose_hint">Выберите хотя бы один. Позже можно добавить ещё в «Настройки → Backends».</string>
     <string name="av_setup_get_started">Начать</string>
@@ -576,15 +576,15 @@
 
     <string name="av_backend_hermes">Hermes Agent</string>
     <string name="av_backend_openclaw">OpenClaw</string>
-    <string name="av_backend_hermes_subtitle">Современный сервер Hermes API. Настройка через сканирование QR с ПК.</string>
-    <string name="av_backend_openclaw_subtitle">Классический OpenClaw Gateway / HTTP. Запустите «openclaw qr» на сервере.</string>
+    <string name="av_backend_hermes_subtitle">Hermes API Server. Helper обнаруживает Hermes, читает локальную конфигурацию/env и добавляет его в общий QR.</string>
+    <string name="av_backend_openclaw_subtitle">OpenClaw Gateway / HTTP. Тот же helper обнаруживает OpenClaw и добавляет setup code в общий QR.</string>
     <string name="av_backend_open_openclaw_setup">Открыть настройку OpenClaw</string>
 
-    <string name="av_hermes_card_title">Hermes Agent · отсканируйте QR с ПК</string>
-    <string name="av_hermes_card_step1">1. На ПК с Hermes API Server установите вспомогательный инструмент:</string>
+    <string name="av_hermes_card_title">Agent Voice · настройка одним QR</string>
+    <string name="av_hermes_card_step1">1. На машине с Hermes/OpenClaw установите helper Agent Voice:</string>
     <string name="av_hermes_card_step2">2. Запустите helper. Он прочитает локальные настройки Hermes/OpenClaw, обнаружит Tailscale и покажет один QR:</string>
-    <string name="av_hermes_card_step3">3. Будет показан QR. Наведите камеру телефона (или любой сканер QR) — AgentVoice откроется с уже заполненной конфигурацией, нажмите «Добавить».</string>
-    <string name="av_hermes_card_note">QR кодирует deep link agentvoice://, поэтому подойдёт любой сканер — отдельное приложение не нужно.</string>
+    <string name="av_hermes_card_step3">3. Отсканируйте этот QR в Agent Voice. Если включены Hermes и OpenClaw, обе настройки применяются вместе.</string>
+    <string name="av_hermes_card_note">Для использования вне дома ответьте да на вопрос Tailscale/VPN, чтобы QR включал LAN + Tailscale endpoints.</string>
 
     <string name="av_openclaw_card_title">OpenClaw · отсканируйте QR с сервера</string>
     <string name="av_openclaw_card_step1">1. На сервере OpenClaw:</string>
@@ -622,7 +622,7 @@
     <string name="av_bridge_play_warning">Эта сборка предназначена для Play: мост спецвозможностей и SMS скрыты.</string>
 
     <string name="av_selfcheck_title">Самопроверка</string>
-    <string name="av_selfcheck_intro">Снимок состояния AgentVoice. После исправления нажмите «Повторить».</string>
+    <string name="av_selfcheck_intro">Снимок состояния Agent Voice. После исправления нажмите «Повторить».</string>
     <string name="av_selfcheck_rerun">Повторить</string>
 
     <string name="av_pair_title">Сопряжение с удалённым устройством</string>
