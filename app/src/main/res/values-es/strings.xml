@@ -693,6 +693,8 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="av_import_add_open">Añadir y abrir Agent Voice</string>
     <string name="av_import_no_hermes">Este QR no incluye un backend de Hermes.</string>
     <string name="av_import_test_hermes">Probar conexión Hermes</string>
+    <string name="av_import_test_openclaw">Probar conexión OpenClaw</string>
+    <string name="av_import_test_all">Probar conexiones</string>
     <string name="av_import_cancel">Cancelar</string>
     <string name="av_import_primary_url">URL principal</string>
     <string name="av_import_fallback_urls">URLs alternativas</string>
@@ -712,7 +714,7 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="av_import_auth_none">Sin autenticación incluida</string>
     <string name="av_import_openclaw_invalid">El setup code de OpenClaw en este QR no es válido.</string>
     <string name="av_pairing_review_title">Revisar configuración detectada</string>
-    <string name="av_pairing_review_desc">Confirma el contenido del QR antes de aplicarlo. Puedes editar URLs, claves, setup code y backend principal aquí.</string>
+    <string name="av_pairing_review_desc">Confirma el contenido del QR antes de aplicarlo. Puedes editar URLs, claves y setup code aquí.</string>
     <string name="av_pairing_display_name">Nombre visible</string>
     <string name="av_pairing_fallback_urls_hint">Una URL por línea, o separadas por comas.</string>
     <string name="av_pairing_runs_api">Usar Runs API</string>
@@ -741,4 +743,7 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="av_home_test_ok">Conectado: %1$s (%2$dms)</string>
     <string name="av_home_test_failed">Error: %1$s</string>
     <string name="permissions_for_agent_voice_title">Capacidades de Android</string>
+    <string name="av_home_disconnected">Desconectado</string>
+    <string name="av_home_test_ok_short">OK</string>
+    <string name="av_home_test_failed_short">Error</string>
 </resources>

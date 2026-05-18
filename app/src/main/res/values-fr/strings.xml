@@ -693,6 +693,8 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="av_import_add_open">Ajouter et ouvrir Agent Voice</string>
     <string name="av_import_no_hermes">Ce QR ne contient aucun backend Hermes.</string>
     <string name="av_import_test_hermes">Tester la connexion Hermes</string>
+    <string name="av_import_test_openclaw">Tester la connexion OpenClaw</string>
+    <string name="av_import_test_all">Tester les connexions</string>
     <string name="av_import_cancel">Annuler</string>
     <string name="av_import_primary_url">URL principale</string>
     <string name="av_import_fallback_urls">URLs de secours</string>
@@ -712,7 +714,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="av_import_auth_none">Aucune auth incluse</string>
     <string name="av_import_openclaw_invalid">Le setup code OpenClaw dans ce QR est invalide.</string>
     <string name="av_pairing_review_title">Vérifier la configuration détectée</string>
-    <string name="av_pairing_review_desc">Confirmez le contenu du QR avant de l\'appliquer. Vous pouvez modifier les URL, clés, setup code et le backend principal ici.</string>
+    <string name="av_pairing_review_desc">Confirmez le contenu du QR avant de l\'appliquer. Vous pouvez modifier les URL, clés et setup code ici.</string>
     <string name="av_pairing_display_name">Nom affiché</string>
     <string name="av_pairing_fallback_urls_hint">Une URL par ligne, ou séparées par des virgules.</string>
     <string name="av_pairing_runs_api">Utiliser Runs API</string>
@@ -741,4 +743,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="av_home_test_ok">Connecté : %1$s (%2$dms)</string>
     <string name="av_home_test_failed">Échec : %1$s</string>
     <string name="permissions_for_agent_voice_title">Fonctionnalités Android</string>
+    <string name="av_home_disconnected">Déconnecté</string>
+    <string name="av_home_test_ok_short">OK</string>
+    <string name="av_home_test_failed_short">Échec</string>
 </resources>

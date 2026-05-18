@@ -29,6 +29,14 @@ data class AgentBackendConfig(
      * network change, using whichever responds first.
      */
     val secondaryUrls: List<String> = emptyList(),
+    /**
+     * Hermes Relay endpoint used by high-privilege realtime channels such as
+     * Terminal. This is separate from [baseUrl], which targets the Hermes API
+     * server for chat/runs.
+     */
+    val relayUrl: String? = null,
+    val relayPairingCode: String? = null,
+    val relaySessionToken: String? = null,
 ) {
     val hermesMode: HermesMode
         get() = if (useRunsApi) HermesMode.RUNS_API else HermesMode.CHAT_COMPLETIONS

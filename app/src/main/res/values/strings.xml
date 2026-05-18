@@ -170,6 +170,8 @@
     <string name="av_import_add_open">Add and open Agent Voice</string>
     <string name="av_import_no_hermes">No Hermes backend in this QR.</string>
     <string name="av_import_test_hermes">Test Hermes connection</string>
+    <string name="av_import_test_openclaw">Test OpenClaw connection</string>
+    <string name="av_import_test_all">Test connections</string>
     <string name="av_import_cancel">Cancel</string>
     <string name="av_import_primary_url">Primary URL</string>
     <string name="av_import_fallback_urls">Fallback URLs</string>
@@ -218,6 +220,8 @@
     <string name="error_start_failed">Start error: %s</string>
     <string name="notification_text">Say \"%s\" to activate</string>
     <string name="settings_title">Settings</string>
+    <string name="settings_category_backend">Backend</string>
+    <string name="settings_category_chat">Chat</string>
     <string name="webhook_url_label">Server URL</string>
     <string name="webhook_url_hint">https://your-server</string>
     <string name="auth_token_label">Auth Token (optional)</string>
@@ -852,7 +856,7 @@
     <string name="error_mic_privacy_message">Your device\'s microphone privacy toggle is off. Enable it in Settings &gt; Privacy &gt; Microphone.</string>
 
     <string name="av_pairing_review_title">Review detected setup</string>
-    <string name="av_pairing_review_desc">Confirm what the QR contains before applying it. You can edit URLs, keys, setup codes, and the primary backend here.</string>
+    <string name="av_pairing_review_desc">Confirm what the QR contains before applying it. You can edit URLs, keys, and setup codes here.</string>
     <string name="av_pairing_display_name">Display name</string>
     <string name="av_pairing_fallback_urls_hint">One URL per line, or separate with commas.</string>
     <string name="av_pairing_runs_api">Use Runs API</string>
@@ -881,4 +885,7 @@
     <string name="av_home_test_ok">Connected: %1$s (%2$dms)</string>
     <string name="av_home_test_failed">Failed: %1$s</string>
     <string name="permissions_for_agent_voice_title">Android capabilities</string>
+    <string name="av_home_disconnected">Disconnected</string>
+    <string name="av_home_test_ok_short">OK</string>
+    <string name="av_home_test_failed_short">Failed</string>
 </resources>

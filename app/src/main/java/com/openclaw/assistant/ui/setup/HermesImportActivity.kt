@@ -3,7 +3,6 @@ package com.openclaw.assistant.ui.setup
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.compose.foundation.clickable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.rememberScrollState
@@ -23,7 +22,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -59,7 +57,9 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import java.net.HttpURLConnection
 import java.net.URI
+import java.net.URL
 import java.util.Base64
 import java.util.Locale
 
@@ -142,30 +142,49 @@ private fun ImportScreen(uri: Uri?, onFinish: () -> Unit, onCancel: () -> Unit) 
             Button(
                 onClick = {
                     editable?.toPairingPayload()?.let {
-                        applyPairingPayload(context, it, editable?.primaryBackendType())
+                        applyPairingPayload(context, it, null)
                     }
                     onFinish()
                 },
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(stringResource(R.string.av_import_add_open)) }
             Spacer(Modifier.height(8.dp))
-            OutlinedButton(
-                onClick = {
-                    val hermes = editable?.toPairingPayload()?.hermes
-                    if (hermes == null) {
-                        status = context.getString(R.string.av_import_no_hermes)
-                        return@OutlinedButton
+            editable?.toPairingPayload()?.let { draft ->
+                val canTestHermes = draft.hermes != null
+                val canTestOpenClaw = draft.openClawSetupCode != null
+                if (canTestHermes || canTestOpenClaw) {
+                    OutlinedButton(
+                        onClick = {
+                            scope.launch {
+                                status = context.getString(R.string.av_connection_testing)
+                                val results = mutableListOf<String>()
+                                draft.hermes?.let { hermes ->
+                                    val config = hermes.toBackendConfig(isPrimary = false)
+                                    val r = withContext(Dispatchers.IO) { AgentClientFactory.create(config).testConnection() }
+                                    results += "Hermes: ${if (r.ok) "✓" else "✗"} ${r.message}"
+                                }
+                                draft.openClawSetupCode?.let { code ->
+                                    val r = withContext(Dispatchers.IO) { testOpenClawSetupCode(code) }
+                                    results += "OpenClaw: ${if (r.ok) "✓" else "✗"} ${r.message}"
+                                }
+                                status = results.joinToString("\n")
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(
+                            stringResource(
+                                when {
+                                    canTestHermes && canTestOpenClaw -> R.string.av_import_test_all
+                                    canTestOpenClaw -> R.string.av_import_test_openclaw
+                                    else -> R.string.av_import_test_hermes
+                                }
+                            )
+                        )
                     }
-                    val config = hermes.toBackendConfig(isPrimary = false)
-                    scope.launch {
-                        status = context.getString(R.string.av_connection_testing)
-                        val r = withContext(Dispatchers.IO) { AgentClientFactory.create(config).testConnection() }
-                        status = if (r.ok) "✓ ${r.message}" else "✗ ${r.message}"
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(R.string.av_import_test_hermes)) }
-            Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(8.dp))
+                }
+            }
             OutlinedButton(onClick = onCancel, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.av_import_cancel)) }
         }
     }
@@ -216,6 +235,32 @@ private fun InfoRow(label: String, value: String) {
 
 private fun mask(s: String): String = if (s.length <= 6) "•".repeat(s.length) else s.take(3) + "…" + s.takeLast(2)
 
+private fun testOpenClawSetupCode(setupCode: String): ConnectionTestResult {
+    val decoded = GatewayConfigUtils.decodeGatewaySetupCode(setupCode)
+        ?: return ConnectionTestResult(false, "Invalid setup code")
+    val healthUrl = decoded.url.trim().trimEnd('/') + "/health"
+    val started = System.currentTimeMillis()
+    return try {
+        val conn = (URL(healthUrl).openConnection() as HttpURLConnection).apply {
+            requestMethod = "GET"
+            connectTimeout = 8_000
+            readTimeout = 8_000
+            instanceFollowRedirects = true
+        }
+        try {
+            if (conn.responseCode in 200..299) {
+                ConnectionTestResult(true, "OK", System.currentTimeMillis() - started)
+            } else {
+                ConnectionTestResult(false, "HTTP ${conn.responseCode}", System.currentTimeMillis() - started)
+            }
+        } finally {
+            conn.disconnect()
+        }
+    } catch (e: Throwable) {
+        ConnectionTestResult(false, e.message ?: e.javaClass.simpleName, System.currentTimeMillis() - started)
+    }
+}
+
 internal data class PairingPayload(
     val hermes: HermesPairingPayload?,
     val openClawSetupCode: String?,
@@ -231,11 +276,6 @@ internal data class HermesPairingPayload(
     val displayName: String?,
 )
 
-internal enum class PairingPrimaryChoice {
-    HERMES,
-    OPENCLAW,
-}
-
 internal data class EditablePairingPayload(
     val includeHermes: Boolean,
     val hermesBaseUrl: String,
@@ -247,15 +287,9 @@ internal data class EditablePairingPayload(
     val hermesDisplayName: String,
     val includeOpenClaw: Boolean,
     val openClawSetupCode: String,
-    val primaryChoice: PairingPrimaryChoice,
 )
 
 internal fun PairingPayload.toEditablePairingPayload(): EditablePairingPayload {
-    val primary = when {
-        hermes != null -> PairingPrimaryChoice.HERMES
-        openClawSetupCode != null -> PairingPrimaryChoice.OPENCLAW
-        else -> PairingPrimaryChoice.HERMES
-    }
     return EditablePairingPayload(
         includeHermes = hermes != null,
         hermesBaseUrl = hermes?.baseUrl.orEmpty(),
@@ -267,7 +301,6 @@ internal fun PairingPayload.toEditablePairingPayload(): EditablePairingPayload {
         hermesDisplayName = hermes?.displayName.orEmpty(),
         includeOpenClaw = openClawSetupCode != null,
         openClawSetupCode = openClawSetupCode.orEmpty(),
-        primaryChoice = primary,
     )
 }
 
@@ -294,11 +327,6 @@ internal fun EditablePairingPayload.toPairingPayload(): PairingPayload? {
     return if (hermes == null && openClaw == null) null else PairingPayload(hermes, openClaw)
 }
 
-internal fun EditablePairingPayload.primaryBackendType(): BackendType? = when (primaryChoice) {
-    PairingPrimaryChoice.HERMES -> if (includeHermes) BackendType.HERMES_API_SERVER else null
-    PairingPrimaryChoice.OPENCLAW -> if (includeOpenClaw) BackendType.OPENCLAW_GATEWAY else null
-}
-
 @Composable
 internal fun PairingPayloadReviewEditor(
     value: EditablePairingPayload,
@@ -314,12 +342,7 @@ internal fun PairingPayloadReviewEditor(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = value.includeHermes,
-                        onCheckedChange = {
-                            onChange(value.copy(
-                                includeHermes = it,
-                                primaryChoice = if (it) value.primaryChoice else PairingPrimaryChoice.OPENCLAW,
-                            ))
-                        },
+                        onCheckedChange = { onChange(value.copy(includeHermes = it)) },
                     )
                     Text(stringResource(R.string.av_backend_hermes), style = MaterialTheme.typography.titleMedium)
                 }
@@ -366,12 +389,7 @@ internal fun PairingPayloadReviewEditor(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = value.includeOpenClaw,
-                        onCheckedChange = {
-                            onChange(value.copy(
-                                includeOpenClaw = it,
-                                primaryChoice = if (it) value.primaryChoice else PairingPrimaryChoice.HERMES,
-                            ))
-                        },
+                        onCheckedChange = { onChange(value.copy(includeOpenClaw = it)) },
                     )
                     Text(stringResource(R.string.av_backend_openclaw), style = MaterialTheme.typography.titleMedium)
                 }
@@ -402,27 +420,6 @@ internal fun PairingPayloadReviewEditor(
             }
         }
 
-        if (value.includeHermes || value.includeOpenClaw) {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(stringResource(R.string.av_pairing_primary_title), style = MaterialTheme.typography.titleMedium)
-                    if (value.includeHermes) {
-                        PrimaryChoiceRow(
-                            selected = value.primaryChoice == PairingPrimaryChoice.HERMES,
-                            label = stringResource(R.string.av_pairing_primary_hermes),
-                            onClick = { onChange(value.copy(primaryChoice = PairingPrimaryChoice.HERMES)) },
-                        )
-                    }
-                    if (value.includeOpenClaw) {
-                        PrimaryChoiceRow(
-                            selected = value.primaryChoice == PairingPrimaryChoice.OPENCLAW,
-                            label = stringResource(R.string.av_pairing_primary_openclaw),
-                            onClick = { onChange(value.copy(primaryChoice = PairingPrimaryChoice.OPENCLAW)) },
-                        )
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -431,29 +428,6 @@ private fun ToggleRow(label: String, checked: Boolean, onCheckedChange: (Boolean
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
         Switch(checked = checked, onCheckedChange = onCheckedChange)
-    }
-}
-
-@Composable
-private fun PrimaryChoiceRow(selected: Boolean, label: String, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            RadioButton(selected = selected, onClick = onClick)
-            Text(
-                label,
-                style = MaterialTheme.typography.titleMedium,
-                color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-            )
-        }
     }
 }
 
@@ -679,6 +653,7 @@ internal fun applyPairingPayload(
             }
         runtime.setManualEnabled(true)
         settings.connectionType = SettingsRepository.CONNECTION_TYPE_GATEWAY
+        runtime.connectManual()
         val current = repo.backends.value
         val duplicates = current.filter { existing ->
             existing.type == BackendType.OPENCLAW_GATEWAY &&

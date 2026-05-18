@@ -240,6 +240,83 @@ def start_cloudflared_tunnel(local_url: str, label: str, timeout_seconds: float 
     return url
 
 
+def start_ngrok_tunnel(local_url: str, label: str, timeout_seconds: float = 35.0) -> Optional[str]:
+    ngrok = shutil.which("ngrok")
+    if not ngrok:
+        return None
+    existing = existing_ngrok_tunnel(local_url)
+    if existing:
+        print(f"Reusing existing public ngrok tunnel for {label}: {existing}")
+        return existing
+    log_path = Path(tempfile.gettempdir()) / f"agentvoice-{label}-ngrok.log"
+    log_file = log_path.open("w+")
+    proc = subprocess.Popen(
+        [ngrok, "http", local_url, "--log", "stdout", "--log-format", "json"],
+        stdout=log_file,
+        stderr=subprocess.STDOUT,
+        stdin=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+    deadline = time.monotonic() + timeout_seconds
+    pattern = re.compile(r"https://[A-Za-z0-9.-]+\.ngrok[^\"\\\s]*")
+    url = None
+    while time.monotonic() < deadline and proc.poll() is None:
+        log_file.flush()
+        try:
+            text = log_path.read_text(errors="ignore")
+        except Exception:
+            text = ""
+        match = pattern.search(text)
+        if match:
+            url = match.group(0)
+            break
+        time.sleep(0.5)
+    log_file.close()
+    if not url:
+        proc.terminate()
+        return None
+    pid_path = Path(tempfile.gettempdir()) / f"agentvoice-{label}-ngrok.pid"
+    pid_path.write_text(str(proc.pid))
+    print(f"Started temporary public ngrok tunnel for {label}: {url}")
+    print(f"  Stop later: kill {proc.pid}")
+    return url
+
+
+def existing_ngrok_tunnel(local_url: str) -> Optional[str]:
+    expected = normalize_url(local_url)
+    for port in range(4040, 4050):
+        try:
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/tunnels", timeout=0.75) as response:
+                if not (200 <= response.status < 300):
+                    continue
+                data = json.loads(response.read().decode("utf-8"))
+        except Exception:
+            continue
+        for tunnel in data.get("tunnels", []):
+            public_url = str(tunnel.get("public_url") or "")
+            config = tunnel.get("config") if isinstance(tunnel.get("config"), dict) else {}
+            addr = normalize_url(str(config.get("addr") or ""))
+            if public_url.startswith("https://") and addr == expected:
+                return public_url.rstrip("/")
+    return None
+
+
+def start_public_tunnel(local_url: str, label: str, provider: str = "auto") -> Optional[str]:
+    providers = [provider]
+    if provider == "auto":
+        providers = ["ngrok", "cloudflare"]
+    for item in providers:
+        if item == "ngrok":
+            url = start_ngrok_tunnel(local_url, label)
+        elif item == "cloudflare":
+            url = start_cloudflared_tunnel(local_url, label)
+        else:
+            raise SystemExit(f"Unknown tunnel provider: {provider}")
+        if url:
+            return url
+    return None
+
+
 def maybe_configure_hermes_remote_access(hermes_key: Optional[str], remote_host: Optional[str]) -> Optional[str]:
     if not remote_host or not sys.stdin.isatty():
         return hermes_key
@@ -613,14 +690,14 @@ def build_pairing_uri(
         if not url.startswith(("http://", "https://")):
             raise SystemExit(f"Hermes URL must start with http:// or https://: {url!r}")
         params.append(("hu", url))
-    if hermes_key:
-        params.append(("hk", hermes_key))
-    if model:
-        params.append(("hm", model))
     if hermes_urls:
+        if hermes_key:
+            params.append(("hk", hermes_key))
+        if model:
+            params.append(("hm", model))
         params.append(("hr", "1" if use_runs_api else "0"))
         params.append(("hs", "1" if streaming else "0"))
-    if display_name:
+    if hermes_urls and display_name:
         params.append(("hn", display_name))
     if openclaw_setup_code:
         params.append(("oc", openclaw_setup_code))
@@ -1038,8 +1115,14 @@ def main(argv: Optional[List[str]] = None) -> int:
     p.add_argument("--yes", action="store_true", help="Accept detected defaults without prompts. This is the normal behavior.")
     p.add_argument("--no-lan", action="store_true", help="Do not add LAN endpoint candidates automatically.")
     p.add_argument("--no-tailscale", action="store_true", help="Do not add Tailscale endpoint candidates automatically.")
-    p.add_argument("--public-tunnel", action="store_true", help="Start temporary Cloudflare Tunnel public URLs for detected local backends.")
+    p.add_argument("--public-tunnel", action="store_true", help="Start temporary public tunnel URLs for detected local backends.")
     p.add_argument("--no-public-tunnel", action="store_true", help="Do not offer temporary public tunnels.")
+    p.add_argument(
+        "--tunnel-provider",
+        choices=("auto", "ngrok", "cloudflare"),
+        default="auto",
+        help="Public tunnel provider for --public-tunnel. Auto prefers ngrok, then Cloudflare.",
+    )
     p.add_argument("--large-qr", action="store_true", help="Render a larger legacy ASCII QR instead of the compact terminal QR.")
     p.add_argument("--terminal-qr", action="store_true", help="Always print the terminal QR even when it does not fit the current terminal.")
     p.add_argument("--no-open", action="store_true", help="Do not open the generated QR image automatically.")
@@ -1094,11 +1177,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         not use_public_tunnel
         and not args.no_public_tunnel
         and sys.stdin.isatty()
-        and shutil.which("cloudflared")
+        and (shutil.which("ngrok") or shutil.which("cloudflared"))
         and (hermes_port_open or openclaw_port_open)
     ):
         use_public_tunnel = ask_yes_no(
-            "Start temporary public Cloudflare Tunnel URLs for phones that are not on your LAN/Tailscale?",
+            "Start temporary public tunnel URLs for phones that are not on your LAN/Tailscale?",
             False,
         )
 
@@ -1107,9 +1190,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     openclaw_public_url: Optional[str] = None
     if use_public_tunnel:
         if include_hermes and hermes_port_open:
-            hermes_public_url = start_cloudflared_tunnel("http://127.0.0.1:8642", "hermes")
+            hermes_public_url = start_public_tunnel("http://127.0.0.1:8642", "hermes", args.tunnel_provider)
         if include_openclaw and openclaw_port_open:
-            openclaw_public_url = start_cloudflared_tunnel("http://127.0.0.1:18789", "openclaw")
+            openclaw_public_url = start_public_tunnel("http://127.0.0.1:18789", "openclaw", args.tunnel_provider)
 
     if include_hermes:
         hermes_candidates: List[str] = []
@@ -1168,6 +1251,11 @@ def main(argv: Optional[List[str]] = None) -> int:
             openclaw_setup_code = setup_code_with_url(openclaw_setup_code, openclaw_public_url)
         elif openclaw_public_url and openclaw_setup_code:
             print(f"Skipping OpenClaw public tunnel because /health is not reachable yet: {openclaw_public_url}", file=sys.stderr)
+            if args.public_tunnel:
+                openclaw_setup_code = None
+        elif args.public_tunnel and openclaw_port_open:
+            print("OpenClaw public tunnel could not be created; refusing to emit a phone QR with a loopback/Tailscale-only URL.", file=sys.stderr)
+            openclaw_setup_code = None
         if not openclaw_setup_code and args.interactive:
             print("Could not read OpenClaw setup code automatically.")
             print("Run `openclaw qr --setup-code-only` and paste the setup code below.")

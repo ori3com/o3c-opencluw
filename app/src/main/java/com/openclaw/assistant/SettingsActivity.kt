@@ -10,10 +10,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.layout.*
@@ -33,6 +29,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -420,6 +417,12 @@ fun SettingsScreen(
         SettingsRepository.WAKE_WORD_CUSTOM to stringResource(R.string.wake_word_custom)
     )
 
+    var selectedSettingsCategoryName by rememberSaveable { mutableStateOf(SettingsCategory.Backend.name) }
+    val selectedSettingsCategory = remember(selectedSettingsCategoryName) {
+        runCatching { SettingsCategory.valueOf(selectedSettingsCategoryName) }
+            .getOrDefault(SettingsCategory.Backend)
+    }
+
     var backendSettingsTabIndex by rememberSaveable { mutableStateOf(0) }
     var openClawTabIndex by remember {
         mutableStateOf(if (connectionType == SettingsRepository.CONNECTION_TYPE_GATEWAY) 0 else 1)
@@ -534,11 +537,20 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                 }
 
+            SettingsCategoryMenu(
+                selected = selectedSettingsCategory,
+                onSelected = { selectedSettingsCategoryName = it.name }
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             // === UNIFIED CONNECTION SECTION ===
+            if (selectedSettingsCategory == SettingsCategory.Backend) {
             CollapsibleSection(
                 title = stringResource(R.string.connection),
                 subtitle = if (connectionType == SettingsRepository.CONNECTION_TYPE_GATEWAY && nodeConnected) nodeStatus.ifBlank { stringResource(R.string.connected) } else "",
-                initiallyExpanded = true
+                initiallyExpanded = true,
+                collapsible = false,
             ) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -1049,9 +1061,11 @@ fun SettingsScreen(
             } // end CollapsibleSection for Unified Connection
 
             Spacer(modifier = Modifier.height(24.dp))
+            }
 
             // === VOICE SECTION ===
-            CollapsibleSection(title = stringResource(R.string.voice)) {
+            if (selectedSettingsCategory == SettingsCategory.Voice) {
+            CollapsibleSection(title = stringResource(R.string.voice), collapsible = false) {
 
             // --- Voice Output card ---
             Text(
@@ -1318,7 +1332,14 @@ fun SettingsScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            } // end CollapsibleSection for Voice
+
+            Spacer(modifier = Modifier.height(24.dp))
+            }
+
+            // === CHAT SECTION ===
+            if (selectedSettingsCategory == SettingsCategory.Chat) {
+            CollapsibleSection(title = stringResource(R.string.chat_settings_title), collapsible = false) {
 
             // --- Conversation card ---
             Text(
@@ -1390,12 +1411,14 @@ fun SettingsScreen(
                 }
             }
 
-            } // end CollapsibleSection for Voice
+            } // end CollapsibleSection for Chat
 
             Spacer(modifier = Modifier.height(24.dp))
+            }
 
             // === WAKE WORD SECTION ===
-            CollapsibleSection(title = stringResource(R.string.wake_word)) {
+            if (selectedSettingsCategory == SettingsCategory.WakeWord) {
+            CollapsibleSection(title = stringResource(R.string.wake_word), collapsible = false) {
 
 
 
@@ -1565,9 +1588,11 @@ fun SettingsScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+            }
 
             // === LANGUAGE SECTION ===
-            CollapsibleSection(title = stringResource(R.string.language_section)) {
+            if (selectedSettingsCategory == SettingsCategory.Language) {
+            CollapsibleSection(title = stringResource(R.string.language_section), collapsible = false) {
 
             // --- Display Language card ---
             Card(
@@ -1707,8 +1732,10 @@ fun SettingsScreen(
             } // end CollapsibleSection for Language
 
             Spacer(modifier = Modifier.height(24.dp))
+            }
 
             // === SUPPORT SECTION ===
+            if (selectedSettingsCategory == SettingsCategory.Support) {
             CollapsibleSection(title = stringResource(R.string.support_section), collapsible = false) {
 
             Card(
@@ -1823,6 +1850,7 @@ fun SettingsScreen(
             } // end CollapsibleSection for Support
 
             Spacer(modifier = Modifier.height(32.dp))
+            }
         }
     }
 
@@ -1832,6 +1860,83 @@ data class TestResult(
     val success: Boolean,
     val message: String
 )
+
+private enum class SettingsCategory {
+    Backend,
+    Chat,
+    Voice,
+    WakeWord,
+    Language,
+    Support,
+}
+
+@Composable
+private fun SettingsCategoryMenu(
+    selected: SettingsCategory,
+    onSelected: (SettingsCategory) -> Unit,
+) {
+    val rows = listOf(
+        listOf(SettingsCategory.Backend, SettingsCategory.Chat, SettingsCategory.Voice),
+        listOf(SettingsCategory.WakeWord, SettingsCategory.Language, SettingsCategory.Support),
+    )
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        rows.forEach { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                row.forEach { category ->
+                    SettingsCategoryButton(
+                        category = category,
+                        selected = selected == category,
+                        onClick = { onSelected(category) },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SettingsCategoryButton(
+    category: SettingsCategory,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val label = when (category) {
+        SettingsCategory.Backend -> stringResource(R.string.settings_category_backend)
+        SettingsCategory.Chat -> stringResource(R.string.settings_category_chat)
+        SettingsCategory.Voice -> stringResource(R.string.voice)
+        SettingsCategory.WakeWord -> stringResource(R.string.wake_word)
+        SettingsCategory.Language -> stringResource(R.string.language_section)
+        SettingsCategory.Support -> stringResource(R.string.support_section)
+    }
+    val icon = when (category) {
+        SettingsCategory.Backend -> Icons.Default.Storage
+        SettingsCategory.Chat -> Icons.Default.Chat
+        SettingsCategory.Voice -> Icons.Default.RecordVoiceOver
+        SettingsCategory.WakeWord -> Icons.Default.Mic
+        SettingsCategory.Language -> Icons.Default.Language
+        SettingsCategory.Support -> Icons.Default.HelpOutline
+    }
+
+    if (selected) {
+        Button(onClick = onClick, modifier = modifier.heightIn(min = 48.dp)) {
+            Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        }
+    } else {
+        OutlinedButton(onClick = onClick, modifier = modifier.heightIn(min = 48.dp)) {
+            Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        }
+    }
+}
 
 @Composable
 private fun BackendSummaryBlock(

@@ -692,6 +692,8 @@
     <string name="av_import_add_open">新增並開啟 Agent Voice</string>
     <string name="av_import_no_hermes">此 QR 不包含 Hermes 後端。</string>
     <string name="av_import_test_hermes">測試 Hermes 連線</string>
+    <string name="av_import_test_openclaw">測試 OpenClaw 連線</string>
+    <string name="av_import_test_all">測試連線</string>
     <string name="av_import_cancel">取消</string>
     <string name="av_import_primary_url">主用 URL</string>
     <string name="av_import_fallback_urls">備用 URL</string>
@@ -711,7 +713,7 @@
     <string name="av_import_auth_none">不包含認證資訊</string>
     <string name="av_import_openclaw_invalid">此 QR 中的 OpenClaw setup code 無效。</string>
     <string name="av_pairing_review_title">檢查偵測到的設定</string>
-    <string name="av_pairing_review_desc">套用前請確認 QR 中的內容。你可以在這裡修改 URL、金鑰、setup code 和主用後端。</string>
+    <string name="av_pairing_review_desc">套用前請確認 QR 中的內容。你可以在這裡修改 URL、金鑰和 setup code。</string>
     <string name="av_pairing_display_name">顯示名稱</string>
     <string name="av_pairing_fallback_urls_hint">每行一個 URL，或用逗號分隔。</string>
     <string name="av_pairing_runs_api">使用 Runs API</string>
@@ -740,4 +742,7 @@
     <string name="av_home_test_ok">連線成功: %1$s (%2$dms)</string>
     <string name="av_home_test_failed">失敗: %1$s</string>
     <string name="permissions_for_agent_voice_title">Android 裝置功能</string>
+    <string name="av_home_disconnected">未連線</string>
+    <string name="av_home_test_ok_short">成功</string>
+    <string name="av_home_test_failed_short">失敗</string>
 </resources>

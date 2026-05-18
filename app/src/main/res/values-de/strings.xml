@@ -692,6 +692,8 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="av_import_add_open">Hinzufügen und Agent Voice öffnen</string>
     <string name="av_import_no_hermes">Dieser QR enthält kein Hermes-Backend.</string>
     <string name="av_import_test_hermes">Hermes-Verbindung testen</string>
+    <string name="av_import_test_openclaw">OpenClaw-Verbindung testen</string>
+    <string name="av_import_test_all">Verbindungen testen</string>
     <string name="av_import_cancel">Abbrechen</string>
     <string name="av_import_primary_url">Primäre URL</string>
     <string name="av_import_fallback_urls">Fallback-URLs</string>
@@ -711,7 +713,7 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="av_import_auth_none">Keine Auth enthalten</string>
     <string name="av_import_openclaw_invalid">Der OpenClaw setup code in diesem QR ist ungültig.</string>
     <string name="av_pairing_review_title">Erkannte Einrichtung prüfen</string>
-    <string name="av_pairing_review_desc">Prüfe den QR-Inhalt vor dem Anwenden. URLs, Schlüssel, Setup-Code und primäres Backend können hier geändert werden.</string>
+    <string name="av_pairing_review_desc">Prüfe den QR-Inhalt vor dem Anwenden. URLs, Schlüssel und Setup-Code können hier geändert werden.</string>
     <string name="av_pairing_display_name">Anzeigename</string>
     <string name="av_pairing_fallback_urls_hint">Eine URL pro Zeile oder durch Kommas getrennt.</string>
     <string name="av_pairing_runs_api">Runs API verwenden</string>
@@ -740,4 +742,7 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="av_home_test_ok">Verbunden: %1$s (%2$dms)</string>
     <string name="av_home_test_failed">Fehlgeschlagen: %1$s</string>
     <string name="permissions_for_agent_voice_title">Android-Gerätefunktionen</string>
+    <string name="av_home_disconnected">Nicht verbunden</string>
+    <string name="av_home_test_ok_short">OK</string>
+    <string name="av_home_test_failed_short">Fehler</string>
 </resources>

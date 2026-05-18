@@ -72,7 +72,6 @@ import com.openclaw.assistant.ui.GatewayTrustDialog
 import com.openclaw.assistant.ui.setup.EditablePairingPayload
 import com.openclaw.assistant.ui.setup.PairingPayloadReviewEditor
 import com.openclaw.assistant.ui.setup.applyPairingPayload
-import com.openclaw.assistant.ui.setup.primaryBackendType
 import com.openclaw.assistant.ui.setup.parsePairingPayload
 import com.openclaw.assistant.ui.setup.toEditablePairingPayload
 import com.openclaw.assistant.ui.setup.toPairingPayload
@@ -724,7 +723,7 @@ private fun ConnectionStep(
                 if (mode == ConnectionMode.Hermes) {
                     pairingReview?.let { draft ->
                         draft.toPairingPayload()?.let { payload ->
-                            applyPairingPayload(context, payload, draft.primaryBackendType())
+                            applyPairingPayload(context, payload, null)
                         }
                     }
                 }

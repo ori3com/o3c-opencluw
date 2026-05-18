@@ -693,6 +693,8 @@
     <string name="av_import_add_open">Добавить и открыть Agent Voice</string>
     <string name="av_import_no_hermes">В этом QR нет backend Hermes.</string>
     <string name="av_import_test_hermes">Проверить подключение Hermes</string>
+    <string name="av_import_test_openclaw">Проверить подключение OpenClaw</string>
+    <string name="av_import_test_all">Проверить подключения</string>
     <string name="av_import_cancel">Отмена</string>
     <string name="av_import_primary_url">Основной URL</string>
     <string name="av_import_fallback_urls">Резервные URL</string>
@@ -712,7 +714,7 @@
     <string name="av_import_auth_none">Auth не включена</string>
     <string name="av_import_openclaw_invalid">OpenClaw setup code в этом QR недействителен.</string>
     <string name="av_pairing_review_title">Проверьте найденную настройку</string>
-    <string name="av_pairing_review_desc">Проверьте содержимое QR перед применением. Здесь можно изменить URL, ключи, setup code и основной бэкенд.</string>
+    <string name="av_pairing_review_desc">Проверьте содержимое QR перед применением. Здесь можно изменить URL, ключи и setup code.</string>
     <string name="av_pairing_display_name">Отображаемое имя</string>
     <string name="av_pairing_fallback_urls_hint">Один URL на строку или через запятую.</string>
     <string name="av_pairing_runs_api">Использовать Runs API</string>
@@ -741,4 +743,7 @@
     <string name="av_home_test_ok">Подключено: %1$s (%2$dms)</string>
     <string name="av_home_test_failed">Ошибка: %1$s</string>
     <string name="permissions_for_agent_voice_title">Возможности Android</string>
+    <string name="av_home_disconnected">Не подключено</string>
+    <string name="av_home_test_ok_short">OK</string>
+    <string name="av_home_test_failed_short">Ошибка</string>
 </resources>

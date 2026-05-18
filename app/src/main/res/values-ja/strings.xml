@@ -34,6 +34,8 @@
 <string name="error_start_failed">起動エラー: %s</string>
 <string name="notification_text">「%s」と話しかけて起動</string>
 <string name="settings_title">設定</string>
+<string name="settings_category_backend">Backend</string>
+<string name="settings_category_chat">Chat</string>
 <string name="webhook_url_label">サーバーURL</string>
 <string name="webhook_url_hint">https://your-server</string>
 <string name="auth_token_label">認証トークン（任意）</string>
@@ -724,6 +726,8 @@
     <string name="av_import_add_open">追加してAgent Voiceを開く</string>
     <string name="av_import_no_hermes">このQRにHermes接続先は含まれていません。</string>
     <string name="av_import_test_hermes">Hermes接続をテスト</string>
+    <string name="av_import_test_openclaw">OpenClaw接続をテスト</string>
+    <string name="av_import_test_all">接続をテスト</string>
     <string name="av_import_cancel">キャンセル</string>
     <string name="av_import_primary_url">メインURL</string>
     <string name="av_import_fallback_urls">予備URL</string>
@@ -744,7 +748,7 @@
     <string name="av_import_openclaw_invalid">このQR内のOpenClaw setup codeは無効です。</string>
 
     <string name="av_pairing_review_title">読み取った設定を確認</string>
-    <string name="av_pairing_review_desc">QRに含まれていた内容を適用前に確認します。URL、キー、setup code、メイン接続先はここで修正できます。</string>
+    <string name="av_pairing_review_desc">QRに含まれていた内容を適用前に確認します。URL、キー、setup codeはここで修正できます。</string>
     <string name="av_pairing_display_name">表示名</string>
     <string name="av_pairing_fallback_urls_hint">1行に1つ、またはカンマ区切りで入力</string>
     <string name="av_pairing_runs_api">Runs APIを使う</string>
@@ -773,4 +777,7 @@
     <string name="av_home_test_ok">接続成功: %1$s (%2$dms)</string>
     <string name="av_home_test_failed">失敗: %1$s</string>
     <string name="permissions_for_agent_voice_title">Android端末機能</string>
+    <string name="av_home_disconnected">未接続</string>
+    <string name="av_home_test_ok_short">成功</string>
+    <string name="av_home_test_failed_short">失敗</string>
 </resources>

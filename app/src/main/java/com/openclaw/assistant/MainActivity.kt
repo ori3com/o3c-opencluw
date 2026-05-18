@@ -689,6 +689,25 @@ fun MainScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.app_name)) },
+                actions = {
+                    val context = LocalContext.current
+                    IconButton(onClick = {
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://ko-fi.com/R5R51S97C4"))
+                            context.startActivity(intent)
+                        } catch (e: ActivityNotFoundException) {
+                            // No browser available; ignore
+                        }
+                    }) {
+                        Icon(Icons.Default.VolunteerActivism, contentDescription = stringResource(R.string.credits_support_kofi_button))
+                    }
+                    IconButton(onClick = { showHowToUse = true }) {
+                        Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = stringResource(R.string.how_to_use))
+                    }
+                    IconButton(onClick = onOpenSettings) {
+                        Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings_title))
+                    }
+                }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -717,6 +736,7 @@ fun MainScreen(
             com.openclaw.assistant.ui.backend.PrimaryBackendCard(
                 openClawConnected = nodeConnected,
                 openClawStatusText = displayStatusText,
+                onOpenClawTest = { runtime.connectManual() },
             )
             Spacer(modifier = Modifier.height(12.dp))
             // Show alert if missing scope error is present

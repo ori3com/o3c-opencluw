@@ -238,7 +238,7 @@ private fun UnifiedPairingCard(includeHermes: Boolean, includeOpenClaw: Boolean)
                 Button(
                     onClick = {
                         draft.toPairingPayload()?.let {
-                            applyPairingPayload(context, it, draft.primaryBackendType())
+                            applyPairingPayload(context, it, null)
                             status = context.getString(R.string.setup_code_applied)
                         }
                     },

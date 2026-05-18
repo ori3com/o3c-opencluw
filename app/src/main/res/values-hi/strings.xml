@@ -693,6 +693,8 @@
     <string name="av_import_add_open">जोड़ें और Agent Voice खोलें</string>
     <string name="av_import_no_hermes">इस QR में Hermes backend नहीं है.</string>
     <string name="av_import_test_hermes">Hermes कनेक्शन टेस्ट करें</string>
+    <string name="av_import_test_openclaw">OpenClaw कनेक्शन टेस्ट करें</string>
+    <string name="av_import_test_all">कनेक्शन टेस्ट करें</string>
     <string name="av_import_cancel">रद्द करें</string>
     <string name="av_import_primary_url">प्राथमिक URL</string>
     <string name="av_import_fallback_urls">Fallback URLs</string>
@@ -712,7 +714,7 @@
     <string name="av_import_auth_none">Auth शामिल नहीं</string>
     <string name="av_import_openclaw_invalid">इस QR का OpenClaw setup code अमान्य है.</string>
     <string name="av_pairing_review_title">पहचाने गए setup की समीक्षा करें</string>
-    <string name="av_pairing_review_desc">लागू करने से पहले QR में मिली जानकारी जांचें। यहां URL, key, setup code और प्राथमिक backend बदले जा सकते हैं।</string>
+    <string name="av_pairing_review_desc">लागू करने से पहले QR में मिली जानकारी जांचें। यहां URL, key और setup code बदले जा सकते हैं।</string>
     <string name="av_pairing_display_name">दिखने वाला नाम</string>
     <string name="av_pairing_fallback_urls_hint">हर लाइन में एक URL, या comma से अलग करें।</string>
     <string name="av_pairing_runs_api">Runs API इस्तेमाल करें</string>
@@ -741,4 +743,7 @@
     <string name="av_home_test_ok">कनेक्टेड: %1$s (%2$dms)</string>
     <string name="av_home_test_failed">विफल: %1$s</string>
     <string name="permissions_for_agent_voice_title">Android डिवाइस क्षमताएँ</string>
+    <string name="av_home_disconnected">कनेक्टेड नहीं</string>
+    <string name="av_home_test_ok_short">OK</string>
+    <string name="av_home_test_failed_short">विफल</string>
 </resources>
