@@ -177,7 +177,6 @@ private fun HermesSummary(hermes: HermesPairingPayload) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.av_backend_hermes), style = MaterialTheme.typography.titleMedium)
             InfoRow(stringResource(R.string.av_import_primary_url), hermes.baseUrl)
-            if (hermes.secondaryUrls.isNotEmpty()) InfoRow(stringResource(R.string.av_import_fallback_urls), hermes.secondaryUrls.joinToString("\n"))
             InfoRow(stringResource(R.string.av_import_api_key), if (hermes.apiKey.isNullOrBlank()) stringResource(R.string.av_import_not_included) else mask(hermes.apiKey))
             InfoRow(stringResource(R.string.av_import_model), hermes.modelName)
             InfoRow(stringResource(R.string.av_import_mode), if (hermes.useRunsApi) stringResource(R.string.av_import_mode_runs) else stringResource(R.string.av_import_mode_chat))
@@ -332,14 +331,6 @@ internal fun PairingPayloadReviewEditor(
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
-                    )
-                    OutlinedTextField(
-                        value = value.hermesFallbackUrls,
-                        onValueChange = { onChange(value.copy(hermesFallbackUrls = it)) },
-                        label = { Text(stringResource(R.string.av_import_fallback_urls)) },
-                        placeholder = { Text(stringResource(R.string.av_pairing_fallback_urls_hint)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        minLines = 2,
                     )
                     OutlinedTextField(
                         value = value.hermesApiKey,
