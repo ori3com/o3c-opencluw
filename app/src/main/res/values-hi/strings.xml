@@ -695,7 +695,7 @@
     <string name="av_import_fallback_urls">Fallback URLs</string>
     <string name="av_import_api_key">API key</string>
     <string name="av_import_not_included">शामिल नहीं</string>
-    <string name="av_import_model">मॉडल</string>
+    <string name="av_import_model">Hermes API model ID</string>
     <string name="av_import_mode">मोड</string>
     <string name="av_import_mode_runs">Runs API</string>
     <string name="av_import_mode_chat">Chat Completions</string>
