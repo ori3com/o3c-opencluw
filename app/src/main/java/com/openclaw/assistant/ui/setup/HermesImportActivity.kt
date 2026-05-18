@@ -3,6 +3,7 @@ package com.openclaw.assistant.ui.setup
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.compose.foundation.clickable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.rememberScrollState
@@ -58,7 +59,9 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import java.net.URI
 import java.util.Base64
+import java.util.Locale
 
 /**
  * Deep-link target for external-camera Agent Voice setup links. App-internal QR
@@ -323,14 +326,6 @@ internal fun PairingPayloadReviewEditor(
                 }
                 if (value.includeHermes) {
                     OutlinedTextField(
-                        value = value.hermesDisplayName,
-                        onValueChange = { onChange(value.copy(hermesDisplayName = it)) },
-                        label = { Text(stringResource(R.string.av_pairing_display_name)) },
-                        placeholder = { Text(stringResource(R.string.av_backend_hermes)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                    )
-                    OutlinedTextField(
                         value = value.hermesBaseUrl,
                         onValueChange = { onChange(value.copy(hermesBaseUrl = it)) },
                         label = { Text(stringResource(R.string.av_import_primary_url)) },
@@ -450,9 +445,24 @@ private fun ToggleRow(label: String, checked: Boolean, onCheckedChange: (Boolean
 
 @Composable
 private fun PrimaryChoiceRow(selected: Boolean, label: String, onClick: () -> Unit) {
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        RadioButton(selected = selected, onClick = onClick)
-        Text(label, style = MaterialTheme.typography.bodyMedium)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            RadioButton(selected = selected, onClick = onClick)
+            Text(
+                label,
+                style = MaterialTheme.typography.titleMedium,
+                color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+            )
+        }
     }
 }
 
@@ -512,11 +522,11 @@ private fun parseAgentVoiceSetupJson(obj: JsonObject): PairingPayload? {
     if (obj["type"]?.jsonPrimitive?.contentOrNull != "agent_voice_setup") return null
         val hermesObj = obj["hermes"] as? JsonObject
         val hermes = hermesObj?.let { h ->
-            val urls = (h["urls"] as? JsonArray)
+            val urls = withoutAndroidLoopbackUrls((h["urls"] as? JsonArray)
                 ?.mapNotNull { element ->
                     element.jsonPrimitive.contentOrNull?.takeIf { it.startsWith("http://") || it.startsWith("https://") }
                 }
-                .orEmpty()
+                .orEmpty())
             val base = urls.firstOrNull()
                 ?: h["url"]?.jsonPrimitive?.contentOrNull?.takeIf { it.startsWith("http://") || it.startsWith("https://") }
             base?.let {
@@ -544,7 +554,7 @@ private fun parseHermesRelayJson(obj: JsonObject): PairingPayload? {
     obj["hermes"]?.jsonPrimitive?.intOrNull ?: return null
     val endpointUrls = parseHermesRelayEndpointUrls(obj)
     val topLevelUrl = parseHermesRelayApiUrl(obj)
-    val urls = (endpointUrls + listOfNotNull(topLevelUrl)).distinct()
+    val urls = withoutAndroidLoopbackUrls((endpointUrls + listOfNotNull(topLevelUrl)).distinct())
     val base = urls.firstOrNull() ?: return null
     return PairingPayload(
         hermes = HermesPairingPayload(
@@ -585,7 +595,7 @@ private fun parseHermesRelayApiUrl(obj: JsonObject): String? {
 private val pairingJson = Json { ignoreUnknownKeys = true; isLenient = true }
 
 private fun parseHermesParams(uri: Uri, prefix: String): HermesPairingPayload? {
-    val urls = uri.getQueryParameters("${prefix}u")
+    val urls = withoutAndroidLoopbackUrls(uri.getQueryParameters("${prefix}u"))
     val base = urls.firstOrNull()?.takeIf { it.startsWith("http://") || it.startsWith("https://") } ?: return null
     val secondary = urls.drop(1).filter { it.startsWith("http://") || it.startsWith("https://") }
     return HermesPairingPayload(
@@ -597,6 +607,17 @@ private fun parseHermesParams(uri: Uri, prefix: String): HermesPairingPayload? {
         streaming = uri.getQueryParameter("${prefix}s") != "0",
         displayName = uri.getQueryParameter("${prefix}n"),
     )
+}
+
+private fun withoutAndroidLoopbackUrls(urls: List<String>): List<String> {
+    val valid = urls.filter { it.startsWith("http://") || it.startsWith("https://") }.distinct()
+    val remote = valid.filterNot(::isLoopbackUrl)
+    return remote.ifEmpty { valid }
+}
+
+private fun isLoopbackUrl(url: String): Boolean {
+    val host = runCatching { URI(url).host }.getOrNull()?.lowercase(Locale.US) ?: return false
+    return host == "localhost" || host == "127.0.0.1" || host == "::1" || host.startsWith("127.")
 }
 
 private fun HermesPairingPayload.toBackendConfig(isPrimary: Boolean): AgentBackendConfig = AgentBackendConfig(

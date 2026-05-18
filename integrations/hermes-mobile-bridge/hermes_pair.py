@@ -22,11 +22,14 @@ import json
 import os
 import re
 import shutil
+import secrets
 import socket
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.parse
+import urllib.request
 from pathlib import Path
 from typing import Any, Iterable, List, Optional
 
@@ -55,6 +58,26 @@ def is_port_open(host: str, port: int, timeout: float = 0.25) -> bool:
     try:
         with socket.create_connection((host, port), timeout=timeout):
             return True
+    except Exception:
+        return False
+
+
+def hermes_models_endpoint_ok(base_url: str, api_key: Optional[str], timeout: float = 4.0) -> bool:
+    url = normalize_url(base_url).rstrip("/") + "/v1/models"
+    req = urllib.request.Request(url)
+    if api_key:
+        req.add_header("Authorization", f"Bearer {api_key}")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            return 200 <= response.status < 300
+    except Exception:
+        return False
+
+
+def http_get_ok(url: str, timeout: float = 4.0) -> bool:
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url), timeout=timeout) as response:
+            return 200 <= response.status < 300
     except Exception:
         return False
 
@@ -93,6 +116,156 @@ def tailscale_ip() -> Optional[str]:
             continue
         return candidate
     return None
+
+
+def tailscale_dns_name() -> Optional[str]:
+    cmd = tailscale_cmd()
+    if not cmd:
+        return None
+    out = run([*cmd, "status", "--json"])
+    if not out:
+        return None
+    try:
+        name = str(json.loads(out).get("Self", {}).get("DNSName", "")).strip().rstrip(".")
+    except Exception:
+        return None
+    return name or None
+
+
+def upsert_env_file(path: Path, key: str, value: str) -> None:
+    lines = path.read_text().splitlines() if path.exists() else []
+    prefix = f"{key}="
+    replaced = False
+    out = []
+    for line in lines:
+        if line.startswith(prefix):
+            out.append(f"{key}={value}")
+            replaced = True
+        else:
+            out.append(line)
+    if not replaced:
+        out.append(f"{key}={value}")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(out).rstrip() + "\n")
+
+
+def set_hermes_api_server_host(host: str) -> bool:
+    path = Path.home() / ".hermes" / "config.yaml"
+    if not path.exists():
+        return False
+    text = path.read_text()
+    updated = re.sub(r"(?m)^(\s+host:\s*)127\.0\.0\.1\s*$", rf"\g<1>{host}", text, count=1)
+    if updated == text:
+        return False
+    path.write_text(updated)
+    return True
+
+
+def restart_hermes_gateway() -> None:
+    subprocess.run(["pkill", "-f", "hermes_cli.main gateway run"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.Popen(
+        ["hermes", "gateway", "run", "--replace"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        stdin=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+
+
+def wait_for_hermes_remote(remote_host: str, api_key: Optional[str], timeout_seconds: float = 20.0) -> bool:
+    deadline = time.monotonic() + timeout_seconds
+    base_url = f"http://{remote_host}:8642"
+    while time.monotonic() < deadline:
+        if is_port_open(remote_host, 8642, timeout=1.0) and hermes_models_endpoint_ok(base_url, api_key, timeout=3.0):
+            return True
+        time.sleep(1.0)
+    return False
+
+
+def wait_for_hermes_url(base_url: str, api_key: Optional[str], timeout_seconds: float = 35.0) -> bool:
+    deadline = time.monotonic() + timeout_seconds
+    while time.monotonic() < deadline:
+        if hermes_models_endpoint_ok(base_url, api_key, timeout=5.0):
+            return True
+        time.sleep(1.0)
+    return False
+
+
+def wait_for_http_url(url: str, timeout_seconds: float = 35.0) -> bool:
+    deadline = time.monotonic() + timeout_seconds
+    while time.monotonic() < deadline:
+        if http_get_ok(url, timeout=5.0):
+            return True
+        time.sleep(1.0)
+    return False
+
+
+def start_cloudflared_tunnel(local_url: str, label: str, timeout_seconds: float = 35.0) -> Optional[str]:
+    cloudflared = shutil.which("cloudflared")
+    if not cloudflared:
+        return None
+    log_path = Path(tempfile.gettempdir()) / f"agentvoice-{label}-cloudflared.log"
+    log_file = log_path.open("w+")
+    proc = subprocess.Popen(
+        [cloudflared, "tunnel", "--url", local_url, "--no-autoupdate"],
+        stdout=log_file,
+        stderr=subprocess.STDOUT,
+        stdin=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+    deadline = time.monotonic() + timeout_seconds
+    pattern = re.compile(r"https://[A-Za-z0-9-]+\.trycloudflare\.com")
+    url = None
+    while time.monotonic() < deadline and proc.poll() is None:
+        log_file.flush()
+        try:
+            text = log_path.read_text(errors="ignore")
+        except Exception:
+            text = ""
+        match = pattern.search(text)
+        if match:
+            url = match.group(0)
+            break
+        time.sleep(0.5)
+    log_file.close()
+    if not url:
+        proc.terminate()
+        return None
+    pid_path = Path(tempfile.gettempdir()) / f"agentvoice-{label}-cloudflared.pid"
+    pid_path.write_text(str(proc.pid))
+    print(f"Started temporary public tunnel for {label}: {url}")
+    print(f"  Stop later: kill {proc.pid}")
+    return url
+
+
+def maybe_configure_hermes_remote_access(hermes_key: Optional[str], remote_host: Optional[str]) -> Optional[str]:
+    if not remote_host or not sys.stdin.isatty():
+        return hermes_key
+    remote_url = f"http://{remote_host}:8642"
+    if is_port_open(remote_host, 8642, timeout=0.5) and hermes_models_endpoint_ok(remote_url, hermes_key, timeout=2.0):
+        return hermes_key
+    if not is_port_open("127.0.0.1", 8642):
+        return hermes_key
+    print("Hermes API Server is reachable only from this Mac right now.")
+    print(f"To use Agent Voice from your phone, Hermes must listen on Tailscale/LAN: http://{remote_host}:8642")
+    if not ask_yes_no("Configure Hermes API Server for phone access and restart it now?", True):
+        return hermes_key
+    env_path = Path.home() / ".hermes" / ".env"
+    key = hermes_key or secrets.token_urlsafe(32)
+    upsert_env_file(env_path, "API_SERVER_KEY", key)
+    upsert_env_file(env_path, "HERMES_API_SERVER_URL", f"http://{remote_host}:8642")
+    set_hermes_api_server_host("0.0.0.0")
+    restart_hermes_gateway()
+    print("Configured Hermes API Server host=0.0.0.0, saved API_SERVER_KEY, and restarted Hermes Gateway.")
+    if wait_for_hermes_remote(remote_host, key):
+        print(f"Verified Hermes API Server from the phone-reachable URL: {remote_url}")
+    else:
+        print(
+            f"Warning: Hermes was configured, but {remote_url} did not pass /v1/models yet. "
+            "Check firewall/VPN and run agentvoice-pair again.",
+            file=sys.stderr,
+        )
+    return key
 
 
 def read_json(path: Path) -> dict:
@@ -309,7 +482,10 @@ def ordered_android_urls(candidates: Iterable[str]) -> List[str]:
     unique = comma_urls(candidates)
     remote = [url for url in unique if not is_loopback_url(url)]
     local = [url for url in unique if is_loopback_url(url)]
-    return remote + local
+    # Android scans this QR on the phone. Loopback URLs point at the phone
+    # itself, not at the desktop running Hermes, so keep them only when there
+    # is no LAN/Tailscale/public candidate at all.
+    return remote if remote else local
 
 
 def gateway_url_from_openclaw_config(cfg: dict) -> Optional[str]:
@@ -340,6 +516,19 @@ def gateway_url_from_openclaw_config(cfg: dict) -> Optional[str]:
 def encode_setup_code(payload: dict) -> str:
     raw = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     return base64.urlsafe_b64encode(raw).decode("ascii").rstrip("=")
+
+
+def decode_setup_code(code: str) -> Optional[dict]:
+    try:
+        return json.loads(base64.urlsafe_b64decode(code + "=" * ((4 - len(code) % 4) % 4)).decode("utf-8"))
+    except Exception:
+        return None
+
+
+def setup_code_with_url(code: str, url: str) -> str:
+    payload = decode_setup_code(code) or {}
+    payload["url"] = url.rstrip("/")
+    return encode_setup_code(payload)
 
 
 def openclaw_setup_code_from_config() -> Optional[str]:
@@ -398,10 +587,9 @@ def openclaw_setup_code_from_local_install() -> Optional[str]:
         return cli_code
     if not cli_code:
         return config_code
-    try:
-        config_payload = json.loads(base64.urlsafe_b64decode(config_code + "=" * ((4 - len(config_code) % 4) % 4)).decode("utf-8"))
-        cli_payload = json.loads(base64.urlsafe_b64decode(cli_code + "=" * ((4 - len(cli_code) % 4) % 4)).decode("utf-8"))
-    except Exception:
+    config_payload = decode_setup_code(config_code)
+    cli_payload = decode_setup_code(cli_code)
+    if not config_payload or not cli_payload:
         return config_code
     merged = dict(config_payload)
     if cli_payload.get("bootstrapToken"):
@@ -814,6 +1002,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     p.add_argument("--yes", action="store_true", help="Accept detected defaults without prompts. This is the normal behavior.")
     p.add_argument("--no-lan", action="store_true", help="Do not add LAN endpoint candidates automatically.")
     p.add_argument("--no-tailscale", action="store_true", help="Do not add Tailscale endpoint candidates automatically.")
+    p.add_argument("--public-tunnel", action="store_true", help="Start temporary Cloudflare Tunnel public URLs for detected local backends.")
+    p.add_argument("--no-public-tunnel", action="store_true", help="Do not offer temporary public tunnels.")
     p.add_argument("--large-qr", action="store_true", help="Render a larger legacy ASCII QR instead of the compact terminal QR.")
     p.add_argument("--terminal-qr", action="store_true", help="Always print the terminal QR even when it does not fit the current terminal.")
     p.add_argument("--no-open", action="store_true", help="Do not open the generated QR image automatically.")
@@ -863,11 +1053,38 @@ def main(argv: Optional[List[str]] = None) -> int:
         include_hermes = auto_hermes
         include_openclaw = auto_openclaw
     include_tailscale = tailscale_installed and not args.no_tailscale and (not args.interactive or ask_yes_no("Include Tailscale/VPN endpoint candidates?", True))
+    use_public_tunnel = args.public_tunnel
+    if (
+        not use_public_tunnel
+        and not args.no_public_tunnel
+        and sys.stdin.isatty()
+        and shutil.which("cloudflared")
+        and (hermes_port_open or openclaw_port_open)
+    ):
+        use_public_tunnel = ask_yes_no(
+            "Start temporary public Cloudflare Tunnel URLs for phones that are not on your LAN/Tailscale?",
+            False,
+        )
 
     hermes_urls: List[str] = []
+    hermes_public_url: Optional[str] = None
+    openclaw_public_url: Optional[str] = None
+    if use_public_tunnel:
+        if include_hermes and hermes_port_open:
+            hermes_public_url = start_cloudflared_tunnel("http://127.0.0.1:8642", "hermes")
+        if include_openclaw and openclaw_port_open:
+            openclaw_public_url = start_cloudflared_tunnel("http://127.0.0.1:18789", "openclaw")
+
     if include_hermes:
         hermes_candidates: List[str] = []
         hermes_candidates.extend(comma_urls(args.url))
+        if hermes_public_url:
+            unique_append(hermes_candidates, hermes_public_url)
+            if not wait_for_hermes_url(hermes_public_url, hermes_key, timeout_seconds=8.0):
+                print(
+                    f"Warning: Hermes public tunnel was created but local verification is still warming up: {hermes_public_url}",
+                    file=sys.stderr,
+                )
         if discovered_hermes_url:
             unique_append(hermes_candidates, normalize_url(discovered_hermes_url))
         if not hermes_candidates:
@@ -879,10 +1096,28 @@ def main(argv: Optional[List[str]] = None) -> int:
         if hermes_port_open:
             unique_append(hermes_candidates, "http://127.0.0.1:8642")
         if include_tailscale:
-            append_host_variant(hermes_candidates, tailscale_ip(), 8642)
+            for ts_host in [tailscale_dns_name(), tailscale_ip()]:
+                if not ts_host:
+                    continue
+                hermes_key = maybe_configure_hermes_remote_access(hermes_key, ts_host)
+                ts_url = f"http://{ts_host}:8642"
+                if hermes_models_endpoint_ok(ts_url, hermes_key, timeout=3.0):
+                    unique_append(hermes_candidates, ts_url)
+                else:
+                    print(
+                        f"Skipping Hermes Tailscale URL because /v1/models is not reachable yet: {ts_url}",
+                        file=sys.stderr,
+                    )
         lan = first_lan_ip()
         if lan and not args.no_lan and (not args.interactive or ask_yes_no(f"Also include LAN URL http://{lan}:8642?", True)):
-            append_host_variant(hermes_candidates, lan, 8642)
+            lan_url = f"http://{lan}:8642"
+            if hermes_models_endpoint_ok(lan_url, hermes_key, timeout=3.0):
+                unique_append(hermes_candidates, lan_url)
+            else:
+                print(
+                    f"Skipping Hermes LAN URL because /v1/models is not reachable yet: {lan_url}",
+                    file=sys.stderr,
+                )
         hermes_urls = ordered_android_urls(hermes_candidates)
         if hermes_key is None and args.interactive:
             hermes_key = getpass.getpass("Hermes API key (blank if none): ").strip() or None
@@ -893,6 +1128,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     openclaw_setup_code: Optional[str] = None
     if include_openclaw:
         openclaw_setup_code = discovered_openclaw_setup_code or openclaw_setup_code_from_local_install()
+        if openclaw_public_url and openclaw_setup_code and wait_for_http_url(openclaw_public_url.rstrip("/") + "/health"):
+            openclaw_setup_code = setup_code_with_url(openclaw_setup_code, openclaw_public_url)
+        elif openclaw_public_url and openclaw_setup_code:
+            print(f"Skipping OpenClaw public tunnel because /health is not reachable yet: {openclaw_public_url}", file=sys.stderr)
         if not openclaw_setup_code and args.interactive:
             print("Could not read OpenClaw setup code automatically.")
             print("Run `openclaw qr --setup-code-only` and paste the setup code below.")

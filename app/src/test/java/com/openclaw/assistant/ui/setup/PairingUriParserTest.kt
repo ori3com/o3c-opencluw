@@ -80,7 +80,7 @@ class PairingUriParserTest {
         assertEquals("abc", p.openClawSetupCode)
         val h = p.hermes!!
         assertEquals("http://tail:8642", h.baseUrl)
-        assertEquals(listOf("http://lan:8642", "http://127.0.0.1:8642"), h.secondaryUrls)
+        assertEquals(listOf("http://lan:8642"), h.secondaryUrls)
     }
 
     @Test fun `combined setup json supports Hermes urls and OpenClaw code`() {
@@ -104,7 +104,7 @@ class PairingUriParserTest {
         assertEquals("openclaw-code", p.openClawSetupCode)
         val h = p.hermes!!
         assertEquals("http://tail:8642", h.baseUrl)
-        assertEquals(listOf("http://lan:8642", "http://127.0.0.1:8642"), h.secondaryUrls)
+        assertEquals(listOf("http://lan:8642"), h.secondaryUrls)
         assertEquals("default", h.modelName)
         assertEquals(false, h.useRunsApi)
         assertEquals(true, h.streaming)
@@ -170,7 +170,6 @@ class PairingUriParserTest {
             listOf(
                 "http://100.79.200.127:8642",
                 "https://relay.example.com:443",
-                "http://127.0.0.1:8642",
             ),
             h.secondaryUrls,
         )

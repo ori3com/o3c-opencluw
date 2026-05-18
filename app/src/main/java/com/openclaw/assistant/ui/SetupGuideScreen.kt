@@ -1285,63 +1285,66 @@ private fun HermesFinalStep(onFinish: () -> Unit) {
     val primaryBackend = remember(backends) {
         backends.firstOrNull { it.enabled && it.isPrimary } ?: backends.firstOrNull { it.enabled }
     }
+    val requiredBackends = remember(backends) { backends.filter { it.enabled } }
+    val requiredBackendIds = remember(requiredBackends) { requiredBackends.map { it.id }.toSet() }
     val scope = rememberCoroutineScope()
     var isTesting by remember { mutableStateOf(false) }
-    var verified by remember { mutableStateOf(false) }
     var testStatus by remember { mutableStateOf<String?>(null) }
-    var replyPreview by remember { mutableStateOf<String?>(null) }
-    var testedBackendId by remember { mutableStateOf<String?>(null) }
+    var replyPreviews by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+    var verifiedBackendIds by remember { mutableStateOf<Set<String>>(emptySet()) }
+    val verified = requiredBackendIds.isNotEmpty() && verifiedBackendIds.containsAll(requiredBackendIds)
 
-    LaunchedEffect(primaryBackend?.id) {
-        verified = false
+    LaunchedEffect(requiredBackendIds) {
         testStatus = null
-        replyPreview = null
-        testedBackendId = null
+        replyPreviews = emptyMap()
+        verifiedBackendIds = emptySet()
     }
 
     fun runEndToEndTest() {
-        val target = primaryBackend ?: return
+        val targets = requiredBackends
+        if (targets.isEmpty()) return
         scope.launch {
             isTesting = true
-            verified = false
-            replyPreview = null
-            testedBackendId = target.id
-            testStatus = context.getString(R.string.setup_guide_e2e_testing_connection, target.displayName)
+            replyPreviews = emptyMap()
+            verifiedBackendIds = emptySet()
             try {
-                if (target.type == BackendType.OPENCLAW_GATEWAY) {
-                    runtime.connectManual()
-                    val connected = withTimeoutOrNull(45_000L) {
-                        while (!runtime.isConnected.value) {
-                            if (runtime.pendingGatewayTrust.value != null) {
-                                testStatus = context.getString(R.string.setup_guide_e2e_waiting_tls)
+                targets.forEach { target ->
+                    testStatus = context.getString(R.string.setup_guide_e2e_testing_connection, target.displayName)
+                    if (target.type == BackendType.OPENCLAW_GATEWAY) {
+                        runtime.connectManual()
+                        val connected = withTimeoutOrNull(45_000L) {
+                            while (!runtime.isConnected.value) {
+                                if (runtime.pendingGatewayTrust.value != null) {
+                                    testStatus = context.getString(R.string.setup_guide_e2e_waiting_tls)
+                                }
+                                delay(500L)
                             }
-                            delay(500L)
+                            true
+                        } == true
+                        if (!connected) {
+                            testStatus = context.getString(R.string.setup_guide_e2e_failed, statusText.ifBlank { "OpenClaw Gateway timeout" })
+                            return@launch
                         }
-                        true
-                    } == true
-                    if (!connected) {
-                        testStatus = context.getString(R.string.setup_guide_e2e_failed, statusText.ifBlank { "OpenClaw Gateway timeout" })
-                        return@launch
+                    } else {
+                        val result = withContext(Dispatchers.IO) { AgentClientFactory.create(target).testConnection() }
+                        if (!result.ok) {
+                            testStatus = context.getString(R.string.setup_guide_e2e_failed, result.message)
+                            return@launch
+                        }
                     }
-                } else {
-                    val result = withContext(Dispatchers.IO) { AgentClientFactory.create(target).testConnection() }
-                    if (!result.ok) {
-                        testStatus = context.getString(R.string.setup_guide_e2e_failed, result.message)
-                        return@launch
-                    }
-                }
 
-                testStatus = context.getString(R.string.setup_guide_e2e_sending_chat, target.displayName)
-                val reply = withContext(Dispatchers.IO) {
-                    sendSetupProbeMessage(context, target)
+                    testStatus = context.getString(R.string.setup_guide_e2e_sending_chat, target.displayName)
+                    val reply = withContext(Dispatchers.IO) {
+                        sendSetupProbeMessage(context, target)
+                    }
+                    if (reply.isBlank()) {
+                        testStatus = context.getString(R.string.setup_guide_e2e_failed, context.getString(R.string.error_no_response))
+                        return@launch
+                    }
+                    replyPreviews = replyPreviews + (target.id to "${target.displayName}: ${reply.take(200)}")
+                    verifiedBackendIds = verifiedBackendIds + target.id
                 }
-                if (reply.isBlank()) {
-                    testStatus = context.getString(R.string.setup_guide_e2e_failed, context.getString(R.string.error_no_response))
-                    return@launch
-                }
-                replyPreview = reply.take(240)
-                verified = true
-                testStatus = context.getString(R.string.setup_guide_e2e_success, target.displayName)
+                testStatus = context.getString(R.string.setup_guide_e2e_success_all)
             } catch (e: Throwable) {
                 testStatus = context.getString(R.string.setup_guide_e2e_failed, e.message ?: e.javaClass.simpleName)
             } finally {
@@ -1446,12 +1449,16 @@ private fun HermesFinalStep(onFinish: () -> Unit) {
                             fontWeight = FontWeight.Bold,
                         )
                         Text(
-                            text = primaryBackend?.let { stringResource(R.string.setup_guide_e2e_target, it.displayName) }
+                            text = if (requiredBackends.isNotEmpty()) {
+                                stringResource(R.string.setup_guide_e2e_targets_all, requiredBackends.joinToString { it.displayName })
+                            } else {
+                                null
+                            }
                                 ?: stringResource(R.string.setup_guide_no_backends_yet),
                             style = MaterialTheme.typography.bodySmall,
                             color = OnboardingTextSecondary,
                         )
-                        if (primaryBackend?.type == BackendType.OPENCLAW_GATEWAY) {
+                        if (requiredBackends.any { it.type == BackendType.OPENCLAW_GATEWAY }) {
                             Text(
                                 text = stringResource(R.string.setup_guide_e2e_openclaw_tls_note),
                                 style = MaterialTheme.typography.bodySmall,
@@ -1472,7 +1479,7 @@ private fun HermesFinalStep(onFinish: () -> Unit) {
                                 color = if (verified) MaterialTheme.colorScheme.primary else OnboardingTextSecondary,
                             )
                         }
-                        replyPreview?.let {
+                        replyPreviews.values.forEach {
                             Text(
                                 text = stringResource(R.string.setup_guide_e2e_reply_preview, it),
                                 style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
@@ -1500,7 +1507,7 @@ private fun HermesFinalStep(onFinish: () -> Unit) {
         Spacer(modifier = Modifier.height(12.dp))
         Button(
             onClick = onFinish,
-            enabled = verified && testedBackendId == primaryBackend?.id,
+            enabled = verified,
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = OnboardingGradientMid)
