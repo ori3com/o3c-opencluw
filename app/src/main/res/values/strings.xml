@@ -45,9 +45,9 @@
     <string name="av_setup_scope_hermes">Only Hermes Agent will be included in the QR.</string>
     <string name="av_setup_scope_openclaw">Only OpenClaw will be included in the QR.</string>
     <string name="av_pairing_card_step1">1. On the computer running Hermes or OpenClaw, install the Agent Voice pairing helper:</string>
-    <string name="av_pairing_card_step2">2. Run the helper. It reads local Hermes/OpenClaw settings, detects Tailscale, and prints a compact QR:</string>
+    <string name="av_pairing_card_step2">2. Run the helper. It reads local Hermes/OpenClaw settings, detects Tailscale, and uses a temporary public tunnel when the phone is not on the same LAN/VPN:</string>
     <string name="av_pairing_card_step3">3. Scan that QR inside Agent Voice. Included backends are saved together.</string>
-    <string name="av_pairing_card_note">For use away from home, let the helper include Tailscale/VPN endpoints. For local-only use, LAN/loopback candidates are enough.</string>
+    <string name="av_pairing_card_note">The public tunnel is temporary and useful for setup from cellular networks. For daily use, prefer Tailscale/VPN or a trusted LAN.</string>
     <string name="av_pairing_scan_qr">Scan pairing QR</string>
     <string name="av_setup_copy_command">Copy command</string>
     <string name="av_setup_command_copied">Command copied</string>

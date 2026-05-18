@@ -605,9 +605,9 @@
     <string name="av_setup_scope_hermes">Hermes Agent だけをQRに含めます。</string>
     <string name="av_setup_scope_openclaw">OpenClaw だけをQRに含めます。</string>
     <string name="av_pairing_card_step1">1. Hermes または OpenClaw を動かしているPCで、Agent Voiceのペアリングhelperをインストールします。</string>
-    <string name="av_pairing_card_step2">2. helperを実行します。ローカルのHermes/OpenClaw設定を読み取り、Tailscaleを検出して、小さめのQRを表示します。</string>
+    <string name="av_pairing_card_step2">2. helperを実行します。ローカルのHermes/OpenClaw設定を読み取り、Tailscaleを検出し、スマホが同じLAN/VPNにいない場合は一時公開トンネルも使います。</string>
     <string name="av_pairing_card_step3">3. Agent Voice内でQRを読み取ります。QRに含まれるbackendがまとめて保存されます。</string>
-    <string name="av_pairing_card_note">外出先でも使う場合は、Tailscale/VPNのendpointを含めます。自宅内だけで使う場合はLAN/loopback候補で十分です。</string>
+    <string name="av_pairing_card_note">公開トンネルはセットアップ用の一時URLです。普段使いはTailscale/VPNまたは信頼できるLANを推奨します。</string>
     <string name="av_pairing_scan_qr">ペアリングQRを読み取る</string>
     <string name="av_setup_copy_command">コマンドをコピー</string>
     <string name="av_setup_command_copied">コマンドをコピーしました</string>

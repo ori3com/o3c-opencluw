@@ -24,12 +24,14 @@ import re
 import shutil
 import secrets
 import socket
+import struct
 import subprocess
 import sys
 import tempfile
 import time
 import urllib.parse
 import urllib.request
+import zlib
 from pathlib import Path
 from typing import Any, Iterable, List, Optional
 
@@ -958,6 +960,40 @@ def write_qr_svg(payload: str, path: Path) -> Path:
     return path
 
 
+def write_qr_png(payload: str, path: Path) -> Path:
+    modules = qr_make_matrix(payload)
+    quiet = 4
+    scale = 12
+    module_count = len(modules) + quiet * 2
+    size = module_count * scale
+    rows = []
+    for py in range(size):
+        y = py // scale - quiet
+        row = bytearray([0])
+        for px in range(size):
+            x = px // scale - quiet
+            dark = 0 <= x < len(modules) and 0 <= y < len(modules) and modules[y][x]
+            row.extend(b"\x00\x00\x00" if dark else b"\xff\xff\xff")
+        rows.append(bytes(row))
+
+    def chunk(kind: bytes, data: bytes) -> bytes:
+        return (
+            struct.pack(">I", len(data))
+            + kind
+            + data
+            + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF)
+        )
+
+    png = b"".join([
+        b"\x89PNG\r\n\x1a\n",
+        chunk(b"IHDR", struct.pack(">IIBBBBB", size, size, 8, 2, 0, 0, 0)),
+        chunk(b"IDAT", zlib.compress(b"".join(rows), level=9)),
+        chunk(b"IEND", b""),
+    ])
+    path.write_bytes(png)
+    return path
+
+
 def open_file(path: Path) -> bool:
     openers = []
     if sys.platform == "darwin":
@@ -1085,7 +1121,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                     f"Warning: Hermes public tunnel was created but local verification is still warming up: {hermes_public_url}",
                     file=sys.stderr,
                 )
-        if discovered_hermes_url:
+        if discovered_hermes_url and not hermes_public_url:
             unique_append(hermes_candidates, normalize_url(discovered_hermes_url))
         if not hermes_candidates:
             if hermes_installed:
@@ -1093,9 +1129,9 @@ def main(argv: Optional[List[str]] = None) -> int:
             elif args.interactive:
                 raw = input("Hermes API Server URL [http://127.0.0.1:8642]: ").strip() or "http://127.0.0.1:8642"
                 unique_append(hermes_candidates, normalize_url(raw))
-        if hermes_port_open:
+        if hermes_port_open and not hermes_public_url:
             unique_append(hermes_candidates, "http://127.0.0.1:8642")
-        if include_tailscale:
+        if include_tailscale and not hermes_public_url:
             for ts_host in [tailscale_dns_name(), tailscale_ip()]:
                 if not ts_host:
                     continue
@@ -1109,7 +1145,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                         file=sys.stderr,
                     )
         lan = first_lan_ip()
-        if lan and not args.no_lan and (not args.interactive or ask_yes_no(f"Also include LAN URL http://{lan}:8642?", True)):
+        if lan and not hermes_public_url and not args.no_lan and (not args.interactive or ask_yes_no(f"Also include LAN URL http://{lan}:8642?", True)):
             lan_url = f"http://{lan}:8642"
             if hermes_models_endpoint_ok(lan_url, hermes_key, timeout=3.0):
                 unique_append(hermes_candidates, lan_url)
@@ -1165,7 +1201,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         openclaw_setup_code=openclaw_setup_code,
     )
 
-    qr_path = write_qr_svg(qr_payload, Path(tempfile.gettempdir()) / "agentvoice-pair-qr.svg")
+    qr_path = write_qr_png(qr_payload, Path(tempfile.gettempdir()) / "agentvoice-pair-qr.png")
+    write_qr_svg(qr_payload, Path(tempfile.gettempdir()) / "agentvoice-pair-qr.svg")
     terminal_width, terminal_height = terminal_qr_size(qr_payload, compact = not args.large_qr)
     cols, rows = shutil.get_terminal_size(fallback=(80, 24))
     fits_terminal = terminal_width <= cols and terminal_height + 8 <= rows
