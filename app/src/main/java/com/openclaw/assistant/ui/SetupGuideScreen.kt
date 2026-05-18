@@ -64,8 +64,13 @@ import com.openclaw.assistant.data.SettingsRepository
 import com.openclaw.assistant.ui.components.ConnectionState
 import com.openclaw.assistant.ui.components.StatusIndicator
 import com.openclaw.assistant.ui.GatewayTrustDialog
+import com.openclaw.assistant.ui.setup.EditablePairingPayload
+import com.openclaw.assistant.ui.setup.PairingPayloadReviewEditor
 import com.openclaw.assistant.ui.setup.applyPairingPayload
+import com.openclaw.assistant.ui.setup.primaryBackendType
 import com.openclaw.assistant.ui.setup.parsePairingPayload
+import com.openclaw.assistant.ui.setup.toEditablePairingPayload
+import com.openclaw.assistant.ui.setup.toPairingPayload
 import com.openclaw.assistant.ui.theme.*
 import com.openclaw.assistant.utils.GatewayConfigUtils
 import androidx.compose.ui.graphics.Brush
@@ -497,6 +502,7 @@ private fun ConnectionStep(
     val context = LocalContext.current
     val effectiveMode = if (mode == ConnectionMode.Manual) ConnectionMode.SetupCode else mode
     var pairingStatus by rememberSaveable { mutableStateOf<String?>(null) }
+    var pairingReview by remember { mutableStateOf<EditablePairingPayload?>(null) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         // スクロール可能なコンテンツ部分
@@ -522,6 +528,13 @@ private fun ConnectionStep(
 
         if (effectiveMode == ConnectionMode.Hermes) {
             AgentVoiceUnifiedPairingContent(configuredBackendCount = configuredBackendCount)
+            pairingReview?.let { draft ->
+                Spacer(modifier = Modifier.height(16.dp))
+                PairingPayloadReviewEditor(
+                    value = draft,
+                    onChange = { pairingReview = it },
+                )
+            }
         } else {
             val decodedSetupCode = GatewayConfigUtils.decodeGatewaySetupCode(setupCode)
             val isCodeValid = decodedSetupCode != null
@@ -669,7 +682,7 @@ private fun ConnectionStep(
 
         // --- 次へボタン・画面下部に固定 ---
         val canContinue = when (mode) {
-            ConnectionMode.Hermes -> configuredBackendCount > 0
+            ConnectionMode.Hermes -> configuredBackendCount > 0 || pairingReview?.toPairingPayload() != null
             ConnectionMode.SetupCode -> GatewayConfigUtils.decodeGatewaySetupCode(setupCode) != null
             ConnectionMode.Manual -> GatewayConfigUtils.decodeGatewaySetupCode(setupCode) != null
         }
@@ -678,8 +691,9 @@ private fun ConnectionStep(
         if (mode == ConnectionMode.Hermes) {
             PairingScanButton(
                 modifier = Modifier.fillMaxWidth().height(52.dp),
-                onImported = {
-                    pairingStatus = context.getString(R.string.setup_code_applied)
+                onScanned = { payload ->
+                    pairingReview = payload.toEditablePairingPayload()
+                    pairingStatus = context.getString(R.string.av_pairing_review_loaded)
                 }
             )
             val readyText = pairingStatus ?: if (configuredBackendCount > 0) {
@@ -697,7 +711,16 @@ private fun ConnectionStep(
             Spacer(modifier = Modifier.height(16.dp))
         }
         Button(
-            onClick = onNext,
+            onClick = {
+                if (mode == ConnectionMode.Hermes) {
+                    pairingReview?.let { draft ->
+                        draft.toPairingPayload()?.let { payload ->
+                            applyPairingPayload(context, payload, draft.primaryBackendType())
+                        }
+                    }
+                }
+                onNext()
+            },
             enabled = canContinue,
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(16.dp),
@@ -755,7 +778,7 @@ private fun AgentVoiceUnifiedPairingContent(configuredBackendCount: Int) {
 @Composable
 private fun PairingScanButton(
     modifier: Modifier = Modifier,
-    onImported: () -> Unit
+    onScanned: (com.openclaw.assistant.ui.setup.PairingPayload) -> Unit
 ) {
     val context = LocalContext.current
     OutlinedButton(
@@ -769,8 +792,7 @@ private fun PairingScanButton(
                     val raw = barcode.rawValue?.trim().orEmpty()
                     val pairingPayload = parsePairingPayload(raw)
                     if (pairingPayload != null) {
-                        applyPairingPayload(context, pairingPayload)
-                        onImported()
+                        onScanned(pairingPayload)
                     } else if (raw.startsWith("agentvoice://")) {
                         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(raw)))
                     } else {

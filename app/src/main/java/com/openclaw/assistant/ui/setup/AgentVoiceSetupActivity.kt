@@ -169,6 +169,7 @@ private fun ConfigurePane(includeHermes: Boolean, includeOpenClaw: Boolean) {
 private fun UnifiedPairingCard(includeHermes: Boolean, includeOpenClaw: Boolean) {
     val context = LocalContext.current
     var status by remember { mutableStateOf<String?>(null) }
+    var pairingReview by remember { mutableStateOf<EditablePairingPayload?>(null) }
     val installCommand = "curl -fsSL https://raw.githubusercontent.com/yuga-hashimoto/openclaw-assistant/main/integrations/agentvoice-pair/install.sh | bash"
     val pairCommand = remember(includeHermes, includeOpenClaw) {
         when {
@@ -211,8 +212,8 @@ private fun UnifiedPairingCard(includeHermes: Boolean, includeOpenClaw: Boolean)
                             val raw = barcode.rawValue?.trim().orEmpty()
                             val pairingPayload = parsePairingPayload(raw)
                             if (pairingPayload != null) {
-                                applyPairingPayload(context, pairingPayload)
-                                status = context.getString(R.string.setup_code_applied)
+                                pairingReview = pairingPayload.toEditablePairingPayload()
+                                status = context.getString(R.string.av_pairing_review_loaded)
                             } else if (raw.startsWith("agentvoice://")) {
                                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(raw)))
                             } else {
@@ -227,6 +228,26 @@ private fun UnifiedPairingCard(includeHermes: Boolean, includeOpenClaw: Boolean)
                 },
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(stringResource(R.string.av_pairing_scan_qr)) }
+            pairingReview?.let { draft ->
+                Spacer(Modifier.height(12.dp))
+                PairingPayloadReviewEditor(
+                    value = draft,
+                    onChange = { pairingReview = it },
+                )
+                Spacer(Modifier.height(12.dp))
+                Button(
+                    onClick = {
+                        draft.toPairingPayload()?.let {
+                            applyPairingPayload(context, it, draft.primaryBackendType())
+                            status = context.getString(R.string.setup_code_applied)
+                        }
+                    },
+                    enabled = draft.toPairingPayload() != null,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.av_pairing_apply_review))
+                }
+            }
             status?.let {
                 Spacer(Modifier.height(8.dp))
                 Text(it, style = MaterialTheme.typography.bodySmall)

@@ -696,4 +696,22 @@
     <string name="av_import_auth_password">包含密碼</string>
     <string name="av_import_auth_none">不包含認證資訊</string>
     <string name="av_import_openclaw_invalid">此 QR 中的 OpenClaw setup code 無效。</string>
+    <string name="av_pairing_review_title">檢查偵測到的設定</string>
+    <string name="av_pairing_review_desc">套用前請確認 QR 中的內容。你可以在這裡修改 URL、金鑰、setup code 和主用後端。</string>
+    <string name="av_pairing_display_name">顯示名稱</string>
+    <string name="av_pairing_fallback_urls_hint">每行一個 URL，或用逗號分隔。</string>
+    <string name="av_pairing_runs_api">使用 Runs API</string>
+    <string name="av_pairing_streaming">使用串流回應</string>
+    <string name="av_pairing_openclaw_setup_code">OpenClaw setup code</string>
+    <string name="av_pairing_openclaw_decoded">解析出的 Gateway URL</string>
+    <string name="av_pairing_primary_title">主用後端</string>
+    <string name="av_pairing_primary_hermes">將 Hermes 設為主用</string>
+    <string name="av_pairing_primary_openclaw">將 OpenClaw 設為主用</string>
+    <string name="av_pairing_review_loaded">已讀取 QR 內容。請檢查並套用。</string>
+    <string name="av_pairing_apply_review">套用已檢查的設定</string>
+    <string name="av_settings_no_hermes">尚未設定 Hermes 後端。</string>
+    <string name="av_settings_no_openclaw">尚未設定 OpenClaw 後端。</string>
+    <string name="av_settings_openclaw_advanced">OpenClaw 進階連線詳細資料</string>
+    <string name="av_backend_url_unset">URL 未設定</string>
+    <string name="av_backend_host_unset">主機未設定</string>
 </resources>

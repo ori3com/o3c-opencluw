@@ -41,6 +41,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.os.LocaleListCompat
 import com.openclaw.assistant.R
 import com.openclaw.assistant.api.OpenClawClient
+import com.openclaw.assistant.backend.AgentBackendConfig
+import com.openclaw.assistant.backend.BackendRepository
+import com.openclaw.assistant.backend.BackendType
 
 import com.openclaw.assistant.data.SettingsRepository
 import com.openclaw.assistant.service.NodeForegroundService
@@ -51,6 +54,7 @@ import com.openclaw.assistant.ui.components.ConnectionState
 import com.openclaw.assistant.ui.components.PairingRequiredCard
 import com.openclaw.assistant.ui.components.StatusIndicator
 import com.openclaw.assistant.gateway.AgentInfo
+import com.openclaw.assistant.ui.backend.BackendListActivity
 import com.openclaw.assistant.ui.theme.OpenClawAssistantTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import com.openclaw.assistant.utils.GatewayConfigUtils
@@ -321,6 +325,10 @@ fun SettingsScreen(
     val nodeConnected by runtime.isConnected.collectAsState()
     val nodeStatus by runtime.statusText.collectAsState()
     val nodeForeground by runtime.isForeground.collectAsState()
+    val backendRepository = remember(context.applicationContext) {
+        BackendRepository.getInstance(context.applicationContext)
+    }
+    val configuredBackends by backendRepository.backends.collectAsState()
 
     val manualEnabledState by runtime.manualEnabled.collectAsState()
     val manualHostState by runtime.manualHost.collectAsState()
@@ -412,7 +420,8 @@ fun SettingsScreen(
         SettingsRepository.WAKE_WORD_CUSTOM to stringResource(R.string.wake_word_custom)
     )
 
-    var selectedTabIndex by remember {
+    var backendSettingsTabIndex by rememberSaveable { mutableStateOf(0) }
+    var openClawTabIndex by remember {
         mutableStateOf(if (connectionType == SettingsRepository.CONNECTION_TYPE_GATEWAY) 0 else 1)
     }
 
@@ -431,7 +440,7 @@ fun SettingsScreen(
                     }
                     TextButton(
                         onClick = {
-                            settings.connectionType = if (selectedTabIndex == 0) {
+                            settings.connectionType = if (openClawTabIndex == 0) {
                                 SettingsRepository.CONNECTION_TYPE_GATEWAY
                             } else {
                                 SettingsRepository.CONNECTION_TYPE_HTTP
@@ -540,30 +549,69 @@ fun SettingsScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
 
-                        // Connection Configuration Tabs
+                        val hermesBackends = configuredBackends.filter { it.type == BackendType.HERMES_API_SERVER }
+                        val openClawBackends = configuredBackends.filter {
+                            it.type == BackendType.OPENCLAW_GATEWAY || it.type == BackendType.OPENCLAW_HTTP
+                        }
+
+                        // Backend configuration tabs
                         Text(stringResource(R.string.connection_settings), style = MaterialTheme.typography.labelLarge)
                         Spacer(modifier = Modifier.height(8.dp))
 
                         TabRow(
-                            selectedTabIndex = selectedTabIndex,
+                            selectedTabIndex = backendSettingsTabIndex,
                             modifier = Modifier.fillMaxWidth(),
                             containerColor = Color.Transparent,
                         ) {
                             Tab(
-                                selected = selectedTabIndex == 0,
-                                onClick = { selectedTabIndex = 0 },
-                                text = { Text(stringResource(R.string.tab_gateway)) }
+                                selected = backendSettingsTabIndex == 0,
+                                onClick = { backendSettingsTabIndex = 0 },
+                                text = { Text(stringResource(R.string.av_backend_hermes)) }
                             )
                             Tab(
-                                selected = selectedTabIndex == 1,
-                                onClick = { selectedTabIndex = 1 },
-                                text = { Text(stringResource(R.string.tab_http)) }
+                                selected = backendSettingsTabIndex == 1,
+                                onClick = { backendSettingsTabIndex = 1 },
+                                text = { Text(stringResource(R.string.av_backend_openclaw)) }
                             )
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        if (selectedTabIndex == 0) {
+                        if (backendSettingsTabIndex == 0) {
+                            BackendSummaryBlock(
+                                backends = hermesBackends,
+                                emptyText = stringResource(R.string.av_settings_no_hermes),
+                                onManage = { context.startActivity(Intent(context, BackendListActivity::class.java)) },
+                            )
+                        } else {
+                            BackendSummaryBlock(
+                                backends = openClawBackends,
+                                emptyText = stringResource(R.string.av_settings_no_openclaw),
+                                onManage = { context.startActivity(Intent(context, BackendListActivity::class.java)) },
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(stringResource(R.string.av_settings_openclaw_advanced), style = MaterialTheme.typography.titleSmall)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            TabRow(
+                                selectedTabIndex = openClawTabIndex,
+                                modifier = Modifier.fillMaxWidth(),
+                                containerColor = Color.Transparent,
+                            ) {
+                                Tab(
+                                    selected = openClawTabIndex == 0,
+                                    onClick = { openClawTabIndex = 0 },
+                                    text = { Text(stringResource(R.string.settings_gateway_title)) },
+                                )
+                                Tab(
+                                    selected = openClawTabIndex == 1,
+                                    onClick = { openClawTabIndex = 1 },
+                                    text = { Text(stringResource(R.string.settings_legacy_title)) },
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+
+                        if (backendSettingsTabIndex == 1 && openClawTabIndex == 0) {
                             // Setup Code quick-config (from `openclaw qr --setup-code-only`)
                             OutlinedTextField(
                                 value = setupCode,
@@ -763,7 +811,7 @@ fun SettingsScreen(
                                     onCheckedChange = { gatewayTls = it; testResult = null; gatewayBootstrapToken = "" }
                                 )
                             }
-                        } else if (selectedTabIndex == 1) {
+                        } else if (backendSettingsTabIndex == 1 && openClawTabIndex == 1) {
                             Text(stringResource(R.string.http_api_configuration), style = MaterialTheme.typography.titleSmall)
                             Spacer(modifier = Modifier.height(8.dp))
                             
@@ -804,7 +852,7 @@ fun SettingsScreen(
 
                         
                         // Gateway Specific Settings
-                        if (selectedTabIndex == 0) {
+                        if (backendSettingsTabIndex == 1 && openClawTabIndex == 0) {
                             Spacer(modifier = Modifier.height(16.dp))
 
                             // Foreground Service Toggle
@@ -828,7 +876,7 @@ fun SettingsScreen(
                         }
 
                         // HTTP Specific Settings
-                        if (selectedTabIndex == 1) {
+                        if (backendSettingsTabIndex == 1 && openClawTabIndex == 1) {
                             Text(
                                 text = stringResource(R.string.settings_legacy_desc),
                                 style = MaterialTheme.typography.bodySmall,
@@ -1784,6 +1832,56 @@ data class TestResult(
     val success: Boolean,
     val message: String
 )
+
+@Composable
+private fun BackendSummaryBlock(
+    backends: List<AgentBackendConfig>,
+    emptyText: String,
+    onManage: () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (backends.isEmpty()) {
+            Text(
+                emptyText,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            backends.forEach { backend ->
+                Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(backend.displayName, style = MaterialTheme.typography.titleSmall)
+                            Text(
+                                backend.settingsTypeLabel(),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        if (backend.isPrimary) {
+                            AssistChip(onClick = {}, label = { Text(stringResource(R.string.primary_backend)) })
+                        }
+                    }
+                }
+            }
+        }
+        OutlinedButton(onClick = onManage, modifier = Modifier.fillMaxWidth()) {
+            Icon(Icons.Default.Storage, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(R.string.av_backends_manage))
+        }
+    }
+}
+
+@Composable
+private fun AgentBackendConfig.settingsTypeLabel(): String = when (type) {
+    BackendType.HERMES_API_SERVER -> "Hermes API Server · ${baseUrl ?: stringResource(R.string.av_backend_url_unset)}"
+    BackendType.OPENCLAW_GATEWAY -> "OpenClaw Gateway · ${host ?: stringResource(R.string.av_backend_host_unset)}:${port ?: "?"}"
+    BackendType.OPENCLAW_HTTP -> "OpenClaw HTTP · ${baseUrl ?: stringResource(R.string.av_backend_url_unset)}"
+}
 
 private fun applyAppLanguage(languageTag: String) {
     val locales = if (languageTag.isBlank()) {

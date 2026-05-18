@@ -697,4 +697,22 @@
     <string name="av_import_auth_password">पासवर्ड शामिल</string>
     <string name="av_import_auth_none">Auth शामिल नहीं</string>
     <string name="av_import_openclaw_invalid">इस QR का OpenClaw setup code अमान्य है.</string>
+    <string name="av_pairing_review_title">पहचाने गए setup की समीक्षा करें</string>
+    <string name="av_pairing_review_desc">लागू करने से पहले QR में मिली जानकारी जांचें। यहां URL, key, setup code और प्राथमिक backend बदले जा सकते हैं।</string>
+    <string name="av_pairing_display_name">दिखने वाला नाम</string>
+    <string name="av_pairing_fallback_urls_hint">हर लाइन में एक URL, या comma से अलग करें।</string>
+    <string name="av_pairing_runs_api">Runs API इस्तेमाल करें</string>
+    <string name="av_pairing_streaming">Streaming इस्तेमाल करें</string>
+    <string name="av_pairing_openclaw_setup_code">OpenClaw setup code</string>
+    <string name="av_pairing_openclaw_decoded">Decoded Gateway URL</string>
+    <string name="av_pairing_primary_title">प्राथमिक backend</string>
+    <string name="av_pairing_primary_hermes">Hermes को प्राथमिक रखें</string>
+    <string name="av_pairing_primary_openclaw">OpenClaw को प्राथमिक रखें</string>
+    <string name="av_pairing_review_loaded">QR सामग्री लोड हो गई। समीक्षा करके लागू करें।</string>
+    <string name="av_pairing_apply_review">समीक्षित setup लागू करें</string>
+    <string name="av_settings_no_hermes">अभी कोई Hermes backend configured नहीं है।</string>
+    <string name="av_settings_no_openclaw">अभी कोई OpenClaw backend configured नहीं है।</string>
+    <string name="av_settings_openclaw_advanced">OpenClaw advanced connection details</string>
+    <string name="av_backend_url_unset">URL सेट नहीं है</string>
+    <string name="av_backend_host_unset">Host सेट नहीं है</string>
 </resources>

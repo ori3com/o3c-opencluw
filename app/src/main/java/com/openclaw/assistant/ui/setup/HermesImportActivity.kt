@@ -9,16 +9,22 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.openclaw.assistant.MainActivity
 import com.openclaw.assistant.OpenClawApplication
@@ -93,6 +100,7 @@ class HermesImportActivity : ComponentActivity() {
 private fun ImportScreen(uri: Uri?, onFinish: () -> Unit, onCancel: () -> Unit) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val parsed = remember(uri) { uri?.let(::parsePairingUri) }
+    var editable by remember(parsed) { mutableStateOf(parsed?.toEditablePairingPayload()) }
     val scope = rememberCoroutineScope()
     var status by remember { mutableStateOf<String?>(null) }
 
@@ -115,10 +123,11 @@ private fun ImportScreen(uri: Uri?, onFinish: () -> Unit, onCancel: () -> Unit) 
             }
             Text(stringResource(R.string.av_import_review), style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(16.dp))
-            parsed.hermes?.let { HermesSummary(it) }
-            parsed.openClawSetupCode?.let { code ->
-                Spacer(Modifier.height(12.dp))
-                OpenClawSummary(code)
+            editable?.let { draft ->
+                PairingPayloadReviewEditor(
+                    value = draft,
+                    onChange = { editable = it },
+                )
             }
             Spacer(Modifier.height(20.dp))
             status?.let {
@@ -127,7 +136,9 @@ private fun ImportScreen(uri: Uri?, onFinish: () -> Unit, onCancel: () -> Unit) 
             }
             Button(
                 onClick = {
-                    applyPairingPayload(context, parsed)
+                    editable?.toPairingPayload()?.let {
+                        applyPairingPayload(context, it, editable?.primaryBackendType())
+                    }
                     onFinish()
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -135,7 +146,7 @@ private fun ImportScreen(uri: Uri?, onFinish: () -> Unit, onCancel: () -> Unit) 
             Spacer(Modifier.height(8.dp))
             OutlinedButton(
                 onClick = {
-                    val hermes = parsed.hermes
+                    val hermes = editable?.toPairingPayload()?.hermes
                     if (hermes == null) {
                         status = context.getString(R.string.av_import_no_hermes)
                         return@OutlinedButton
@@ -215,6 +226,232 @@ internal data class HermesPairingPayload(
     val streaming: Boolean,
     val displayName: String?,
 )
+
+internal enum class PairingPrimaryChoice {
+    HERMES,
+    OPENCLAW,
+}
+
+internal data class EditablePairingPayload(
+    val includeHermes: Boolean,
+    val hermesBaseUrl: String,
+    val hermesFallbackUrls: String,
+    val hermesApiKey: String,
+    val hermesModelName: String,
+    val hermesUseRunsApi: Boolean,
+    val hermesStreaming: Boolean,
+    val hermesDisplayName: String,
+    val includeOpenClaw: Boolean,
+    val openClawSetupCode: String,
+    val primaryChoice: PairingPrimaryChoice,
+)
+
+internal fun PairingPayload.toEditablePairingPayload(): EditablePairingPayload {
+    val primary = when {
+        hermes != null -> PairingPrimaryChoice.HERMES
+        openClawSetupCode != null -> PairingPrimaryChoice.OPENCLAW
+        else -> PairingPrimaryChoice.HERMES
+    }
+    return EditablePairingPayload(
+        includeHermes = hermes != null,
+        hermesBaseUrl = hermes?.baseUrl.orEmpty(),
+        hermesFallbackUrls = hermes?.secondaryUrls?.joinToString("\n").orEmpty(),
+        hermesApiKey = hermes?.apiKey.orEmpty(),
+        hermesModelName = hermes?.modelName ?: "hermes-agent",
+        hermesUseRunsApi = hermes?.useRunsApi ?: false,
+        hermesStreaming = hermes?.streaming ?: true,
+        hermesDisplayName = hermes?.displayName.orEmpty(),
+        includeOpenClaw = openClawSetupCode != null,
+        openClawSetupCode = openClawSetupCode.orEmpty(),
+        primaryChoice = primary,
+    )
+}
+
+internal fun EditablePairingPayload.toPairingPayload(): PairingPayload? {
+    val hermes = if (includeHermes && hermesBaseUrl.trim().startsWith("http")) {
+        HermesPairingPayload(
+            baseUrl = hermesBaseUrl.trim(),
+            secondaryUrls = hermesFallbackUrls
+                .split("\n", ",")
+                .map { it.trim() }
+                .filter { it.startsWith("http://") || it.startsWith("https://") }
+                .distinct()
+                .filterNot { it == hermesBaseUrl.trim() },
+            apiKey = hermesApiKey.trim().ifEmpty { null },
+            modelName = hermesModelName.trim().ifEmpty { "hermes-agent" },
+            useRunsApi = hermesUseRunsApi,
+            streaming = hermesStreaming,
+            displayName = hermesDisplayName.trim().ifEmpty { null },
+        )
+    } else {
+        null
+    }
+    val openClaw = openClawSetupCode.trim().takeIf { includeOpenClaw && it.isNotEmpty() }
+    return if (hermes == null && openClaw == null) null else PairingPayload(hermes, openClaw)
+}
+
+internal fun EditablePairingPayload.primaryBackendType(): BackendType? = when (primaryChoice) {
+    PairingPrimaryChoice.HERMES -> if (includeHermes) BackendType.HERMES_API_SERVER else null
+    PairingPrimaryChoice.OPENCLAW -> if (includeOpenClaw) BackendType.OPENCLAW_GATEWAY else null
+}
+
+@Composable
+internal fun PairingPayloadReviewEditor(
+    value: EditablePairingPayload,
+    onChange: (EditablePairingPayload) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(stringResource(R.string.av_pairing_review_title), style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.av_pairing_review_desc), style = MaterialTheme.typography.bodySmall)
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = value.includeHermes,
+                        onCheckedChange = {
+                            onChange(value.copy(
+                                includeHermes = it,
+                                primaryChoice = if (it) value.primaryChoice else PairingPrimaryChoice.OPENCLAW,
+                            ))
+                        },
+                    )
+                    Text(stringResource(R.string.av_backend_hermes), style = MaterialTheme.typography.titleMedium)
+                }
+                if (value.includeHermes) {
+                    OutlinedTextField(
+                        value = value.hermesDisplayName,
+                        onValueChange = { onChange(value.copy(hermesDisplayName = it)) },
+                        label = { Text(stringResource(R.string.av_pairing_display_name)) },
+                        placeholder = { Text(stringResource(R.string.av_backend_hermes)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                    )
+                    OutlinedTextField(
+                        value = value.hermesBaseUrl,
+                        onValueChange = { onChange(value.copy(hermesBaseUrl = it)) },
+                        label = { Text(stringResource(R.string.av_import_primary_url)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                    )
+                    OutlinedTextField(
+                        value = value.hermesFallbackUrls,
+                        onValueChange = { onChange(value.copy(hermesFallbackUrls = it)) },
+                        label = { Text(stringResource(R.string.av_import_fallback_urls)) },
+                        placeholder = { Text(stringResource(R.string.av_pairing_fallback_urls_hint)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        minLines = 2,
+                    )
+                    OutlinedTextField(
+                        value = value.hermesApiKey,
+                        onValueChange = { onChange(value.copy(hermesApiKey = it)) },
+                        label = { Text(stringResource(R.string.av_import_api_key)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                    )
+                    OutlinedTextField(
+                        value = value.hermesModelName,
+                        onValueChange = { onChange(value.copy(hermesModelName = it)) },
+                        label = { Text(stringResource(R.string.av_import_model)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                    )
+                    ToggleRow(
+                        label = stringResource(R.string.av_pairing_runs_api),
+                        checked = value.hermesUseRunsApi,
+                        onCheckedChange = { onChange(value.copy(hermesUseRunsApi = it)) },
+                    )
+                    ToggleRow(
+                        label = stringResource(R.string.av_pairing_streaming),
+                        checked = value.hermesStreaming,
+                        onCheckedChange = { onChange(value.copy(hermesStreaming = it)) },
+                    )
+                }
+            }
+        }
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = value.includeOpenClaw,
+                        onCheckedChange = {
+                            onChange(value.copy(
+                                includeOpenClaw = it,
+                                primaryChoice = if (it) value.primaryChoice else PairingPrimaryChoice.HERMES,
+                            ))
+                        },
+                    )
+                    Text(stringResource(R.string.av_backend_openclaw), style = MaterialTheme.typography.titleMedium)
+                }
+                if (value.includeOpenClaw) {
+                    val decoded = remember(value.openClawSetupCode) {
+                        GatewayConfigUtils.decodeGatewaySetupCode(value.openClawSetupCode)
+                    }
+                    OutlinedTextField(
+                        value = value.openClawSetupCode,
+                        onValueChange = { onChange(value.copy(openClawSetupCode = it)) },
+                        label = { Text(stringResource(R.string.av_pairing_openclaw_setup_code)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        minLines = 2,
+                    )
+                    if (decoded != null) {
+                        InfoRow(stringResource(R.string.av_pairing_openclaw_decoded), decoded.url)
+                        InfoRow(stringResource(R.string.av_import_auth), when {
+                            decoded.bootstrapToken != null && decoded.password != null -> stringResource(R.string.av_import_auth_password_pairing)
+                            decoded.bootstrapToken != null -> stringResource(R.string.av_import_auth_bootstrap)
+                            decoded.token != null -> stringResource(R.string.av_import_auth_token)
+                            decoded.password != null -> stringResource(R.string.av_import_auth_password)
+                            else -> stringResource(R.string.av_import_auth_none)
+                        })
+                    } else {
+                        Text(stringResource(R.string.av_import_openclaw_invalid), color = MaterialTheme.colorScheme.error)
+                    }
+                }
+            }
+        }
+
+        if (value.includeHermes || value.includeOpenClaw) {
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.av_pairing_primary_title), style = MaterialTheme.typography.titleMedium)
+                    if (value.includeHermes) {
+                        PrimaryChoiceRow(
+                            selected = value.primaryChoice == PairingPrimaryChoice.HERMES,
+                            label = stringResource(R.string.av_pairing_primary_hermes),
+                            onClick = { onChange(value.copy(primaryChoice = PairingPrimaryChoice.HERMES)) },
+                        )
+                    }
+                    if (value.includeOpenClaw) {
+                        PrimaryChoiceRow(
+                            selected = value.primaryChoice == PairingPrimaryChoice.OPENCLAW,
+                            label = stringResource(R.string.av_pairing_primary_openclaw),
+                            onClick = { onChange(value.copy(primaryChoice = PairingPrimaryChoice.OPENCLAW)) },
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ToggleRow(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
+    }
+}
+
+@Composable
+private fun PrimaryChoiceRow(selected: Boolean, label: String, onClick: () -> Unit) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        RadioButton(selected = selected, onClick = onClick)
+        Text(label, style = MaterialTheme.typography.bodyMedium)
+    }
+}
 
 /**
  * Parses `agentvoice://hermes/setup?u=...&k=...&m=...&r=...&s=...&n=...` URIs.
@@ -300,7 +537,11 @@ private fun HermesPairingPayload.toBackendConfig(isPrimary: Boolean): AgentBacke
     isPrimary = isPrimary,
 )
 
-internal fun applyPairingPayload(context: android.content.Context, payload: PairingPayload) {
+internal fun applyPairingPayload(
+    context: android.content.Context,
+    payload: PairingPayload,
+    primaryType: BackendType? = null,
+) {
     val repo = BackendRepository.getInstance(context)
     payload.hermes?.let { hermes ->
         val current = repo.backends.value
@@ -377,5 +618,21 @@ internal fun applyPairingPayload(context: android.content.Context, payload: Pair
         duplicates.filterNot { it.id == gatewayConfig.id }.forEach { repo.delete(it.id) }
         repo.upsert(gatewayConfig)
         if (gatewayConfig.isPrimary) repo.setPrimary(gatewayConfig.id)
+    }
+    primaryType?.let { desired ->
+        val match = repo.backends.value.firstOrNull { config ->
+            config.enabled && when (desired) {
+                BackendType.HERMES_API_SERVER -> config.type == desired && payload.hermes?.let { hermes ->
+                    val incomingUrls = buildSet {
+                        add(hermes.baseUrl)
+                        addAll(hermes.secondaryUrls)
+                    }
+                    config.baseUrl in incomingUrls || config.secondaryUrls.any { it in incomingUrls }
+                } == true
+                BackendType.OPENCLAW_GATEWAY -> config.type == desired
+                BackendType.OPENCLAW_HTTP -> config.type == desired
+            }
+        } ?: repo.backends.value.firstOrNull { it.enabled && it.type == desired }
+        match?.let { repo.setPrimary(it.id) }
     }
 }

@@ -720,4 +720,23 @@
     <string name="av_import_auth_password">パスワードを含みます</string>
     <string name="av_import_auth_none">認証情報なし</string>
     <string name="av_import_openclaw_invalid">このQR内のOpenClaw setup codeは無効です。</string>
+
+    <string name="av_pairing_review_title">読み取った設定を確認</string>
+    <string name="av_pairing_review_desc">QRに含まれていた内容を適用前に確認します。URL、キー、setup code、メイン接続先はここで修正できます。</string>
+    <string name="av_pairing_display_name">表示名</string>
+    <string name="av_pairing_fallback_urls_hint">1行に1つ、またはカンマ区切りで入力</string>
+    <string name="av_pairing_runs_api">Runs APIを使う</string>
+    <string name="av_pairing_streaming">ストリーミングを使う</string>
+    <string name="av_pairing_openclaw_setup_code">OpenClaw setup code</string>
+    <string name="av_pairing_openclaw_decoded">解析したGateway URL</string>
+    <string name="av_pairing_primary_title">メイン接続先</string>
+    <string name="av_pairing_primary_hermes">Hermesをメインにする</string>
+    <string name="av_pairing_primary_openclaw">OpenClawをメインにする</string>
+    <string name="av_pairing_review_loaded">QRの内容を読み取りました。確認して適用してください。</string>
+    <string name="av_pairing_apply_review">確認した設定を適用</string>
+    <string name="av_settings_no_hermes">Hermes接続先はまだ設定されていません。</string>
+    <string name="av_settings_no_openclaw">OpenClaw接続先はまだ設定されていません。</string>
+    <string name="av_settings_openclaw_advanced">OpenClawの詳細接続設定</string>
+    <string name="av_backend_url_unset">URL未設定</string>
+    <string name="av_backend_host_unset">ホスト未設定</string>
 </resources>

@@ -697,4 +697,22 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="av_import_auth_password">Mot de passe inclus</string>
     <string name="av_import_auth_none">Aucune auth incluse</string>
     <string name="av_import_openclaw_invalid">Le setup code OpenClaw dans ce QR est invalide.</string>
+    <string name="av_pairing_review_title">Vérifier la configuration détectée</string>
+    <string name="av_pairing_review_desc">Confirmez le contenu du QR avant de l\'appliquer. Vous pouvez modifier les URL, clés, setup code et le backend principal ici.</string>
+    <string name="av_pairing_display_name">Nom affiché</string>
+    <string name="av_pairing_fallback_urls_hint">Une URL par ligne, ou séparées par des virgules.</string>
+    <string name="av_pairing_runs_api">Utiliser Runs API</string>
+    <string name="av_pairing_streaming">Utiliser le streaming</string>
+    <string name="av_pairing_openclaw_setup_code">Setup code OpenClaw</string>
+    <string name="av_pairing_openclaw_decoded">URL Gateway décodée</string>
+    <string name="av_pairing_primary_title">Backend principal</string>
+    <string name="av_pairing_primary_hermes">Utiliser Hermes comme principal</string>
+    <string name="av_pairing_primary_openclaw">Utiliser OpenClaw comme principal</string>
+    <string name="av_pairing_review_loaded">Contenu du QR chargé. Vérifiez et appliquez.</string>
+    <string name="av_pairing_apply_review">Appliquer la configuration vérifiée</string>
+    <string name="av_settings_no_hermes">Aucun backend Hermes n\'est encore configuré.</string>
+    <string name="av_settings_no_openclaw">Aucun backend OpenClaw n\'est encore configuré.</string>
+    <string name="av_settings_openclaw_advanced">Détails avancés de connexion OpenClaw</string>
+    <string name="av_backend_url_unset">URL non définie</string>
+    <string name="av_backend_host_unset">Hôte non défini</string>
 </resources>

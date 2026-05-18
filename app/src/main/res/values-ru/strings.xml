@@ -697,4 +697,22 @@
     <string name="av_import_auth_password">Пароль включен</string>
     <string name="av_import_auth_none">Auth не включена</string>
     <string name="av_import_openclaw_invalid">OpenClaw setup code в этом QR недействителен.</string>
+    <string name="av_pairing_review_title">Проверьте найденную настройку</string>
+    <string name="av_pairing_review_desc">Проверьте содержимое QR перед применением. Здесь можно изменить URL, ключи, setup code и основной бэкенд.</string>
+    <string name="av_pairing_display_name">Отображаемое имя</string>
+    <string name="av_pairing_fallback_urls_hint">Один URL на строку или через запятую.</string>
+    <string name="av_pairing_runs_api">Использовать Runs API</string>
+    <string name="av_pairing_streaming">Использовать streaming</string>
+    <string name="av_pairing_openclaw_setup_code">Setup code OpenClaw</string>
+    <string name="av_pairing_openclaw_decoded">Расшифрованный Gateway URL</string>
+    <string name="av_pairing_primary_title">Основной бэкенд</string>
+    <string name="av_pairing_primary_hermes">Использовать Hermes основным</string>
+    <string name="av_pairing_primary_openclaw">Использовать OpenClaw основным</string>
+    <string name="av_pairing_review_loaded">Содержимое QR загружено. Проверьте и примените.</string>
+    <string name="av_pairing_apply_review">Применить проверенную настройку</string>
+    <string name="av_settings_no_hermes">Бэкенд Hermes еще не настроен.</string>
+    <string name="av_settings_no_openclaw">Бэкенд OpenClaw еще не настроен.</string>
+    <string name="av_settings_openclaw_advanced">Расширенные параметры подключения OpenClaw</string>
+    <string name="av_backend_url_unset">URL не задан</string>
+    <string name="av_backend_host_unset">Хост не задан</string>
 </resources>

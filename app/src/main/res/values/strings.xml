@@ -828,4 +828,23 @@
     <string name="action_copy">Copy</string>
     <string name="error_mic_privacy_title">Microphone Access Blocked</string>
     <string name="error_mic_privacy_message">Your device\'s microphone privacy toggle is off. Enable it in Settings &gt; Privacy &gt; Microphone.</string>
+
+    <string name="av_pairing_review_title">Review detected setup</string>
+    <string name="av_pairing_review_desc">Confirm what the QR contains before applying it. You can edit URLs, keys, setup codes, and the primary backend here.</string>
+    <string name="av_pairing_display_name">Display name</string>
+    <string name="av_pairing_fallback_urls_hint">One URL per line, or separate with commas.</string>
+    <string name="av_pairing_runs_api">Use Runs API</string>
+    <string name="av_pairing_streaming">Use streaming</string>
+    <string name="av_pairing_openclaw_setup_code">OpenClaw setup code</string>
+    <string name="av_pairing_openclaw_decoded">Decoded Gateway URL</string>
+    <string name="av_pairing_primary_title">Primary backend</string>
+    <string name="av_pairing_primary_hermes">Use Hermes as primary</string>
+    <string name="av_pairing_primary_openclaw">Use OpenClaw as primary</string>
+    <string name="av_pairing_review_loaded">QR contents loaded. Review and apply them.</string>
+    <string name="av_pairing_apply_review">Apply reviewed setup</string>
+    <string name="av_settings_no_hermes">No Hermes backend is configured yet.</string>
+    <string name="av_settings_no_openclaw">No OpenClaw backend is configured yet.</string>
+    <string name="av_settings_openclaw_advanced">OpenClaw advanced connection details</string>
+    <string name="av_backend_url_unset">URL unset</string>
+    <string name="av_backend_host_unset">Host unset</string>
 </resources>
