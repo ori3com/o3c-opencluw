@@ -728,4 +728,16 @@
     <string name="av_settings_openclaw_advanced">OpenClaw 進階連線詳細資料</string>
     <string name="av_backend_url_unset">URL 未設定</string>
     <string name="av_backend_host_unset">主機未設定</string>
+    <string name="av_home_connections_title">連線狀態</string>
+    <string name="av_home_connected">已連線</string>
+    <string name="av_home_configured">已設定</string>
+    <string name="av_home_reachable">可連線</string>
+    <string name="av_home_configured_not_connected">已設定，未連線</string>
+    <string name="av_home_not_configured">未設定</string>
+    <string name="av_home_primary_chip">主要</string>
+    <string name="av_home_connection_detail">%1$s · %2$s</string>
+    <string name="av_home_test_connection">測試連線</string>
+    <string name="av_home_test_ok">連線成功: %1$s (%2$dms)</string>
+    <string name="av_home_test_failed">失敗: %1$s</string>
+    <string name="permissions_for_agent_voice_title">Android 裝置功能</string>
 </resources>

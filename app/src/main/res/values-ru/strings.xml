@@ -729,4 +729,16 @@
     <string name="av_settings_openclaw_advanced">Расширенные параметры подключения OpenClaw</string>
     <string name="av_backend_url_unset">URL не задан</string>
     <string name="av_backend_host_unset">Хост не задан</string>
+    <string name="av_home_connections_title">Подключения</string>
+    <string name="av_home_connected">Подключено</string>
+    <string name="av_home_configured">Настроено</string>
+    <string name="av_home_reachable">Доступно</string>
+    <string name="av_home_configured_not_connected">Настроено, не подключено</string>
+    <string name="av_home_not_configured">Не настроено</string>
+    <string name="av_home_primary_chip">Основной</string>
+    <string name="av_home_connection_detail">%1$s · %2$s</string>
+    <string name="av_home_test_connection">Проверить подключение</string>
+    <string name="av_home_test_ok">Подключено: %1$s (%2$dms)</string>
+    <string name="av_home_test_failed">Ошибка: %1$s</string>
+    <string name="permissions_for_agent_voice_title">Возможности Android</string>
 </resources>

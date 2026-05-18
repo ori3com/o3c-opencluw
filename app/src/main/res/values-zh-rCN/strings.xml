@@ -729,4 +729,16 @@
     <string name="av_settings_openclaw_advanced">OpenClaw 高级连接详情</string>
     <string name="av_backend_url_unset">URL 未设置</string>
     <string name="av_backend_host_unset">主机未设置</string>
+    <string name="av_home_connections_title">连接状态</string>
+    <string name="av_home_connected">已连接</string>
+    <string name="av_home_configured">已配置</string>
+    <string name="av_home_reachable">可访问</string>
+    <string name="av_home_configured_not_connected">已配置，未连接</string>
+    <string name="av_home_not_configured">未配置</string>
+    <string name="av_home_primary_chip">主连接</string>
+    <string name="av_home_connection_detail">%1$s · %2$s</string>
+    <string name="av_home_test_connection">测试连接</string>
+    <string name="av_home_test_ok">连接成功: %1$s (%2$dms)</string>
+    <string name="av_home_test_failed">失败: %1$s</string>
+    <string name="permissions_for_agent_voice_title">Android 设备功能</string>
 </resources>

@@ -869,4 +869,16 @@
     <string name="av_settings_openclaw_advanced">OpenClaw advanced connection details</string>
     <string name="av_backend_url_unset">URL unset</string>
     <string name="av_backend_host_unset">Host unset</string>
+    <string name="av_home_connections_title">Connections</string>
+    <string name="av_home_connected">Connected</string>
+    <string name="av_home_configured">Configured</string>
+    <string name="av_home_reachable">Reachable</string>
+    <string name="av_home_configured_not_connected">Configured, not connected</string>
+    <string name="av_home_not_configured">Not configured</string>
+    <string name="av_home_primary_chip">Primary</string>
+    <string name="av_home_connection_detail">%1$s · %2$s</string>
+    <string name="av_home_test_connection">Test connection</string>
+    <string name="av_home_test_ok">Connected: %1$s (%2$dms)</string>
+    <string name="av_home_test_failed">Failed: %1$s</string>
+    <string name="permissions_for_agent_voice_title">Android capabilities</string>
 </resources>

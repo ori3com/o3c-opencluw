@@ -729,4 +729,16 @@
     <string name="av_settings_openclaw_advanced">OpenClaw advanced connection details</string>
     <string name="av_backend_url_unset">URL सेट नहीं है</string>
     <string name="av_backend_host_unset">Host सेट नहीं है</string>
+    <string name="av_home_connections_title">कनेक्शन</string>
+    <string name="av_home_connected">कनेक्टेड</string>
+    <string name="av_home_configured">कॉन्फ़िगर किया गया</string>
+    <string name="av_home_reachable">पहुँच योग्य</string>
+    <string name="av_home_configured_not_connected">कॉन्फ़िगर है, कनेक्टेड नहीं</string>
+    <string name="av_home_not_configured">कॉन्फ़िगर नहीं</string>
+    <string name="av_home_primary_chip">प्राथमिक</string>
+    <string name="av_home_connection_detail">%1$s · %2$s</string>
+    <string name="av_home_test_connection">कनेक्शन टेस्ट करें</string>
+    <string name="av_home_test_ok">कनेक्टेड: %1$s (%2$dms)</string>
+    <string name="av_home_test_failed">विफल: %1$s</string>
+    <string name="permissions_for_agent_voice_title">Android डिवाइस क्षमताएँ</string>
 </resources>

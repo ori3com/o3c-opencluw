@@ -689,41 +689,6 @@ fun MainScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.app_name)) },
-                actions = {
-                    val context = LocalContext.current
-                    IconButton(onClick = {
-                        try {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://ko-fi.com/R5R51S97C4"))
-                            context.startActivity(intent)
-                        } catch (e: ActivityNotFoundException) {
-                            // No browser available; ignore
-                        }
-                    }) {
-                        Icon(Icons.Default.VolunteerActivism, contentDescription = stringResource(R.string.credits_support_kofi_button))
-                    }
-                    IconButton(onClick = { showHowToUse = true }) {
-                        Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = stringResource(R.string.how_to_use))
-                    }
-                    IconButton(onClick = onOpenSettings) {
-                        Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings_title))
-                    }
-                    val ctx = LocalContext.current
-                    IconButton(onClick = {
-                        ctx.startActivity(Intent(ctx, com.openclaw.assistant.ui.backend.BackendListActivity::class.java))
-                    }) {
-                        Icon(Icons.Default.Cloud, contentDescription = "Backends")
-                    }
-                    IconButton(onClick = {
-                        ctx.startActivity(Intent(ctx, com.openclaw.assistant.ui.bridge.MobileBridgeSettingsActivity::class.java))
-                    }) {
-                        Icon(Icons.Default.PowerSettingsNew, contentDescription = "Mobile Bridge")
-                    }
-                    IconButton(onClick = {
-                        ctx.startActivity(Intent(ctx, com.openclaw.assistant.ui.setup.AgentVoiceSetupActivity::class.java))
-                    }) {
-                        Icon(Icons.Default.PlayArrow, contentDescription = "Setup wizard")
-                    }
-                }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -743,7 +708,16 @@ fun MainScreen(
                     onDecline = { runtime.declineGatewayTrustPrompt() }
                 )
             }
-            com.openclaw.assistant.ui.backend.PrimaryBackendCard()
+            val displayStatusText = when (nodeStatusText) {
+                "Operator Online (Node Offline)" -> stringResource(R.string.status_operator_online_node_offline)
+                "Node Online (Operator Offline)" -> stringResource(R.string.status_node_online_operator_offline)
+                "Offline" -> stringResource(R.string.status_offline)
+                else -> nodeStatusText
+            }
+            com.openclaw.assistant.ui.backend.PrimaryBackendCard(
+                openClawConnected = nodeConnected,
+                openClawStatusText = displayStatusText,
+            )
             Spacer(modifier = Modifier.height(12.dp))
             // Show alert if missing scope error is present
             if (missingScopeError != null) {
@@ -763,27 +737,9 @@ fun MainScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // === SYSTEM STATUS DASHBOARD ===
-            val displayStatusText = when (nodeStatusText) {
-                "Operator Online (Node Offline)" -> stringResource(R.string.status_operator_online_node_offline)
-                "Node Online (Operator Offline)" -> stringResource(R.string.status_node_online_operator_offline)
-                "Offline" -> stringResource(R.string.status_offline)
-                else -> nodeStatusText
-            }
-            
-            SystemStatusCard(
-                connected = nodeConnected,
-                statusText = displayStatusText,
-                onConnect = { runtime.connectManual() },
-                onDisconnect = { runtime.disconnect() },
-                onOpenSettings = onOpenSettings
-            )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-
             // === CAPABILITIES CONTROLS ===
             Text(
-                text = stringResource(R.string.permissions_for_openclaw_title),
+                text = stringResource(R.string.permissions_for_agent_voice_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)

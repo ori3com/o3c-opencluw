@@ -729,4 +729,16 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="av_settings_openclaw_advanced">Détails avancés de connexion OpenClaw</string>
     <string name="av_backend_url_unset">URL non définie</string>
     <string name="av_backend_host_unset">Hôte non défini</string>
+    <string name="av_home_connections_title">Connexions</string>
+    <string name="av_home_connected">Connecté</string>
+    <string name="av_home_configured">Configuré</string>
+    <string name="av_home_reachable">Accessible</string>
+    <string name="av_home_configured_not_connected">Configuré, non connecté</string>
+    <string name="av_home_not_configured">Non configuré</string>
+    <string name="av_home_primary_chip">Principal</string>
+    <string name="av_home_connection_detail">%1$s · %2$s</string>
+    <string name="av_home_test_connection">Tester la connexion</string>
+    <string name="av_home_test_ok">Connecté : %1$s (%2$dms)</string>
+    <string name="av_home_test_failed">Échec : %1$s</string>
+    <string name="permissions_for_agent_voice_title">Fonctionnalités Android</string>
 </resources>
