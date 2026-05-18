@@ -737,7 +737,7 @@ private fun ConnectionStep(
         ) {
             Text(
                 stringResource(
-                    if (mode == ConnectionMode.Hermes && configuredBackendCount == 0) {
+                    if (mode == ConnectionMode.Hermes && configuredBackendCount == 0 && pairingReview == null) {
                         R.string.setup_guide_next_after_qr
                     } else {
                         R.string.setup_guide_next
