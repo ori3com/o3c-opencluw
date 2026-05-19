@@ -415,10 +415,11 @@ class NodeRuntime(context: Context) {
     )
 
     if (operatorNeedsPairing || nodeNeedsPairing) {
-      // Show pairing card as long as either session still needs approval,
-      // even if the other session has already connected.
+      // Keep the pairing card visible once the gateway reports it. Some status polls return a
+      // generic disconnected message while the request is still pending, so only a real connection
+      // should clear the prompt.
       _isPairingRequired.value = true
-    } else if (!operatorNeedsPairing && !nodeNeedsPairing) {
+    } else if (operatorConnected || nodeConnected) {
       _isPairingRequired.value = false
     }
 
@@ -795,10 +796,8 @@ class NodeRuntime(context: Context) {
   }
 
   fun connectManual() {
-    _isPairingRequired.value = false
     operatorStatusText = ""
     nodeStatusText = ""
-    _isPairingRequired.value = false
     val host = manualHost.value.trim()
       .removePrefix("http://")
       .removePrefix("https://")

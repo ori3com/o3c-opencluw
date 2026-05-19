@@ -1049,6 +1049,7 @@ private fun FinalCheckStep(
     val apiClient = remember { OpenClawClient() }
     var attemptedConnect by remember { mutableStateOf(false) }
     var pairingDetected by remember { mutableStateOf(false) }
+    var isTesting by remember { mutableStateOf(false) }
     var isFinishing by remember { mutableStateOf(false) }
 
     val finishWithHttpTest: () -> Unit = {
@@ -1073,8 +1074,11 @@ private fun FinalCheckStep(
 
 
 
-    LaunchedEffect(isPairingRequired, attemptedConnect) {
+    LaunchedEffect(isConnected, isPairingRequired, statusText, attemptedConnect) {
         if (isPairingRequired) pairingDetected = true
+        if (isConnected || isPairingRequired || statusText.contains("Failed", ignoreCase = true)) {
+            isTesting = false
+        }
 
         if (!isPairingRequired || !attemptedConnect) return@LaunchedEffect
         while (true) {
@@ -1220,6 +1224,37 @@ private fun FinalCheckStep(
                 modifier = Modifier.padding(16.dp)
             )
 
+            if (isTesting && !isConnected) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(OnboardingGradientMid.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
+                        .border(1.dp, OnboardingGradientMid.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
+                        .padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                        color = OnboardingGradientMid
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column {
+                        Text(
+                            text = stringResource(R.string.setup_guide_testing_in_progress),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = OnboardingTextPrimary,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = statusText,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = OnboardingTextSecondary
+                        )
+                    }
+                }
+            }
+
             if (isConnected && (serverName != null || remoteAddress != null)) {
                 Text(
                     text = stringResource(R.string.setup_guide_connected_to, serverName ?: remoteAddress ?: ""),
@@ -1259,13 +1294,19 @@ private fun FinalCheckStep(
                 onClick = {
                     attemptedConnect = true
                     pairingDetected = false
+                    isTesting = true
                     runtime.connectManual()
                 },
+                enabled = !isTesting,
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = OnboardingGradientMid)
             ) {
-                Text(stringResource(R.string.test_connection_button), fontSize = 18.sp)
+                if (isTesting) {
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp), color = MaterialTheme.colorScheme.onPrimary, strokeWidth = 2.dp)
+                } else {
+                    Text(stringResource(R.string.test_connection_button), fontSize = 18.sp)
+                }
             }
         }
     } // end of Column(fillMaxSize)
@@ -1481,13 +1522,31 @@ private fun HermesFinalStep(onFinish: () -> Unit) {
                                     color = MaterialTheme.colorScheme.primary,
                                 )
                             }
+                            Text(
+                                text = stringResource(R.string.setup_guide_connection_state, statusText),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (isGatewayConnected) MaterialTheme.colorScheme.primary else OnboardingTextSecondary,
+                            )
                         }
                         testStatus?.let {
-                            Text(
-                                text = it,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = if (verified) MaterialTheme.colorScheme.primary else OnboardingTextSecondary,
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                if (isTesting) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(18.dp),
+                                        strokeWidth = 2.dp,
+                                        color = OnboardingGradientMid,
+                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                }
+                                Text(
+                                    text = it,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = if (verified) MaterialTheme.colorScheme.primary else OnboardingTextSecondary,
+                                )
+                            }
                         }
                         replyPreviews.values.forEach {
                             Text(
