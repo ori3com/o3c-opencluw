@@ -18,9 +18,36 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.concurrent.TimeUnit
 
+import kotlinx.serialization.Serializable
+
 data class HermesModelOption(
     val id: String,
     val description: String? = null,
+)
+
+@Serializable
+data class HermesCronSchedule(
+    val kind: String? = null,
+    val expr: String,
+    val display: String? = null
+)
+
+@Serializable
+data class HermesCronRepeat(
+    val times: Int? = null,
+    val completed: Int? = null
+)
+
+@Serializable
+data class HermesCronJob(
+    val id: String,
+    val name: String,
+    val schedule: HermesCronSchedule,
+    val prompt: String,
+    val deliver: String = "local",
+    val skills: List<String>? = null,
+    val repeat: HermesCronRepeat? = null,
+    val enabled: Boolean = true
 )
 
 data class HermesConfigState(
@@ -203,6 +230,96 @@ class HermesConfigApi(
         val obj = json.parseToJsonElement(text).jsonObject
         obj["error"]?.jsonPrimitive?.contentOrNull.orEmpty()
     }.getOrDefault(text).take(300)
+
+    suspend fun fetchJobs(config: AgentBackendConfig): List<HermesCronJob> = withContext(Dispatchers.IO) {
+        val baseUrl = requireBaseUrl(config)
+        val request = authed(config, Request.Builder().url(HermesUrl.jobsUrl(baseUrl)).get()).build()
+        httpClient.newCall(request).execute().use { response ->
+            val text = response.body?.string().orEmpty()
+            if (!response.isSuccessful) {
+                throw IllegalStateException("HTTP ${response.code}: ${extractError(text).ifBlank { response.message }}")
+            }
+            val obj = json.parseToJsonElement(text).jsonObject
+            val array = obj["jobs"]?.jsonArray ?: return@withContext emptyList()
+            array.map { json.decodeFromJsonElement(HermesCronJob.serializer(), it) }
+        }
+    }
+
+    suspend fun createJob(
+        config: AgentBackendConfig,
+        name: String,
+        schedule: String,
+        prompt: String,
+        deliver: String = "local",
+        repeat: Int? = null
+    ): HermesCronJob = withContext(Dispatchers.IO) {
+        val baseUrl = requireBaseUrl(config)
+        val bodyObj = buildJsonObject {
+            put("name", name.trim())
+            put("schedule", schedule.trim())
+            put("prompt", prompt.trim())
+            put("deliver", deliver.trim())
+            if (repeat != null) {
+                put("repeat", repeat)
+            }
+        }
+        val requestBody = bodyObj.toString().toRequestBody(JSON_MEDIA)
+        val request = authed(config, Request.Builder().url(HermesUrl.jobsUrl(baseUrl)).post(requestBody)).build()
+        httpClient.newCall(request).execute().use { response ->
+            val text = response.body?.string().orEmpty()
+            if (!response.isSuccessful) {
+                throw IllegalStateException("HTTP ${response.code}: ${extractError(text).ifBlank { response.message }}")
+            }
+            val obj = json.parseToJsonElement(text).jsonObject
+            val jobJson = obj["job"] ?: throw IllegalStateException("Response does not contain 'job'")
+            json.decodeFromJsonElement(HermesCronJob.serializer(), jobJson)
+        }
+    }
+
+    suspend fun updateJob(
+        config: AgentBackendConfig,
+        jobId: String,
+        name: String? = null,
+        schedule: String? = null,
+        prompt: String? = null,
+        enabled: Boolean? = null,
+        repeat: Int? = null
+    ): HermesCronJob = withContext(Dispatchers.IO) {
+        val baseUrl = requireBaseUrl(config)
+        val bodyObj = buildJsonObject {
+            if (name != null) put("name", name.trim())
+            if (schedule != null) put("schedule", schedule.trim())
+            if (prompt != null) put("prompt", prompt.trim())
+            if (enabled != null) put("enabled", enabled)
+            if (repeat != null) {
+                put("repeat", repeat)
+            }
+        }
+        val requestBody = bodyObj.toString().toRequestBody(JSON_MEDIA)
+        val request = authed(config, Request.Builder().url(HermesUrl.jobUrl(baseUrl, jobId)).patch(requestBody)).build()
+        httpClient.newCall(request).execute().use { response ->
+            val text = response.body?.string().orEmpty()
+            if (!response.isSuccessful) {
+                throw IllegalStateException("HTTP ${response.code}: ${extractError(text).ifBlank { response.message }}")
+            }
+            val obj = json.parseToJsonElement(text).jsonObject
+            val jobJson = obj["job"] ?: throw IllegalStateException("Response does not contain 'job'")
+            json.decodeFromJsonElement(HermesCronJob.serializer(), jobJson)
+        }
+    }
+
+    suspend fun deleteJob(config: AgentBackendConfig, jobId: String): Boolean = withContext(Dispatchers.IO) {
+        val baseUrl = requireBaseUrl(config)
+        val request = authed(config, Request.Builder().url(HermesUrl.jobUrl(baseUrl, jobId)).delete()).build()
+        httpClient.newCall(request).execute().use { response ->
+            val text = response.body?.string().orEmpty()
+            if (!response.isSuccessful) {
+                throw IllegalStateException("HTTP ${response.code}: ${extractError(text).ifBlank { response.message }}")
+            }
+            val obj = json.parseToJsonElement(text).jsonObject
+            obj["ok"]?.jsonPrimitive?.contentOrNull?.toBoolean() == true
+        }
+    }
 
     private companion object {
         val JSON_MEDIA = "application/json; charset=utf-8".toMediaType()

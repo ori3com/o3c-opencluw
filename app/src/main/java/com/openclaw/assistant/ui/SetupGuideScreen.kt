@@ -67,6 +67,7 @@ import com.openclaw.assistant.backend.BackendType
 import com.openclaw.assistant.backend.PrimaryBackendDispatcher
 import com.openclaw.assistant.data.SettingsRepository
 import com.openclaw.assistant.ui.components.ConnectionState
+import com.openclaw.assistant.ui.components.PairingRequiredCard
 import com.openclaw.assistant.ui.components.StatusIndicator
 import com.openclaw.assistant.ui.GatewayTrustDialog
 import com.openclaw.assistant.ui.setup.EditablePairingPayload
@@ -779,7 +780,7 @@ private fun AgentVoiceUnifiedPairingContent(configuredBackendCount: Int) {
                 Text(stringResource(R.string.av_pairing_card_step1), style = MaterialTheme.typography.bodyMedium, color = OnboardingTextPrimary)
                 CommandBlock("curl -fsSL https://raw.githubusercontent.com/yuga-hashimoto/openclaw-assistant/main/integrations/agentvoice-pair/install.sh | bash")
                 Text(stringResource(R.string.av_pairing_card_step2), style = MaterialTheme.typography.bodyMedium, color = OnboardingTextPrimary)
-                CommandBlock("agentvoice-pair")
+                CommandBlock("agentvoice-pair --public-tunnel --terminal-qr")
                 Text(stringResource(R.string.av_pairing_card_step3), style = MaterialTheme.typography.bodyMedium, color = OnboardingTextPrimary)
                 Text(stringResource(R.string.av_pairing_card_note), style = MaterialTheme.typography.bodySmall, color = OnboardingTextSecondary)
                 if (configuredBackendCount > 0) {
@@ -1279,7 +1280,12 @@ private fun FinalCheckStep(
 
             if (!isConnected && pairingDetected) {
                 Spacer(modifier = Modifier.height(8.dp))
-                PairingGuideBlock(deviceId = runtime.deviceId)
+                val deviceId = runtime.deviceId
+                if (isPairingRequired && deviceId != null) {
+                    PairingRequiredCard(deviceId = deviceId)
+                } else {
+                    PairingGuideBlock(deviceId = deviceId)
+                }
             }
         }
 
@@ -1334,7 +1340,11 @@ private fun HermesFinalStep(onFinish: () -> Unit) {
         (context.applicationContext as OpenClawApplication).nodeRuntime
     }
     val isGatewayConnected by runtime.isConnected.collectAsState()
+    val gatewayChatReady by runtime.chatHealthOk.collectAsState()
+    val isPairingRequired by runtime.isPairingRequired.collectAsState()
+    val pendingGatewayTrust by runtime.pendingGatewayTrust.collectAsState()
     val statusText by runtime.statusText.collectAsState()
+    val displayName by runtime.displayName.collectAsState()
     val primaryBackend = remember(backends) {
         backends.firstOrNull { it.enabled && it.isPrimary } ?: backends.firstOrNull { it.enabled }
     }
@@ -1366,9 +1376,11 @@ private fun HermesFinalStep(onFinish: () -> Unit) {
                     if (target.type == BackendType.OPENCLAW_GATEWAY) {
                         runtime.connectManual()
                         val connected = withTimeoutOrNull(45_000L) {
-                            while (!runtime.isConnected.value) {
+                            while (!runtime.chatHealthOk.value) {
                                 if (runtime.pendingGatewayTrust.value != null) {
                                     testStatus = context.getString(R.string.setup_guide_e2e_waiting_tls)
+                                } else if (runtime.isPairingRequired.value) {
+                                    testStatus = context.getString(R.string.setup_guide_pairing_required)
                                 }
                                 delay(500L)
                             }
@@ -1378,6 +1390,9 @@ private fun HermesFinalStep(onFinish: () -> Unit) {
                             testStatus = context.getString(R.string.setup_guide_e2e_failed, statusText.ifBlank { "OpenClaw timeout" })
                             return@launch
                         }
+                        replyPreviews = replyPreviews + (target.id to context.getString(R.string.setup_guide_e2e_openclaw_ready, target.displayName))
+                        verifiedBackendIds = verifiedBackendIds + target.id
+                        return@forEach
                     } else {
                         val result = withContext(Dispatchers.IO) { AgentClientFactory.create(target).testConnection() }
                         if (!result.ok) {
@@ -1407,6 +1422,13 @@ private fun HermesFinalStep(onFinish: () -> Unit) {
     }
 
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        if (pendingGatewayTrust != null) {
+            GatewayTrustDialog(
+                prompt = pendingGatewayTrust!!,
+                onAccept = { runtime.acceptGatewayTrustPrompt() },
+                onDecline = { runtime.declineGatewayTrustPrompt() },
+            )
+        }
         Column(
             modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -1538,7 +1560,7 @@ private fun HermesFinalStep(onFinish: () -> Unit) {
                             Text(
                                 text = stringResource(R.string.setup_guide_connection_state, statusText),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = if (isGatewayConnected) MaterialTheme.colorScheme.primary else OnboardingTextSecondary,
+                                color = if (gatewayChatReady || isGatewayConnected) MaterialTheme.colorScheme.primary else OnboardingTextSecondary,
                             )
                         }
                         testStatus?.let {
@@ -1568,6 +1590,15 @@ private fun HermesFinalStep(onFinish: () -> Unit) {
                                 color = OnboardingTextSecondary,
                             )
                         }
+                    }
+                }
+                if (requiredBackends.any { it.type == BackendType.OPENCLAW_GATEWAY } && isPairingRequired) {
+                    val deviceId = runtime.deviceId
+                    Spacer(modifier = Modifier.height(16.dp))
+                    if (deviceId != null) {
+                        PairingRequiredCard(deviceId = deviceId, displayName = displayName)
+                    } else {
+                        PairingGuideBlock(deviceId = null)
                     }
                 }
             }

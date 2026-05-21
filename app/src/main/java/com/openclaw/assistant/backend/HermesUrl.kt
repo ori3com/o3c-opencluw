@@ -40,4 +40,6 @@ internal object HermesUrl {
     fun runUrl(base: String, id: String) = "${normalizeBase(base)}/runs/$id"
     fun runEventsUrl(base: String, id: String) = "${normalizeBase(base)}/runs/$id/events"
     fun runStopUrl(base: String, id: String) = "${normalizeBase(base)}/runs/$id/stop"
+    fun jobsUrl(base: String) = "${apiBase(base)}/api/jobs"
+    fun jobUrl(base: String, id: String) = "${apiBase(base)}/api/jobs/$id"
 }

@@ -100,8 +100,9 @@ sealed class AppTab(val route: String, val labelResId: Int, val icon: ImageVecto
     object Chat     : AppTab("chat",     R.string.tab_nav_chat,     Icons.AutoMirrored.Filled.Chat)
     object Terminal : AppTab("terminal", R.string.tab_nav_terminal, Icons.Default.Terminal)
     object Canvas   : AppTab("canvas",   R.string.tab_nav_canvas,   Icons.Default.Brush)
+    object Cron     : AppTab("cron",     R.string.tab_nav_cron,     Icons.Default.Schedule)
     object Settings : AppTab("settings", R.string.tab_nav_settings, Icons.Default.Settings)
-    companion object { val BOTTOM_NAV_TABS by lazy { listOf(Home, Chat, Terminal, Settings) } }
+    companion object { val BOTTOM_NAV_TABS by lazy { listOf(Home, Chat, Terminal, Cron, Settings) } }
 }
 
 class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
@@ -472,6 +473,7 @@ fun MainNavHost(
                 when (route) {
                     AppTab.Chat.route     -> AppTab.Chat
                     AppTab.Terminal.route -> AppTab.Terminal
+                    AppTab.Cron.route     -> AppTab.Cron
                     "bridge"              -> AppTab.Settings
                     AppTab.Canvas.route   -> AppTab.Home
                     AppTab.Settings.route -> AppTab.Settings
@@ -574,6 +576,11 @@ fun MainNavHost(
                     val terminalViewModel: TerminalViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
                     TerminalScreen(
                         viewModel = terminalViewModel,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+                AppTab.Cron -> {
+                    com.openclaw.assistant.ui.cron.CronScreen(
                         modifier = Modifier.fillMaxSize()
                     )
                 }
