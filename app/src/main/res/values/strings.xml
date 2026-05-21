@@ -594,6 +594,7 @@
     <!-- Pairing -->
     <string name="pairing_required_title">Device Pairing Required</string>
     <string name="pairing_required_desc">This device is not yet approved by the server. WakeHermesClaw will try to approve it through OpenClaw first; if that is not available, run the command on the host.</string>
+    <string name="pairing_requested_scopes">Requested OpenClaw scopes: operator.read, operator.write, operator.admin, operator.pairing, operator.talk.secrets, operator.approvals.</string>
     <string name="pairing_copy_command">Copy Command</string>
     <string name="pairing_command_copied">Command copied to clipboard</string>
     <string name="pairing_device_id">Device ID: %s</string>
@@ -945,6 +946,9 @@
     <string name="cron_job_enabled">Enabled</string>
     <string name="cron_save">Save</string>
     <string name="cron_cancel">Cancel</string>
+    <string name="cron_disable_all">Disable all</string>
+    <string name="cron_disable_all_confirm_title">Disable all jobs?</string>
+    <string name="cron_disable_all_confirm_body">All enabled jobs in this tab will be turned off.</string>
     <string name="cron_delete_confirm">Are you sure you want to delete this job?</string>
     <string name="cron_error_fetch">Failed to fetch jobs</string>
     <string name="cron_error_save">Failed to save job</string>

@@ -1685,6 +1685,11 @@ private fun PairingGuideBlock(deviceId: String?) {
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+        Text(
+            text = stringResource(R.string.pairing_requested_scopes),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
         CommandBlock("openclaw devices list")
         CommandBlock(approveCmd)
         Text(

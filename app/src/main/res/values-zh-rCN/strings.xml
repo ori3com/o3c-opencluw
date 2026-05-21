@@ -328,6 +328,7 @@
 <string name="action_ask_ai">请 AI 修复</string>
 <string name="pairing_required_title">需要设备配对</string>
 <string name="pairing_required_desc">此设备尚未获得服务器批准。WakeHermesClaw 会先尝试通过 OpenClaw 批准它；如果不可用，请在主机上运行该命令。</string>
+<string name="pairing_requested_scopes">请求的 OpenClaw 权限：operator.read、operator.write、operator.admin、operator.pairing、operator.talk.secrets、operator.approvals。</string>
 <string name="pairing_copy_command">复制命令</string>
 <string name="pairing_command_copied">命令已复制到剪贴板</string>
 <string name="pairing_device_id">设备 ID：%s</string>
@@ -604,6 +605,9 @@
     <string name="cron_job_enabled">已启用</string>
     <string name="cron_save">保存</string>
     <string name="cron_cancel">取消</string>
+    <string name="cron_disable_all">全部停用</string>
+    <string name="cron_disable_all_confirm_title">停用所有作业？</string>
+    <string name="cron_disable_all_confirm_body">此标签页中所有已启用的作业都将关闭。</string>
     <string name="cron_delete_confirm">确定要删除此作业吗？</string>
     <string name="cron_error_fetch">获取作业失败</string>
     <string name="cron_error_save">保存作业失败</string>

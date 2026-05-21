@@ -111,6 +111,12 @@ class OpenClawCronApi(
         return json.decodeFromString(OpenClawCronJob.serializer(), response)
     }
 
+    suspend fun disableAll(jobs: List<OpenClawCronJob>) {
+        jobs.filter { it.enabled }.forEach { job ->
+            updateJob(job, enabled = false)
+        }
+    }
+
     suspend fun deleteJob(jobId: String) {
         runtime.requestGateway("cron.remove", """{"id":${quote(jobId)}}""", timeoutMs = 30_000)
     }

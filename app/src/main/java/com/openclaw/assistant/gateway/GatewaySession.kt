@@ -90,8 +90,10 @@ class GatewaySession(
       return "$scheme://$formattedHost$portSuffix$suffix"
     }
 
-    internal fun buildOrigin(scheme: String, host: String, port: Int): String =
-      buildCanvasUrl(scheme, host, port, "")
+    internal fun buildOrigin(scheme: String, host: String, port: Int): String {
+      val originHost = if (host.trim().lowercase() == "10.0.2.2") "127.0.0.1" else host
+      return buildCanvasUrl(scheme, originHost, port, "")
+    }
 
     internal fun resolveInvokeResultAckTimeoutMs(invokeTimeoutMs: Long?): Long {
       if (invokeTimeoutMs == null) return 15_000L
@@ -104,6 +106,7 @@ class GatewaySession(
       if (host == "localhost") return true
       if (host == "::1") return true
       if (host == "0.0.0.0" || host == "::") return true
+      if (host == "10.0.2.2") return true // Android emulator alias for the host loopback.
 
       val parts = host.split(".")
       if (parts.size == 4) {

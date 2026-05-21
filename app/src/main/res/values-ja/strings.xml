@@ -359,6 +359,7 @@
 <string name="action_ask_ai">AIに修正を依頼</string>
 <string name="pairing_required_title">デバイスのペアリングが必要です</string>
 <string name="pairing_required_desc">このデバイスはまだサーバーで承認されていません。まず WakeHermesClaw が OpenClaw 経由で承認を試みます。使えない場合はホスト側でコマンドを実行してください。</string>
+<string name="pairing_requested_scopes">要求する OpenClaw 権限: operator.read, operator.write, operator.admin, operator.pairing, operator.talk.secrets, operator.approvals。</string>
 <string name="pairing_copy_command">コマンドをコピー</string>
 <string name="pairing_command_copied">コマンドをクリップボードにコピーしました</string>
 <string name="pairing_device_id">デバイスID: %s</string>
@@ -662,6 +663,9 @@
     <string name="cron_job_enabled">有効</string>
     <string name="cron_save">保存</string>
     <string name="cron_cancel">キャンセル</string>
+    <string name="cron_disable_all">すべて停止</string>
+    <string name="cron_disable_all_confirm_title">すべてのジョブを停止しますか？</string>
+    <string name="cron_disable_all_confirm_body">このタブ内で有効なジョブをすべてオフにします。</string>
     <string name="cron_delete_confirm">このジョブを削除してもよろしいですか？</string>
     <string name="cron_error_fetch">ジョブの取得に失敗しました</string>
     <string name="cron_error_save">ジョブの保存に失敗しました</string>

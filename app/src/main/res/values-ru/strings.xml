@@ -328,6 +328,7 @@
 <string name="action_ask_ai">Попросите ИИ исправить</string>
 <string name="pairing_required_title">Требуется сопряжение устройств</string>
 <string name="pairing_required_desc">Это устройство еще не одобрено сервером. WakeHermesClaw сначала попробует одобрить его через OpenClaw; если это недоступно, выполните команду на хосте.</string>
+<string name="pairing_requested_scopes">Запрашиваемые права OpenClaw: operator.read, operator.write, operator.admin, operator.pairing, operator.talk.secrets, operator.approvals.</string>
 <string name="pairing_copy_command">Команда копирования</string>
 <string name="pairing_command_copied">Команда скопирована в буфер обмена</string>
 <string name="pairing_device_id">Идентификатор устройства: %s</string>
@@ -604,6 +605,9 @@
     <string name="cron_job_enabled">Включено</string>
     <string name="cron_save">Сохранить</string>
     <string name="cron_cancel">Отмена</string>
+    <string name="cron_disable_all">Отключить все</string>
+    <string name="cron_disable_all_confirm_title">Отключить все задания?</string>
+    <string name="cron_disable_all_confirm_body">Все включенные задания на этой вкладке будут отключены.</string>
     <string name="cron_delete_confirm">Удалить это задание?</string>
     <string name="cron_error_fetch">Не удалось загрузить задания</string>
     <string name="cron_error_save">Не удалось сохранить задание</string>

@@ -328,6 +328,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="action_ask_ai">Demander à l\'IA de réparer</string>
 <string name="pairing_required_title">Couplage de périphériques requis</string>
 <string name="pairing_required_desc">Cet appareil n’est pas encore approuvé par le serveur. WakeHermesClaw essaiera d’abord de l’approuver via OpenClaw. Si ce n’est pas disponible, exécutez la commande sur l’hôte.</string>
+<string name="pairing_requested_scopes">Autorisations OpenClaw demandées : operator.read, operator.write, operator.admin, operator.pairing, operator.talk.secrets, operator.approvals.</string>
 <string name="pairing_copy_command">Copier la commande</string>
 <string name="pairing_command_copied">Commande copiée dans le presse-papiers</string>
 <string name="pairing_device_id">ID de l\'appareil : %s</string>
@@ -604,6 +605,9 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="cron_job_enabled">Activé</string>
     <string name="cron_save">Enregistrer</string>
     <string name="cron_cancel">Annuler</string>
+    <string name="cron_disable_all">Tout désactiver</string>
+    <string name="cron_disable_all_confirm_title">Désactiver toutes les tâches ?</string>
+    <string name="cron_disable_all_confirm_body">Toutes les tâches activées dans cet onglet seront désactivées.</string>
     <string name="cron_delete_confirm">Voulez-vous vraiment supprimer cette tâche ?</string>
     <string name="cron_error_fetch">Impossible de récupérer les tâches</string>
     <string name="cron_error_save">Impossible d’enregistrer la tâche</string>

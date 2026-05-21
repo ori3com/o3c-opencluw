@@ -328,6 +328,7 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
 <string name="action_ask_ai">Pídale a AI que lo arregle</string>
 <string name="pairing_required_title">Se requiere emparejamiento de dispositivos</string>
 <string name="pairing_required_desc">Este dispositivo aún no ha sido aprobado por el servidor. WakeHermesClaw intentará aprobarlo primero mediante OpenClaw; si no está disponible, ejecuta el comando en el host.</string>
+<string name="pairing_requested_scopes">Permisos de OpenClaw solicitados: operator.read, operator.write, operator.admin, operator.pairing, operator.talk.secrets, operator.approvals.</string>
 <string name="pairing_copy_command">Copiar comando</string>
 <string name="pairing_command_copied">Comando copiado al portapapeles</string>
 <string name="pairing_device_id">ID del dispositivo: %s</string>
@@ -604,6 +605,9 @@ Para más detalles, consulta el sitio oficial de VOICEVOX.</string>
     <string name="cron_job_enabled">Activado</string>
     <string name="cron_save">Guardar</string>
     <string name="cron_cancel">Cancelar</string>
+    <string name="cron_disable_all">Desactivar todo</string>
+    <string name="cron_disable_all_confirm_title">¿Desactivar todos los trabajos?</string>
+    <string name="cron_disable_all_confirm_body">Se desactivarán todos los trabajos activos de esta pestaña.</string>
     <string name="cron_delete_confirm">¿Seguro que quieres eliminar este trabajo?</string>
     <string name="cron_error_fetch">No se pudieron obtener los trabajos</string>
     <string name="cron_error_save">No se pudo guardar el trabajo</string>

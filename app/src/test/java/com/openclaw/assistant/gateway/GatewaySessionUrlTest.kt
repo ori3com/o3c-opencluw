@@ -113,6 +113,11 @@ class GatewaySessionUrlTest {
         assertEquals("https://example.com:8443", GatewaySession.buildOrigin("https", "example.com", 8443))
     }
 
+    @Test
+    fun `buildOrigin - maps Android emulator host loopback to localhost origin`() {
+        assertEquals("http://127.0.0.1:18789", GatewaySession.buildOrigin("http", "10.0.2.2", 18789))
+    }
+
     // ---------------------------------------------------------------------------
     // isLoopbackHost
     // ---------------------------------------------------------------------------
@@ -128,6 +133,9 @@ class GatewaySessionUrlTest {
 
     @Test
     fun `isLoopbackHost - 0_0_0_0`() = assertTrue(GatewaySession.isLoopbackHost("0.0.0.0"))
+
+    @Test
+    fun `isLoopbackHost - Android emulator host loopback`() = assertTrue(GatewaySession.isLoopbackHost("10.0.2.2"))
 
     @Test
     fun `isLoopbackHost - public domain`() = assertFalse(GatewaySession.isLoopbackHost("example.com"))

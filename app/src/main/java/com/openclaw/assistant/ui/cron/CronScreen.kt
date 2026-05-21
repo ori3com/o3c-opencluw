@@ -457,6 +457,7 @@ private fun OpenClawCronJobList() {
     var showAddDialog by remember { mutableStateOf(false) }
     var editingJob by remember { mutableStateOf<OpenClawCronJob?>(null) }
     var jobToDelete by remember { mutableStateOf<OpenClawCronJob?>(null) }
+    var showDisableAllDialog by remember { mutableStateOf(false) }
 
     fun refresh() {
         scope.launch {
@@ -525,6 +526,16 @@ private fun OpenClawCronJobList() {
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                if (jobs.any { it.enabled }) {
+                    item {
+                        OutlinedButton(
+                            onClick = { showDisableAllDialog = true },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(stringResource(R.string.cron_disable_all))
+                        }
+                    }
+                }
                 items(jobs, key = { it.id }) { job ->
                     OpenClawCronJobCard(
                         job = job,
@@ -596,6 +607,38 @@ private fun OpenClawCronJobList() {
                     }
                 }
             }
+        )
+    }
+
+    if (showDisableAllDialog) {
+        AlertDialog(
+            onDismissRequest = { showDisableAllDialog = false },
+            title = { Text(stringResource(R.string.cron_disable_all_confirm_title)) },
+            text = { Text(stringResource(R.string.cron_disable_all_confirm_body)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            isLoading = true
+                            try {
+                                api.disableAll(jobs)
+                                showDisableAllDialog = false
+                                refresh()
+                            } catch (e: Exception) {
+                                errorMessage = e.message ?: context.getString(R.string.cron_error_save)
+                                isLoading = false
+                            }
+                        }
+                    }
+                ) {
+                    Text(stringResource(R.string.cron_disable_all))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDisableAllDialog = false }) {
+                    Text(stringResource(R.string.cron_cancel))
+                }
+            },
         )
     }
 
@@ -713,7 +756,7 @@ private fun OpenClawCronJob.deliveryLabel(): String {
 private fun OpenClawCronJob.scheduleLabel(): String {
     return when (schedule.kind) {
         "cron" -> listOfNotNull(schedule.expr, schedule.tz?.takeIf { it.isNotBlank() }).joinToString("  ")
-        "every" -> schedule.everyMs?.let { "every ${it / 1000}s" } ?: schedule.kind
+        "every" -> schedule.everyMs?.let { "${it / 1000}s" } ?: schedule.kind
         "at" -> schedule.at ?: schedule.kind
         else -> schedule.kind
     }

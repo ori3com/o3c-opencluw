@@ -285,6 +285,8 @@ class ConnectionManager(
       scopes = listOf(
         "operator.read",
         "operator.write",
+        "operator.admin",
+        "operator.pairing",
         "operator.talk.secrets",
         "operator.approvals",
       ),
@@ -299,7 +301,14 @@ class ConnectionManager(
   fun buildPairingOperatorConnectOptions(): GatewayConnectOptions {
     return GatewayConnectOptions(
       role = "operator",
-      scopes = listOf("operator.pairing"),
+      scopes = listOf(
+        "operator.read",
+        "operator.write",
+        "operator.admin",
+        "operator.pairing",
+        "operator.talk.secrets",
+        "operator.approvals",
+      ),
       caps = emptyList(),
       commands = emptyList(),
       permissions = emptyMap(),

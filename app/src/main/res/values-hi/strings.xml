@@ -328,6 +328,7 @@
 <string name="action_ask_ai">एआई को ठीक करने के लिए कहें</string>
 <string name="pairing_required_title">डिवाइस पेयरिंग आवश्यक है</string>
 <string name="pairing_required_desc">यह डिवाइस अभी तक सर्वर द्वारा स्वीकृत नहीं है. WakeHermesClaw पहले OpenClaw के जरिए इसे approve करने की कोशिश करेगा; अगर वह उपलब्ध न हो, तो host पर command चलाएँ.</string>
+<string name="pairing_requested_scopes">Requested OpenClaw scopes: operator.read, operator.write, operator.admin, operator.pairing, operator.talk.secrets, operator.approvals.</string>
 <string name="pairing_copy_command">कमांड कॉपी करें</string>
 <string name="pairing_command_copied">कमांड को क्लिपबोर्ड पर कॉपी किया गया</string>
 <string name="pairing_device_id">डिवाइस आईडी: %s</string>
@@ -604,6 +605,9 @@
     <string name="cron_job_enabled">Enabled</string>
     <string name="cron_save">Save</string>
     <string name="cron_cancel">Cancel</string>
+    <string name="cron_disable_all">सब बंद करें</string>
+    <string name="cron_disable_all_confirm_title">सभी jobs बंद करें?</string>
+    <string name="cron_disable_all_confirm_body">इस tab में enabled सभी jobs बंद हो जाएँगे.</string>
     <string name="cron_delete_confirm">क्या आप यह job delete करना चाहते हैं?</string>
     <string name="cron_error_fetch">Jobs fetch नहीं हो सके</string>
     <string name="cron_error_save">Job save नहीं हो सका</string>

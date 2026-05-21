@@ -148,6 +148,13 @@ fun PairingRequiredCard(deviceId: String, displayName: String = "") {
                 style = MaterialTheme.typography.bodyMedium
             )
 
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.pairing_requested_scopes),
+                style = MaterialTheme.typography.bodySmall
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
 
             // Actions

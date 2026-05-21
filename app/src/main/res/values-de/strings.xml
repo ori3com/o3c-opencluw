@@ -327,6 +327,7 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
 <string name="action_ask_ai">Bitten Sie die KI, das Problem zu beheben</string>
 <string name="pairing_required_title">Gerätekopplung erforderlich</string>
 <string name="pairing_required_desc">Dieses Gerät ist noch nicht vom Server genehmigt. WakeHermesClaw versucht zuerst, es über OpenClaw zu genehmigen. Wenn das nicht verfügbar ist, führe den Befehl auf dem Host aus.</string>
+<string name="pairing_requested_scopes">Angeforderte OpenClaw-Berechtigungen: operator.read, operator.write, operator.admin, operator.pairing, operator.talk.secrets, operator.approvals.</string>
 <string name="pairing_copy_command">Befehl kopieren</string>
 <string name="pairing_command_copied">Befehl in die Zwischenablage kopiert</string>
 <string name="pairing_device_id">Geräte-ID: %s</string>
@@ -603,6 +604,9 @@ Weitere Informationen finden Sie auf der offiziellen Website von VOICEVOX.</stri
     <string name="cron_job_enabled">Aktiviert</string>
     <string name="cron_save">Speichern</string>
     <string name="cron_cancel">Abbrechen</string>
+    <string name="cron_disable_all">Alle deaktivieren</string>
+    <string name="cron_disable_all_confirm_title">Alle Jobs deaktivieren?</string>
+    <string name="cron_disable_all_confirm_body">Alle aktivierten Jobs auf diesem Tab werden ausgeschaltet.</string>
     <string name="cron_delete_confirm">Diesen Job wirklich löschen?</string>
     <string name="cron_error_fetch">Jobs konnten nicht geladen werden</string>
     <string name="cron_error_save">Job konnte nicht gespeichert werden</string>
