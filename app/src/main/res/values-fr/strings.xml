@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string name="app_name">WakeHermesClaw</string>
+<string name="app_name">o3clu</string>
 <string name="notification_channel_name">Service Wake Word</string>
 <string name="notification_channel_description">Service de détection vocale toujours actif</string>
-<string name="notification_title">WakeHermesClaw</string>
+<string name="notification_title">o3clu</string>
 <string name="notification_content">Dites \"%s\" pour activer</string>
 <string name="default_session_title_format">Séance vocale %s</string>
 <string name="chat_session_title_format">Chat %s</string>
@@ -44,15 +44,15 @@
 <string name="test_connection_button">Test de connexion</string>
 <string name="backends_title">Backends</string>
 <string name="backends_empty">No backends configured yet</string>
-<string name="backends_empty_desc">Tap Add backend to configure OpenClaw or Hermes Agent.</string>
+<string name="backends_empty_desc">Tap Add backend to configure o3clu or Hermes Agent.</string>
 <string name="add_backend">Add backend</string>
 <string name="primary_backend">Primary</string>
 <string name="test_connection">Test connection</string>
 <string name="more_options">More options</string>
 <string name="no_url">no URL</string>
 <string name="backend_type_hermes_with_url">Hermes Agent - %1$s</string>
-<string name="backend_type_openclaw_with_host">OpenClaw - %1$s:%2$s</string>
-<string name="backend_type_openclaw_api_with_url">OpenClaw API - %1$s</string>
+<string name="backend_type_openclaw_with_host">o3clu - %1$s:%2$s</string>
+<string name="backend_type_openclaw_api_with_url">o3clu API - %1$s</string>
 <string name="backend_type">Type</string>
 <string name="backend_display_name">Display name</string>
 <string name="backend_agent_context">Agent Context</string>
@@ -81,14 +81,14 @@
 <string name="backend_apply_to_hermes">Apply to Hermes</string>
 <string name="backend_providers_value">Providers: %1$s</string>
 <string name="backend_more_models">+%1$d more</string>
-<string name="backend_openclaw_token">OpenClaw token</string>
+<string name="backend_openclaw_token">o3clu token</string>
 <string name="backend_use_tls">Use TLS</string>
-<string name="backend_openclaw_setup_hint">For pairing, QR-code setup, or discovery, use the OpenClaw setup screen on the Home tab. It handles certificate fingerprints and TLS trust prompts. Save this entry once host, port, and token are confirmed.</string>
+<string name="backend_openclaw_setup_hint">For pairing, QR-code setup, or discovery, use the o3clu setup screen on the Home tab. It handles certificate fingerprints and TLS trust prompts. Save this entry once host, port, and token are confirmed.</string>
 <string name="backend_base_url">Base URL</string>
 <string name="backend_mark_primary">Mark as Primary</string>
 <string name="backend_hermes_model_title">Hermes Model</string>
-<string name="backend_openclaw_model_title">OpenClaw Model</string>
-<string name="backend_openclaw_api_model_title">OpenClaw API Model</string>
+<string name="backend_openclaw_model_title">o3clu Model</string>
+<string name="backend_openclaw_api_model_title">o3clu API Model</string>
 <string name="backend_hermes_model_help">Saved for chat and can also be applied to Hermes.</string>
 <string name="backend_openclaw_model_help">Sent with gateway chat requests when supported.</string>
 <string name="backend_openclaw_api_model_help">Sent as the OpenAI-compatible model field.</string>
@@ -102,7 +102,7 @@
 <string name="processing">Traitement…</string>
 <string name="error_label">Erreur</string>
 <string name="try_again_button">Réessayer</string>
-<string name="ask_hint">Demandez à WakeHermesClaw…</string>
+<string name="ask_hint">Demandez à o3clu…</string>
 <string name="send_description">Envoyer</string>
 <string name="stop_description">Arrêter</string>
     <string name="start_listening_description">Commencer à écouter</string>
@@ -124,7 +124,7 @@
 <string name="disabled">Désactivé</string>
 <string name="open_chat">Ouvrir le chat</string>
 <string name="setup_required">Configuration requise</string>
-<string name="connected_to_openclaw">Connecté à OpenClaw</string>
+<string name="connected_to_openclaw">Connecté à o3clu</string>
 <string name="permissions_required">Autorisations requises</string>
 <string name="could_not_open_settings">Impossible d\'ouvrir les paramètres</string>
 <string name="hotword_started">Détection de Wake Word démarrée</string>
@@ -135,7 +135,7 @@
 <string name="got_it">Compris</string>
 <string name="step_1">Appuyez longuement sur Accueil ou dites \"%s\"</string>
 <string name="step_2">Posez votre question ou demande</string>
-<string name="step_3">OpenClaw lit la réponse à haute voix</string>
+<string name="step_3">o3clu lit la réponse à haute voix</string>
 <string name="step_4">Poursuivre la conversation (session maintenue)</string>
 <string name="assist_gesture_not_working">Le geste d\'assistance ne fonctionne pas ?</string>
 <string name="troubleshooting_intro">Même si elles sont définies par défaut, certaines fonctionnalités du système peuvent remplacer le geste d\'appui long.</string>
@@ -146,7 +146,7 @@
 <string name="google_app_setting_title">Paramètres de l\'application Google</string>
 <string name="google_app_setting_desc">Ouvrez l\'application Google → Appuyez sur Profil → Paramètres → Assistant Google → Général → Désactivez « Assistant Google » s\'il continue d\'interférer.</string>
 <string name="refresh_binding_title">Actualiser la liaison</string>
-<string name="refresh_binding_desc">Si l\'état est « Actif » mais que cela ne fonctionne toujours pas, essayez de remplacer « Application d\'assistant numérique » par « Aucun », puis revenez à « WakeHermesClaw ».</string>
+<string name="refresh_binding_desc">Si l\'état est « Actif » mais que cela ne fonctionne toujours pas, essayez de remplacer « Application d\'assistant numérique » par « Aucun », puis revenez à « o3clu ».</string>
 <string name="debug_force_start">Débogage : forcer le démarrage de la session</string>
 <string name="connection">Connexion</string>
 <string name="voice">Voix</string>
@@ -247,7 +247,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="connected">Connecté !</string>
 <string name="failed">Échec : %s</string>
 <string name="error">Erreur : %s</string>
-<string name="wake_word_openclaw">OpenClaw</string>
+<string name="wake_word_openclaw">o3clu</string>
 <string name="wake_word_hey_assistant">Hey Assistant</string>
 <string name="wake_word_jarvis">Jarvis</string>
 <string name="wake_word_computer">Ordinateur</string>
@@ -278,7 +278,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="back">Retour</string>
 <string name="select_chat_type">Choisir le backend</string>
 <string name="select_chat_backend_desc">Choisissez où envoyer cette conversation.</string>
-<string name="chat_type_openclaw">OpenClaw</string>
+<string name="chat_type_openclaw">o3clu</string>
 <string name="chat_type_hermes">Hermes</string>
 <string name="chat_type_gateway">Gateway Chat</string>
 <string name="chat_type_http">Chat HTTP</string>
@@ -327,17 +327,17 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="fix_request_message">Veuillez accorder la portée \'operator.read\' à mon jeton API actuel.</string>
 <string name="action_ask_ai">Demander à l\'IA de réparer</string>
 <string name="pairing_required_title">Couplage de périphériques requis</string>
-<string name="pairing_required_desc">Cet appareil n’est pas encore approuvé par le serveur. WakeHermesClaw essaiera de l’approuver automatiquement via l’endpoint de commande hôte du lien de configuration. Si ce n’est pas disponible, exécutez la commande sur l’hôte.</string>
-<string name="pairing_requested_scopes">Autorisations OpenClaw demandées : operator.read, operator.write, operator.admin, operator.pairing, operator.talk.secrets, operator.approvals.</string>
+<string name="pairing_required_desc">Cet appareil n’est pas encore approuvé par le serveur. o3clu essaiera de l’approuver automatiquement via l’endpoint de commande hôte du lien de configuration. Si ce n’est pas disponible, exécutez la commande sur l’hôte.</string>
+<string name="pairing_requested_scopes">Autorisations o3clu demandées : operator.read, operator.write, operator.admin, operator.pairing, operator.talk.secrets, operator.approvals.</string>
 <string name="pairing_copy_command">Copier la commande</string>
 <string name="pairing_command_copied">Commande copiée dans le presse-papiers</string>
 <string name="pairing_device_id">ID de l\'appareil : %s</string>
 <string name="pairing_approve_command">Approuver la commande (copie)</string>
 <string name="pairing_reject_command">Rejeter la commande (Copie)</string>
-<string name="pairing_host_command_required">Exécutez ceci sur l’hôte OpenClaw : %1$s</string>
+<string name="pairing_host_command_required">Exécutez ceci sur l’hôte o3clu : %1$s</string>
 <string name="pairing_refresh_status">Actualiser l\'état</string>
 <string name="pairing_guide_title">Comment approuver cet appareil :</string>
-<string name="pairing_guide_step_1">1. Accédez au terminal de votre serveur OpenClaw.</string>
+<string name="pairing_guide_step_1">1. Accédez au terminal de votre serveur o3clu.</string>
 <string name="pairing_guide_step_2">2. Collez et exécutez la commande Approuver.</string>
 <string name="pairing_guide_step_3">3. Une fois que le serveur indique \"Appareil approuvé\", appuyez sur Actualiser l\'état ci-dessous.</string>
 <string name="pairing_troubleshooting_title">Dépannage</string>
@@ -346,7 +346,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="support_section">Support</string>
 <string name="report_issue">Signaler un problème</string>
 <string name="report_issue_desc">Vous avez trouvé un bug ou avez une demande de fonctionnalité ? Faites-le-nous savoir sur GitHub.</string>
-<string name="permissions_for_openclaw_title">Autorisations pour OpenClaw</string>
+<string name="permissions_for_openclaw_title">Autorisations pour o3clu</string>
 <string name="capabilities_title">Capacités</string>
 <string name="capability_camera">Caméra</string>
 <string name="capability_talk">Parler</string>
@@ -418,7 +418,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="wake_word_node_desc">Détecte votre mot d\'activation et envoie une requête à la passerelle AI.</string>
 <string name="wake_word_gateway_desc">Cet appareil écoute votre mot d\'activation et envoie une commande à la passerelle. Saisissez les mots que vous souhaitez prononcer pour activer l\'assistant.</string>
 <string name="wake_word_node_foreground">Application ouverte</string>
-<string name="wake_word_node_foreground_desc">Écoute uniquement lorsque OpenClaw est ouvert.</string>
+<string name="wake_word_node_foreground_desc">Écoute uniquement lorsque o3clu est ouvert.</string>
 <string name="wake_word_node_always">Toujours</string>
 <string name="wake_word_node_always_desc">Continue l\'écoute en arrière-plan (utilise une notification persistante).</string>
 <string name="wake_word_classic_title">Vosk</string>
@@ -456,7 +456,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="update_action">Mise à jour</string>
 <string name="update_dismiss_action">Fermer</string>
 <string name="setup_guide_first_run">PREMIÈRE EXÉCUTION</string>
-    <string name="setup_guide_title">WakeHermesClaw\nfor Android</string>
+    <string name="setup_guide_title">o3clu\nfor Android</string>
 <string name="setup_guide_step_format">Étape %1$d de %2$d</string>
 <string name="setup_guide_welcome_title">Ce que vous obtenez</string>
 <string name="setup_guide_welcome_bullet_1">Contrôlez la passerelle et le chat de l\'opérateur depuis une seule surface mobile.</string>
@@ -468,7 +468,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="setup_guide_connection_guide_cmd_1">Exécutez-les sur l\'hôte de la passerelle :</string>
 <string name="setup_guide_connection_guide_json_desc">`--json` imprime `setupCode` et `gatewayUrl`.</string>
 <string name="setup_guide_connection_discovery_desc">La découverte automatique d\'URL n\'est pas encore câblée. L\'émulateur Android utilise « 10.0.2.2 » ; les appareils réels ont besoin d\'un hôte LAN/Tailscale.</string>
-<string name="setup_guide_mode_setup_code">OpenClaw</string>
+<string name="setup_guide_mode_setup_code">o3clu</string>
 <string name="setup_guide_mode_manual">Manuel</string>
 <string name="setup_guide_setup_code_label">CODE DE CONFIGURATION</string>
 <string name="setup_guide_setup_code_hint">Coller le code depuis `agentvoice-pair`</string>
@@ -479,7 +479,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="setup_guide_manual_token">JETON (OPTIONNEL)</string>
 <string name="setup_guide_manual_password">MOT DE PASSE (OPTIONNEL)</string>
 <string name="setup_guide_permissions_title">Autorisations</string>
-<string name="setup_guide_permissions_desc">Accorder des autorisations pour activer les fonctionnalités d\'OpenClaw.</string>
+<string name="setup_guide_permissions_desc">Accorder des autorisations pour activer les fonctionnalités d\'o3clu.</string>
 <string name="setup_guide_final_check_title">Vérification finale</string>
 <string name="setup_guide_final_check_desc">Vérifiez la connexion et les paramètres.</string>
 <string name="setup_guide_finish">Terminer</string>
@@ -491,7 +491,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="setup_code_invalid_code">Code de configuration invalide ou incomplet.</string>
 <string name="setup_code_credential_copy_button">Copier la commande</string>
     <string name="setup_code_credential_hint_title">Entrez votre mot de passe ou token gateway</string>
-<string name="setup_code_credential_hint_desc">Le code de configuration a configuré l\'URL du serveur. Pour connecter la session opérateur, entrez votre mot de passe ou token gateway.\n\nExécutez cette commande sur le hôte exécutant OpenClaw pour le récupérer :</string>
+<string name="setup_code_credential_hint_desc">Le code de configuration a configuré l\'URL du serveur. Pour connecter la session opérateur, entrez votre mot de passe ou token gateway.\n\nExécutez cette commande sur le hôte exécutant o3clu pour le récupérer :</string>
 <string name="permission_camera_desc">Requis pour que l\'IA puisse voir le flux de votre caméra</string>
 <string name="permission_location_desc">Nécessaire pour que l\'IA connaisse votre position</string>
 <string name="setup_guide_auth_token_password">Jeton + Mot de passe</string>
@@ -503,7 +503,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
 <string name="setup_guide_test_connection_desc">Appuyez sur Test Connection pour vérifier l’accessibilité de la passerelle.</string>
 <string name="setup_guide_e2e_title">Test réel obligatoire</string>
 <string name="setup_guide_e2e_target">Backend principal : %1$s</string>
-<string name="setup_guide_e2e_openclaw_tls_note">Si OpenClaw affiche un certificat, approuvez l’empreinte ici pour poursuivre le test de chat.</string>
+<string name="setup_guide_e2e_openclaw_tls_note">Si o3clu affiche un certificat, approuvez l’empreinte ici pour poursuivre le test de chat.</string>
 <string name="setup_guide_e2e_button">Tester connexion et chat</string>
 <string name="setup_guide_e2e_testing_connection">Test de connexion à %1$s...</string>
 <string name="setup_guide_e2e_waiting_tls">En attente de l’approbation du certificat...</string>
@@ -585,8 +585,8 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="qr_scan_prompt">Scan QR Code</string>
     <string name="qr_scan_unavailable">La numérisation QR n\'est pas disponible. Veuillez mettre à jour les services Google Play.</string>
     <string name="reject_command_format">openclaw devices reject $(openclaw devices list --json | jq -r \'.pending[] | select(.deviceId == \"%s\") | .requestId\')</string>
-    <string name="setup_guide_qr_scan_title">Appairage QR OpenClaw</string>
-    <string name="setup_guide_qr_scan_cmd_label">Exécutez ceci sur l\'hôte OpenClaw, puis scannez le QR dans cette app :</string>
+    <string name="setup_guide_qr_scan_title">Appairage QR o3clu</string>
+    <string name="setup_guide_qr_scan_cmd_label">Exécutez ceci sur l\'hôte o3clu, puis scannez le QR dans cette app :</string>
     <string name="setup_guide_code_input_title">Option 2 : Saisir le code de configuration</string>
     <!-- Bottom Navigation Tabs -->
     <string name="tab_nav_home">Accueil</string>
@@ -616,11 +616,11 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="cron_empty_fields">Le nom et la planification sont obligatoires</string>
     <string name="cron_job_deliver">Destination de livraison</string>
     <string name="cron_owner_hermes_agent">HermesAgent</string>
-    <string name="cron_owner_openclaw">OpenClaw</string>
+    <string name="cron_owner_openclaw">o3clu</string>
     <string name="cron_hermes_not_configured">Cron HermesAgent non configuré</string>
     <string name="cron_hermes_not_configured_desc">Ajoutez et activez un backend Hermes API Server dans les paramètres pour gérer les tâches Cron de HermesAgent.</string>
-    <string name="cron_openclaw_title">Cron OpenClaw</string>
-    <string name="cron_openclaw_not_configured_desc">Aucun backend OpenClaw activé n’est configuré.</string>
+    <string name="cron_openclaw_title">Cron o3clu</string>
+    <string name="cron_openclaw_not_configured_desc">Aucun backend o3clu activé n’est configuré.</string>
     <string name="cron_job_deliver_value">Livraison : %1$s</string>
     <string name="cron_job_prompt_value">Prompt : %1$s</string>
     <string name="cron_job_repeat_value">Répétition : %1$d / %2$d</string>
@@ -668,10 +668,10 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="action_show_api_key">Afficher la clé API</string>
     <string name="action_refresh_agents">Actualiser les agents</string>
 
-    <!-- WakeHermesClaw setup wizard -->
-    <string name="av_setup_title">Configurer WakeHermesClaw</string>
-    <string name="av_setup_welcome_title">Bienvenue dans WakeHermesClaw</string>
-    <string name="av_setup_welcome_body">Un client vocal Android natif pour Hermes Agent et OpenClaw. Lancez le helper d\'appairage sur votre ordinateur, choisissez Hermes, OpenClaw et Tailscale, puis scannez un seul QR dans cette app.</string>
+    <!-- o3clu setup wizard -->
+    <string name="av_setup_title">Configurer o3clu</string>
+    <string name="av_setup_welcome_title">Bienvenue dans o3clu</string>
+    <string name="av_setup_welcome_body">Un client vocal Android natif pour Hermes Agent et o3clu. Lancez le helper d\'appairage sur votre ordinateur, choisissez Hermes, o3clu et Tailscale, puis scannez un seul QR dans cette app.</string>
     <string name="av_setup_choose_title">Quels backends allez-vous utiliser ?</string>
     <string name="av_setup_choose_hint">Cochez-en au moins un. Vous pourrez en ajouter plus tard dans Paramètres → Backends.</string>
     <string name="av_setup_get_started">Commencer</string>
@@ -682,20 +682,20 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="av_setup_done_empty">Aucun backend configuré pour le moment. Vous pouvez en ajouter un depuis Paramètres → Backends.</string>
 
     <string name="av_backend_hermes">Hermes Agent</string>
-    <string name="av_backend_openclaw">OpenClaw</string>
+    <string name="av_backend_openclaw">o3clu</string>
     <string name="av_backend_hermes_subtitle">Hermes API Server. Le helper détecte Hermes, lit la configuration/env locale et l\'inclut dans le QR partagé.</string>
-    <string name="av_backend_openclaw_subtitle">OpenClaw Gateway / HTTP. Le même helper détecte OpenClaw et ajoute son setup code au QR partagé.</string>
-    <string name="av_backend_open_openclaw_setup">Ouvrir la configuration OpenClaw</string>
+    <string name="av_backend_openclaw_subtitle">o3clu Gateway / HTTP. Le même helper détecte o3clu et ajoute son setup code au QR partagé.</string>
+    <string name="av_backend_open_openclaw_setup">Ouvrir la configuration o3clu</string>
 
-    <string name="av_hermes_card_title">WakeHermesClaw · configuration avec un QR</string>
-    <string name="av_hermes_card_step1">1. Sur la machine qui exécute Hermes/OpenClaw, installez le helper WakeHermesClaw :</string>
-    <string name="av_hermes_card_step2">2. Lancez l’assistant. Il lit les réglages locaux Hermes/OpenClaw, détecte Tailscale, puis affiche un QR code :</string>
-    <string name="av_hermes_card_step3">3. Scannez ce QR dans WakeHermesClaw. Si Hermes et OpenClaw sont inclus, les deux configurations sont appliquées ensemble.</string>
+    <string name="av_hermes_card_title">o3clu · configuration avec un QR</string>
+    <string name="av_hermes_card_step1">1. Sur la machine qui exécute Hermes/o3clu, installez le helper o3clu :</string>
+    <string name="av_hermes_card_step2">2. Lancez l’assistant. Il lit les réglages locaux Hermes/o3clu, détecte Tailscale, puis affiche un QR code :</string>
+    <string name="av_hermes_card_step3">3. Scannez ce QR dans o3clu. Si Hermes et o3clu sont inclus, les deux configurations sont appliquées ensemble.</string>
     <string name="av_hermes_card_note">Pour l\'utiliser hors de chez vous, répondez oui à la question Tailscale/VPN afin d\'inclure les candidats LAN + Tailscale dans le QR.</string>
 
-    <string name="av_openclaw_card_title">OpenClaw · scannez un QR depuis votre serveur</string>
-    <string name="av_openclaw_card_step1">1. Sur votre serveur OpenClaw :</string>
-    <string name="av_openclaw_card_step2">2. Ouvrez l\'écran de configuration OpenClaw et tapez « Scanner le QR ». OpenClaw gère le pairage, la confiance TLS et la découverte d\'agents.</string>
+    <string name="av_openclaw_card_title">o3clu · scannez un QR depuis votre serveur</string>
+    <string name="av_openclaw_card_step1">1. Sur votre serveur o3clu :</string>
+    <string name="av_openclaw_card_step2">2. Ouvrez l\'écran de configuration o3clu et tapez « Scanner le QR ». o3clu gère le pairage, la confiance TLS et la découverte d\'agents.</string>
 
     <string name="av_backends_test">Tester la connexion</string>
     <string name="av_backends_edit">Modifier</string>
@@ -729,7 +729,7 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="av_bridge_play_warning">Cette version est destinée à Play : Pont d\'accessibilité et SMS sont masqués.</string>
 
     <string name="av_selfcheck_title">Diagnostic</string>
-    <string name="av_selfcheck_intro">État de santé d\'WakeHermesClaw. Tapez « Relancer » après avoir corrigé un point ci-dessous.</string>
+    <string name="av_selfcheck_intro">État de santé d\'o3clu. Tapez « Relancer » après avoir corrigé un point ci-dessous.</string>
     <string name="av_selfcheck_rerun">Relancer</string>
     <string name="av_selfcheck_backends_configured">Backends configurés</string>
     <string name="av_selfcheck_backends_none">Aucun. Ajoutez-en un dans Backends.</string>
@@ -780,14 +780,14 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="av_connection_testing">Test…</string>
     <string name="av_chat_no_backend">Aucun backend</string>
     <string name="av_chat_primary_target">Principal : %1$s</string>
-    <string name="av_import_title">Ajouter des backends WakeHermesClaw</string>
+    <string name="av_import_title">Ajouter des backends o3clu</string>
     <string name="av_import_missing">Ce QR d\'appairage ne contient pas les informations requises.</string>
     <string name="av_import_close">Fermer</string>
     <string name="av_import_review">Vérifiez les réglages trouvés dans le QR avant de les enregistrer.</string>
-    <string name="av_import_add_open">Ajouter et ouvrir WakeHermesClaw</string>
+    <string name="av_import_add_open">Ajouter et ouvrir o3clu</string>
     <string name="av_import_no_hermes">Ce QR ne contient aucun backend Hermes.</string>
     <string name="av_import_test_hermes">Tester la connexion Hermes</string>
-    <string name="av_import_test_openclaw">Tester la connexion OpenClaw</string>
+    <string name="av_import_test_openclaw">Tester la connexion o3clu</string>
     <string name="av_import_test_all">Tester les connexions</string>
     <string name="av_import_cancel">Annuler</string>
     <string name="av_import_primary_url">URL principale</string>
@@ -806,23 +806,23 @@ Pour plus de détails, consultez le site officiel de VOICEVOX.</string>
     <string name="av_import_auth_token">Jeton inclus</string>
     <string name="av_import_auth_password">Mot de passe inclus</string>
     <string name="av_import_auth_none">Aucune auth incluse</string>
-    <string name="av_import_openclaw_invalid">Le setup code OpenClaw dans ce QR est invalide.</string>
+    <string name="av_import_openclaw_invalid">Le setup code o3clu dans ce QR est invalide.</string>
     <string name="av_pairing_review_title">Vérifier la configuration détectée</string>
     <string name="av_pairing_review_desc">Confirmez le contenu du QR avant de l\'appliquer. Vous pouvez modifier les URL, clés et setup code ici.</string>
     <string name="av_pairing_display_name">Nom affiché</string>
     <string name="av_pairing_fallback_urls_hint">Une URL par ligne, ou séparées par des virgules.</string>
     <string name="av_pairing_runs_api">Utiliser Runs API</string>
     <string name="av_pairing_streaming">Utiliser le streaming</string>
-    <string name="av_pairing_openclaw_setup_code">Setup code OpenClaw</string>
+    <string name="av_pairing_openclaw_setup_code">Setup code o3clu</string>
     <string name="av_pairing_openclaw_decoded">URL Gateway décodée</string>
     <string name="av_pairing_primary_title">Backend principal</string>
     <string name="av_pairing_primary_hermes">Utiliser Hermes comme principal</string>
-    <string name="av_pairing_primary_openclaw">Utiliser OpenClaw comme principal</string>
+    <string name="av_pairing_primary_openclaw">Utiliser o3clu comme principal</string>
     <string name="av_pairing_review_loaded">Contenu du QR chargé. Vérifiez et appliquez.</string>
     <string name="av_pairing_apply_review">Appliquer la configuration vérifiée</string>
     <string name="av_settings_no_hermes">Aucun backend Hermes n\'est encore configuré.</string>
-    <string name="av_settings_no_openclaw">Aucun backend OpenClaw n\'est encore configuré.</string>
-    <string name="av_settings_openclaw_advanced">Détails avancés de connexion OpenClaw</string>
+    <string name="av_settings_no_openclaw">Aucun backend o3clu n\'est encore configuré.</string>
+    <string name="av_settings_openclaw_advanced">Détails avancés de connexion o3clu</string>
     <string name="av_backend_url_unset">URL non définie</string>
     <string name="av_backend_host_unset">Hôte non défini</string>
     <string name="av_home_connections_title">Connexions</string>

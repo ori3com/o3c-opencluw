@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">WakeHermesClaw</string>
+    <string name="app_name">o3clu</string>
     <string name="notification_channel_name">Wake Word Service</string>
     <string name="notification_channel_description">Always-on voice detection service</string>
-    <string name="notification_title">WakeHermesClaw</string>
-    <string name="agent_voice_subtitle">Voice client for OpenClaw and Hermes Agent</string>
+    <string name="notification_title">o3clu</string>
+    <string name="agent_voice_subtitle">Voice client for o3clu and Hermes Agent</string>
     <string name="backends_title">Backends</string>
     <string name="backends_empty">No backends configured yet</string>
-    <string name="backends_empty_desc">Tap Add backend to configure OpenClaw or Hermes Agent.</string>
+    <string name="backends_empty_desc">Tap Add backend to configure o3clu or Hermes Agent.</string>
     <string name="add_backend">Add backend</string>
     <string name="primary_backend">Primary</string>
     <string name="test_connection">Test connection</string>
     <string name="more_options">More options</string>
     <string name="no_url">no URL</string>
     <string name="backend_type_hermes_with_url">Hermes Agent - %1$s</string>
-    <string name="backend_type_openclaw_with_host">OpenClaw - %1$s:%2$s</string>
-    <string name="backend_type_openclaw_api_with_url">OpenClaw API - %1$s</string>
+    <string name="backend_type_openclaw_with_host">o3clu - %1$s:%2$s</string>
+    <string name="backend_type_openclaw_api_with_url">o3clu API - %1$s</string>
     <string name="backend_type">Type</string>
     <string name="backend_display_name">Display name</string>
     <string name="backend_agent_context">Agent Context</string>
@@ -44,14 +44,14 @@
     <string name="backend_apply_to_hermes">Apply to Hermes</string>
     <string name="backend_providers_value">Providers: %1$s</string>
     <string name="backend_more_models">+%1$d more</string>
-    <string name="backend_openclaw_token">OpenClaw token</string>
+    <string name="backend_openclaw_token">o3clu token</string>
     <string name="backend_use_tls">Use TLS</string>
-    <string name="backend_openclaw_setup_hint">For pairing, QR-code setup, or discovery, use the OpenClaw setup screen on the Home tab. It handles certificate fingerprints and TLS trust prompts. Save this entry once host, port, and token are confirmed.</string>
+    <string name="backend_openclaw_setup_hint">For pairing, QR-code setup, or discovery, use the o3clu setup screen on the Home tab. It handles certificate fingerprints and TLS trust prompts. Save this entry once host, port, and token are confirmed.</string>
     <string name="backend_base_url">Base URL</string>
     <string name="backend_mark_primary">Mark as Primary</string>
     <string name="backend_hermes_model_title">Hermes Model</string>
-    <string name="backend_openclaw_model_title">OpenClaw Model</string>
-    <string name="backend_openclaw_api_model_title">OpenClaw API Model</string>
+    <string name="backend_openclaw_model_title">o3clu Model</string>
+    <string name="backend_openclaw_api_model_title">o3clu API Model</string>
     <string name="backend_hermes_model_help">Saved for chat and can also be applied to Hermes.</string>
     <string name="backend_openclaw_model_help">Sent with gateway chat requests when supported.</string>
     <string name="backend_openclaw_api_model_help">Sent as the OpenAI-compatible model field.</string>
@@ -64,8 +64,8 @@
     <string name="bridge_token">Bridge token</string>
     <string name="bridge_generate_token">Generate new token</string>
     <string name="bridge_warning_lan">LAN bind exposes this device on the network. Use Tailscale or a trusted Wi-Fi.</string>
-    <string name="bridge_approval_required">WakeHermesClaw action approval</string>
-    <string name="accessibility_bridge_description">Lets WakeHermesClaw tap, swipe, type, and read on-screen content on behalf of a paired Hermes agent. Off by default. Every gesture requires an explicit, time-limited grant from you.</string>
+    <string name="bridge_approval_required">o3clu action approval</string>
+    <string name="accessibility_bridge_description">Lets o3clu tap, swipe, type, and read on-screen content on behalf of a paired Hermes agent. Off by default. Every gesture requires an explicit, time-limited grant from you.</string>
     <string name="av_bridge_connection_section">Connection</string>
     <string name="av_bridge_port">Port</string>
     <string name="av_bridge_lan_warning">LAN / VPN exposes this device to the network. Use it only on trusted Wi-Fi or Tailscale.</string>
@@ -77,7 +77,7 @@
     <string name="av_bridge_service_enabled">Service enabled</string>
     <string name="av_bridge_enable_a11y_settings">Enable in Android Accessibility settings</string>
     <string name="av_bridge_pairing_checks">Pairing and checks</string>
-    <string name="av_bridge_pairing_checks_desc">Use the pairing screen for Hermes Agent tools or another trusted client. OpenClaw inside this app uses its own device-control path and does not need this token.</string>
+    <string name="av_bridge_pairing_checks_desc">Use the pairing screen for Hermes Agent tools or another trusted client. o3clu inside this app uses its own device-control path and does not need this token.</string>
     <string name="av_bridge_self_check">Self-check</string>
     <string name="av_bridge_running_on_port">Running on port %1$d (%2$s)</string>
     <string name="av_bridge_off_desc">Off. Enable only when a trusted agent needs device access.</string>
@@ -88,10 +88,10 @@
     <string name="av_pair_expires_in">Expires in %1$ds</string>
     <string name="av_pair_desktop_command">On the desktop, run:\n  hermes-pair %1$s\n  (or POST {&quot;code&quot;:&quot;%1$s&quot;} to /pair on this bridge)</string>
 
-    <!-- WakeHermesClaw setup wizard -->
-    <string name="av_setup_title">Set up WakeHermesClaw</string>
-    <string name="av_setup_welcome_title">Welcome to WakeHermesClaw</string>
-    <string name="av_setup_welcome_body">A native Android voice client for Hermes Agent and OpenClaw. Run the pairing helper on your computer, answer whether to include Hermes Agent, OpenClaw, and Tailscale, then scan one QR in this app.</string>
+    <!-- o3clu setup wizard -->
+    <string name="av_setup_title">Set up o3clu</string>
+    <string name="av_setup_welcome_title">Welcome to o3clu</string>
+    <string name="av_setup_welcome_body">A native Android voice client for Hermes Agent and o3clu. Run the pairing helper on your computer, answer whether to include Hermes Agent, o3clu, and Tailscale, then scan one QR in this app.</string>
     <string name="av_setup_choose_title">Which backends will you use?</string>
     <string name="av_setup_choose_hint">Tick at least one. You can add more later in Settings → Backends.</string>
     <string name="av_setup_choose_recommended">Recommended: set up both now. You can switch Primary later.</string>
@@ -104,37 +104,37 @@
 
     <!-- Backend cards -->
     <string name="av_backend_hermes">Hermes Agent</string>
-    <string name="av_backend_openclaw">OpenClaw</string>
+    <string name="av_backend_openclaw">o3clu</string>
     <string name="av_backend_hermes_subtitle">Hermes Agent API Server. The pairing helper detects Hermes Agent, reads config/env, and includes it in the shared QR.</string>
-    <string name="av_backend_openclaw_subtitle">OpenClaw. The same helper detects OpenClaw and adds its setup code to the shared QR.</string>
-    <string name="av_backend_open_openclaw_setup">Open OpenClaw setup</string>
+    <string name="av_backend_openclaw_subtitle">o3clu. The same helper detects o3clu and adds its setup code to the shared QR.</string>
+    <string name="av_backend_open_openclaw_setup">Open o3clu setup</string>
 
     <!-- Unified pairing card -->
-    <string name="av_pairing_card_title">One QR sets up WakeHermesClaw</string>
-    <string name="av_setup_scope_both">Hermes Agent and OpenClaw will be included in one QR.</string>
+    <string name="av_pairing_card_title">One QR sets up o3clu</string>
+    <string name="av_setup_scope_both">Hermes Agent and o3clu will be included in one QR.</string>
     <string name="av_setup_scope_hermes">Only Hermes Agent will be included in the QR.</string>
-    <string name="av_setup_scope_openclaw">Only OpenClaw will be included in the QR.</string>
-    <string name="av_pairing_card_step1">1. On the computer running Hermes Agent or OpenClaw, install the WakeHermesClaw pairing helper:</string>
-    <string name="av_pairing_card_step2">2. Run the helper. It reads local Hermes Agent/OpenClaw settings, detects Tailscale, and uses a temporary public tunnel when the phone is not on the same LAN/VPN:</string>
-    <string name="av_pairing_card_step3">3. Scan that QR inside WakeHermesClaw. Included backends are saved together.</string>
+    <string name="av_setup_scope_openclaw">Only o3clu will be included in the QR.</string>
+    <string name="av_pairing_card_step1">1. On the computer running Hermes Agent or o3clu, install the o3clu pairing helper:</string>
+    <string name="av_pairing_card_step2">2. Run the helper. It reads local Hermes Agent/o3clu settings, detects Tailscale, and uses a temporary public tunnel when the phone is not on the same LAN/VPN:</string>
+    <string name="av_pairing_card_step3">3. Scan that QR inside o3clu. Included backends are saved together.</string>
     <string name="av_pairing_card_note">The public tunnel is temporary and useful for setup from cellular networks. For daily use, prefer Tailscale/VPN or a trusted LAN.</string>
     <string name="av_pairing_scan_qr">Scan pairing QR</string>
     <string name="av_setup_copy_command">Copy command</string>
     <string name="av_setup_command_copied">Command copied</string>
 
     <!-- Hermes QR card -->
-    <string name="av_hermes_card_title">WakeHermesClaw · one QR setup</string>
-    <string name="av_hermes_card_step1">1. On the machine running Hermes Agent/OpenClaw, install the WakeHermesClaw pairing helper:</string>
-    <string name="av_hermes_card_step2">2. Run the helper. It reads local Hermes Agent/OpenClaw settings, detects Tailscale, and prints one QR:</string>
-    <string name="av_hermes_card_step3">3. Scan that QR in WakeHermesClaw. Hermes Agent and OpenClaw settings are applied together when both are included.</string>
+    <string name="av_hermes_card_title">o3clu · one QR setup</string>
+    <string name="av_hermes_card_step1">1. On the machine running Hermes Agent/o3clu, install the o3clu pairing helper:</string>
+    <string name="av_hermes_card_step2">2. Run the helper. It reads local Hermes Agent/o3clu settings, detects Tailscale, and prints one QR:</string>
+    <string name="av_hermes_card_step3">3. Scan that QR in o3clu. Hermes Agent and o3clu settings are applied together when both are included.</string>
     <string name="av_hermes_card_note">For use away from home, answer yes to the Tailscale/VPN prompt so the QR includes LAN + Tailscale endpoint candidates.</string>
     <string name="av_hermes_use_runs_api">Use Runs API</string>
     <string name="av_hermes_stream_responses">Stream responses</string>
 
-    <!-- OpenClaw card -->
-    <string name="av_openclaw_card_title">OpenClaw · pair with QR</string>
-    <string name="av_openclaw_card_step1">1. On your OpenClaw server, print a setup QR:</string>
-    <string name="av_openclaw_card_step2">2. Scan it in WakeHermesClaw. OpenClaw handles pairing, TLS trust, and agent discovery.</string>
+    <!-- o3clu card -->
+    <string name="av_openclaw_card_title">o3clu · pair with QR</string>
+    <string name="av_openclaw_card_step1">1. On your o3clu server, print a setup QR:</string>
+    <string name="av_openclaw_card_step2">2. Scan it in o3clu. o3clu handles pairing, TLS trust, and agent discovery.</string>
 
     <!-- Backend list -->
     <string name="av_backends_test">Test connection</string>
@@ -175,7 +175,7 @@
 
     <!-- Self-check -->
     <string name="av_selfcheck_title">Self-check</string>
-    <string name="av_selfcheck_intro">Health snapshot of WakeHermesClaw. Tap Re-run after fixing anything below.</string>
+    <string name="av_selfcheck_intro">Health snapshot of o3clu. Tap Re-run after fixing anything below.</string>
     <string name="av_selfcheck_rerun">Re-run</string>
     <string name="av_selfcheck_backends_configured">Backends configured</string>
     <string name="av_selfcheck_backends_none">None. Add one in Backends.</string>
@@ -224,27 +224,27 @@
     <string name="av_home_test_short">Test</string>
     <string name="av_home_switch_primary">Switch primary</string>
     <string name="av_backend_kind_hermes">Hermes Agent</string>
-    <string name="av_backend_kind_gateway">OpenClaw</string>
-    <string name="av_backend_kind_http">OpenClaw API</string>
+    <string name="av_backend_kind_gateway">o3clu</string>
+    <string name="av_backend_kind_http">o3clu API</string>
     <string name="av_connection_testing">Testing…</string>
     <string name="av_chat_no_backend">No backend</string>
     <string name="av_chat_primary_target">Primary: %1$s</string>
     <string name="chat_settings_title">Chat settings</string>
     <string name="chat_settings_backend">Backend</string>
     <string name="chat_settings_primary_backend">Use primary backend</string>
-    <string name="chat_settings_openclaw_agent">OpenClaw agent</string>
+    <string name="chat_settings_openclaw_agent">o3clu agent</string>
     <string name="chat_settings_hermes_model">Hermes Agent model</string>
     <string name="chat_settings_hermes_model_help">Usually keep default. Change it only for a specific Hermes Agent profile or model.</string>
 
     <!-- Pairing import -->
-    <string name="av_import_title">Add WakeHermesClaw backends</string>
+    <string name="av_import_title">Add o3clu backends</string>
     <string name="av_import_missing">This pairing QR is missing required information.</string>
     <string name="av_import_close">Close</string>
     <string name="av_import_review">Review the settings found in the QR before saving them.</string>
-    <string name="av_import_add_open">Add and open WakeHermesClaw</string>
+    <string name="av_import_add_open">Add and open o3clu</string>
     <string name="av_import_no_hermes">No Hermes Agent backend in this QR.</string>
     <string name="av_import_test_hermes">Test Hermes Agent connection</string>
-    <string name="av_import_test_openclaw">Test OpenClaw connection</string>
+    <string name="av_import_test_openclaw">Test o3clu connection</string>
     <string name="av_import_test_all">Test connections</string>
     <string name="av_import_cancel">Cancel</string>
     <string name="av_import_primary_url">Primary URL</string>
@@ -256,20 +256,20 @@
     <string name="av_import_mode">Mode</string>
     <string name="av_import_mode_runs">Runs API</string>
     <string name="av_import_mode_chat">Chat completions</string>
-    <string name="av_import_gateway_url">OpenClaw URL</string>
+    <string name="av_import_gateway_url">o3clu URL</string>
     <string name="av_import_auth">Auth</string>
     <string name="av_import_auth_password_pairing">Password and pairing token included</string>
     <string name="av_import_auth_bootstrap">Bootstrap token included</string>
     <string name="av_import_auth_token">Token included</string>
     <string name="av_import_auth_password">Password included</string>
     <string name="av_import_auth_none">No auth included</string>
-    <string name="av_import_openclaw_invalid">The OpenClaw setup code in this QR is invalid.</string>
+    <string name="av_import_openclaw_invalid">The o3clu setup code in this QR is invalid.</string>
     <string name="notification_content">Say \"%s\" to activate</string>
     <string name="default_session_title_format">Voice Session %s</string>
     <string name="chat_session_title_format">Chat %s</string>
     <string name="error_config_required">Please configure connection in Settings</string>
     <string name="config_required">Configuration required</string>
-    <string name="error_gateway_not_connected">OpenClaw is not connected. Please check your connection settings.</string>
+    <string name="error_gateway_not_connected">o3clu is not connected. Please check your connection settings.</string>
     <string name="state_listening">Listening...</string>
     <string name="state_processing">Processing...</string>
     <string name="state_thinking">Thinking...</string>
@@ -325,7 +325,7 @@
     <string name="processing">Processing…</string>
     <string name="error_label">Error</string>
     <string name="try_again_button">Try again</string>
-    <string name="ask_hint">Ask WakeHermesClaw…</string>
+    <string name="ask_hint">Ask o3clu…</string>
     <string name="send_description">Send</string>
     <string name="stop_description">Stop</string>
     <string name="start_listening_description">Start listening</string>
@@ -335,7 +335,7 @@
     <string name="speaking">Speaking…</string>
     <string name="preparing_speech">読み込み中…</string>
     <string name="ready">Ready</string>
-    <string name="error_no_webhook">Please configure OpenClaw connection</string>
+    <string name="error_no_webhook">Please configure o3clu connection</string>
 
     <string name="error_speech">Speech recognition error</string>
     
@@ -350,12 +350,12 @@
     <string name="disabled">Disabled</string>
     <string name="open_chat">Open Chat</string>
     <string name="setup_required">Setup Required</string>
-    <string name="connected_to_openclaw">Connected to OpenClaw</string>
+    <string name="connected_to_openclaw">Connected to o3clu</string>
     <string name="permissions_required">Permissions required</string>
     <string name="could_not_open_settings">Could not open settings</string>
     <string name="hotword_started">Wake Word detection started</string>
     <string name="hotword_stopped">Wake Word detection stopped</string>
-    <string name="wakeword_requires_connection_error">Please configure an OpenClaw connection in Settings before enabling Wake Word.</string>
+    <string name="wakeword_requires_connection_error">Please configure an o3clu connection in Settings before enabling Wake Word.</string>
     <string name="saved">Saved</string>
     
     <!-- How to Use -->
@@ -363,7 +363,7 @@
     <string name="got_it">Got it</string>
     <string name="step_1">Long press Home or say \"%s\"</string>
     <string name="step_2">Ask your question or request</string>
-    <string name="step_3">OpenClaw reads the response aloud</string>
+    <string name="step_3">o3clu reads the response aloud</string>
     <string name="step_4">Continue conversation (session maintained)</string>
     
     <!-- Troubleshooting -->
@@ -376,7 +376,7 @@
     <string name="google_app_setting_title">Google App Setting</string>
     <string name="google_app_setting_desc">Open Google App → Tap Profile → Settings → Google Assistant → General → Turn off \'Google Assistant\' if it still interferes.</string>
     <string name="refresh_binding_title">Refresh Binding</string>
-    <string name="refresh_binding_desc">If status is \'Active\' but it still won\'t work, try changing \'Digital assistant app\' to \'None\' and then back to \'WakeHermesClaw\'.</string>
+    <string name="refresh_binding_desc">If status is \'Active\' but it still won\'t work, try changing \'Digital assistant app\' to \'None\' and then back to \'o3clu\'.</string>
     <string name="debug_force_start">Debug: Force Start Session</string>
     
     <!-- Settings Screen -->
@@ -474,7 +474,7 @@
     <string name="custom_wake_word">Custom Wake Word</string>
     <string name="custom_wake_word_hint">e.g., hey buddy</string>
     <string name="custom_wake_word_help">Enter 2-3 English words, lowercase</string>
-    <string name="wake_word_dual_desc">Wake Word can route directly to OpenClaw or Hermes Agent. Manual starts use the voice session connection below.</string>
+    <string name="wake_word_dual_desc">Wake Word can route directly to o3clu or Hermes Agent. Manual starts use the voice session connection below.</string>
     <string name="wake_word_phrase_label">Wake Word</string>
     <string name="wake_word_hermes_agent">Hermes Agent</string>
     <string name="wake_word_sound">Startup sound</string>
@@ -488,7 +488,7 @@
     <string name="error">Error: %s</string>
     
     <!-- Wake Word Presets -->
-    <string name="wake_word_openclaw">OpenClaw</string>
+    <string name="wake_word_openclaw">o3clu</string>
     <string name="wake_word_hey_assistant">Hey Assistant</string>
     <string name="wake_word_jarvis">Jarvis</string>
     <string name="wake_word_computer">Computer</string>
@@ -528,10 +528,10 @@
     <string name="back">Back</string>
     <string name="select_chat_type">Choose backend</string>
     <string name="select_chat_backend_desc">Choose where this chat should be sent.</string>
-    <string name="chat_type_openclaw">OpenClaw</string>
+    <string name="chat_type_openclaw">o3clu</string>
     <string name="chat_type_hermes">Hermes Agent</string>
-    <string name="chat_type_gateway">OpenClaw</string>
-    <string name="chat_type_http">OpenClaw</string>
+    <string name="chat_type_gateway">o3clu</string>
+    <string name="chat_type_http">o3clu</string>
 
     <!-- Session List -->
     <string name="chat_sessions_dialog_title">Sessions</string>
@@ -593,8 +593,8 @@
 
     <!-- Pairing -->
     <string name="pairing_required_title">Device Pairing Required</string>
-    <string name="pairing_required_desc">This device is not yet approved by the server. WakeHermesClaw will try to approve it through the host command endpoint in the setup link; if that is not available, run the command on the host.</string>
-    <string name="pairing_requested_scopes">Requested OpenClaw scopes: operator.read, operator.write, operator.admin, operator.pairing, operator.talk.secrets, operator.approvals.</string>
+    <string name="pairing_required_desc">This device is not yet approved by the server. o3clu will try to approve it through the host command endpoint in the setup link; if that is not available, run the command on the host.</string>
+    <string name="pairing_requested_scopes">Requested o3clu scopes: operator.read, operator.write, operator.admin, operator.pairing, operator.talk.secrets, operator.approvals.</string>
     <string name="pairing_copy_command">Copy Command</string>
     <string name="pairing_command_copied">Command copied to clipboard</string>
     <string name="pairing_device_id">Device ID: %s</string>
@@ -603,11 +603,11 @@
     <string name="pairing_approve_command">Approve Command (Copy)</string>
     <string name="pairing_reject_command">Reject Command (Copy)</string>
     <string name="pairing_approve_terminal">Approve</string>
-    <string name="pairing_gateway_running">Approving through OpenClaw...</string>
-    <string name="pairing_gateway_auto_running">Approving through OpenClaw automatically...</string>
+    <string name="pairing_gateway_running">Approving through o3clu...</string>
+    <string name="pairing_gateway_auto_running">Approving through o3clu automatically...</string>
     <string name="pairing_gateway_approve_sent">Pairing approved. Refreshing connection...</string>
-    <string name="pairing_gateway_failed">OpenClaw approval failed.</string>
-    <string name="pairing_host_command_required">Run this on the OpenClaw host: %1$s</string>
+    <string name="pairing_gateway_failed">o3clu approval failed.</string>
+    <string name="pairing_host_command_required">Run this on the o3clu host: %1$s</string>
     <string name="pairing_terminal_running">Running approval command in Terminal...</string>
     <string name="pairing_terminal_auto_running">Terminal is connected. Running approval command automatically...</string>
     <string name="pairing_terminal_approve_sent">Approval command sent. Refreshing connection...</string>
@@ -615,7 +615,7 @@
     <string name="pairing_terminal_auto_failed">Automatic Terminal approval failed. You can run it again or copy the command.</string>
     <string name="pairing_refresh_status">Refresh Status</string>
     <string name="pairing_guide_title">How to approve this device:</string>
-    <string name="pairing_guide_step_1">1. Access your OpenClaw server terminal.</string>
+    <string name="pairing_guide_step_1">1. Access your o3clu server terminal.</string>
     <string name="pairing_guide_step_2">2. Paste and run the Approve command.</string>
     <string name="pairing_guide_step_3">3. Once the server says \"Device approved\", tap Refresh Status below.</string>
     <string name="pairing_troubleshooting_title">Troubleshooting</string>
@@ -628,7 +628,7 @@
     <string name="report_issue_desc">Found a bug or have a feature request? Let us know on GitHub.</string>
 
     <!-- Device Node & Capabilities -->
-    <string name="permissions_for_openclaw_title">Permissions for OpenClaw</string>
+    <string name="permissions_for_openclaw_title">Permissions for o3clu</string>
     <string name="capabilities_title">Capabilities</string>
     <string name="none">None</string>
     <string name="capability_camera">Camera</string>
@@ -643,7 +643,7 @@
     <string name="setup_required_hint">Please configure connection in Settings</string>
 
     <!-- Gateway Settings -->
-    <string name="settings_gateway_title">OpenClaw Connection</string>
+    <string name="settings_gateway_title">o3clu Connection</string>
     <string name="disconnected">Disconnected</string>
     <string name="offline">Offline</string>
     <string name="gateway_discovery_active">Discovery active...</string>
@@ -665,12 +665,12 @@
     <string name="connect">Connect</string>
     <string name="gateway_foreground_service">Foreground Service</string>
     <string name="gateway_foreground_desc">Keep running in background</string>
-    <string name="gateway_use_node_chat">Use OpenClaw Chat</string>
-    <string name="gateway_use_node_chat_desc">Route chat via OpenClaw</string>
+    <string name="gateway_use_node_chat">Use o3clu Chat</string>
+    <string name="gateway_use_node_chat_desc">Route chat via o3clu</string>
 
     <!-- Legacy Settings -->
-    <string name="settings_legacy_title">OpenClaw API</string>
-    <string name="settings_legacy_desc">Direct connection to OpenClaw</string>
+    <string name="settings_legacy_title">o3clu API</string>
+    <string name="settings_legacy_desc">Direct connection to o3clu</string>
 
     <!-- Capability Cards (SMS & Screen) -->
     <string name="capability_sms">SMS</string>
@@ -696,8 +696,8 @@
     <string name="canvas_debug_mode_desc">Show a connection status overlay on the canvas screen</string>
 
     <!-- Wake Word Sync -->
-    <string name="wake_word_sync_from_server">Get Wake Words from OpenClaw</string>
-    <string name="wake_word_sync_desc">Download wake words configured on OpenClaw to this device.</string>
+    <string name="wake_word_sync_from_server">Get Wake Words from o3clu</string>
+    <string name="wake_word_sync_desc">Download wake words configured on o3clu to this device.</string>
     <string name="wake_word_sync_success">Wake words synced</string>
     <string name="wake_word_sync_failed">Sync failed</string>
 
@@ -718,21 +718,21 @@
     <string name="status_node_online_operator_offline">Node Online (Operator Offline)</string>
 
     <!-- Gateway Trust Dialog -->
-    <string name="gateway_trust_title">Trust this OpenClaw connection?</string>
+    <string name="gateway_trust_title">Trust this o3clu connection?</string>
     <string name="gateway_trust_message">First-time TLS connection.\n\nVerify this SHA-256 fingerprint out-of-band before trusting:\n%s</string>
     <string name="gateway_trust_confirm">Trust &amp; Connect</string>
     <string name="gateway_fingerprint_label">SHA-256 Fingerprint:</string>
 
     <!-- Error Messages -->
-    <string name="gateway_not_connected">Not connected to OpenClaw</string>
+    <string name="gateway_not_connected">Not connected to o3clu</string>
     <string name="agents_fetch_failed">Connected, but failed to load agents</string>
 
     <!-- Wake Word Mode (Settings) -->
-    <string name="wake_word_node_title">OpenClaw Wake Word</string>
-    <string name="wake_word_node_desc">Detects your wake word and sends a request to OpenClaw.</string>
-    <string name="wake_word_gateway_desc">This device listens for your wake word and sends a command to OpenClaw. Enter the words you want to say to activate the assistant.</string>
+    <string name="wake_word_node_title">o3clu Wake Word</string>
+    <string name="wake_word_node_desc">Detects your wake word and sends a request to o3clu.</string>
+    <string name="wake_word_gateway_desc">This device listens for your wake word and sends a command to o3clu. Enter the words you want to say to activate the assistant.</string>
     <string name="wake_word_node_foreground">App Open</string>
-    <string name="wake_word_node_foreground_desc">Listens only while OpenClaw is open.</string>
+    <string name="wake_word_node_foreground_desc">Listens only while o3clu is open.</string>
     <string name="wake_word_node_always">Always</string>
     <string name="wake_word_node_always_desc">Continues listening in the background (uses a persistent notification).</string>
     <string name="wake_word_classic_title">Vosk</string>
@@ -745,16 +745,16 @@
 
     <!-- Hardcoded strings extracted to resources -->
     <string name="connection_settings">Connection Settings</string>
-    <string name="tab_gateway">OpenClaw</string>
-    <string name="tab_http">OpenClaw API</string>
-    <string name="gateway_configuration">OpenClaw Configuration</string>
-    <string name="http_api_configuration">OpenClaw API Configuration</string>
+    <string name="tab_gateway">o3clu</string>
+    <string name="tab_http">o3clu API</string>
+    <string name="gateway_configuration">o3clu Configuration</string>
+    <string name="http_api_configuration">o3clu API Configuration</string>
     <string name="http_ignore_ssl_errors">Ignore SSL Certificate Errors</string>
     <string name="http_ignore_ssl_errors_desc">Allow self-signed or invalid HTTPS certificates. Use only on trusted networks.</string>
     <string name="http_ignore_ssl_errors_warning">⚠️ Security Risk: Disabling SSL verification makes your connection vulnerable to man-in-the-middle (MITM) attacks. An attacker on the same network could intercept or tamper with your data. Only enable this if you fully trust your network and cannot install a proper certificate.</string>
     <string name="wakeword_connection_type">Voice Session Connection</string>
     <string name="wakeword_connection_type_desc">Choose the backend for voice sessions started without a wake word, such as long-press Home or headset button.</string>
-    <string name="wakeword_use_gateway">OpenClaw</string>
+    <string name="wakeword_use_gateway">o3clu</string>
     <string name="wakeword_use_http">Hermes Agent</string>
     <string name="enter_session_name">Enter session name</string>
     <string name="session_name_optional">Session Name (Optional)</string>
@@ -775,19 +775,19 @@
 
     <!-- Setup Guide -->
     <string name="setup_guide_first_run">FIRST RUN</string>
-    <string name="setup_guide_title">WakeHermesClaw\nfor Android</string>
+    <string name="setup_guide_title">o3clu\nfor Android</string>
     <string name="setup_guide_step_format">Step %1$d of %2$d</string>
     <string name="setup_guide_welcome_title">What You Get</string>
-    <string name="setup_guide_welcome_bullet_1">Use OpenClaw and Hermes Agent from the same native voice client.</string>
+    <string name="setup_guide_welcome_bullet_1">Use o3clu and Hermes Agent from the same native voice client.</string>
     <string name="setup_guide_welcome_bullet_2">Install one helper on your computer and scan one QR in this app.</string>
     <string name="setup_guide_welcome_bullet_3">Include LAN or Tailscale endpoints without hand-copying URLs.</string>
     <string name="setup_guide_welcome_bullet_4">Review the configured backends before entering the app.</string>
     <string name="setup_guide_connection_title">Backend Connection</string>
-    <string name="setup_guide_connection_guide_title">Get setup code + OpenClaw URL</string>
-    <string name="setup_guide_connection_guide_cmd_1">Run these on the OpenClaw host:</string>
+    <string name="setup_guide_connection_guide_title">Get setup code + o3clu URL</string>
+    <string name="setup_guide_connection_guide_cmd_1">Run these on the o3clu host:</string>
     <string name="setup_guide_connection_guide_json_desc">`--json` prints `setupCode` and `gatewayUrl`.</string>
     <string name="setup_guide_connection_discovery_desc">Auto URL discovery is not wired yet. Android emulator uses `10.0.2.2`; real devices need LAN/Tailscale host.</string>
-    <string name="setup_guide_mode_setup_code">OpenClaw</string>
+    <string name="setup_guide_mode_setup_code">o3clu</string>
     <string name="setup_guide_mode_manual">Manual</string>
     <string name="setup_guide_setup_code_label">SETUP CODE</string>
     <string name="setup_guide_setup_code_hint">Paste code from `agentvoice-pair`</string>
@@ -798,28 +798,28 @@
     <string name="setup_guide_manual_token">TOKEN (OPTIONAL)</string>
     <string name="setup_guide_manual_password">PASSWORD (OPTIONAL)</string>
     <string name="setup_guide_permissions_title">Permissions</string>
-    <string name="setup_guide_permissions_desc">Grant permissions to enable OpenClaw features.</string>
+    <string name="setup_guide_permissions_desc">Grant permissions to enable o3clu features.</string>
     <string name="setup_guide_final_check_title">Final Check</string>
     <string name="setup_guide_final_check_desc">Verify connection and settings.</string>
     <string name="setup_guide_finish">Finish</string>
     <string name="setup_guide_next">Next</string>
     <string name="setup_guide_next_after_qr">Scan QR first</string>
-    <string name="setup_guide_connection_waiting">No backend has been imported yet. Scan the WakeHermesClaw QR generated by the helper.</string>
+    <string name="setup_guide_connection_waiting">No backend has been imported yet. Scan the o3clu QR generated by the helper.</string>
     <string name="setup_guide_connection_ready">%1$d backend(s) imported. Continue to permissions.</string>
     <string name="setup_guide_configured_backends">%1$d configured</string>
-    <string name="setup_guide_no_backends_yet">No backend is configured yet. Go back and scan the WakeHermesClaw QR.</string>
+    <string name="setup_guide_no_backends_yet">No backend is configured yet. Go back and scan the o3clu QR.</string>
     <string name="setup_guide_invalid_code">Invalid setup code.</string>
-    <string name="setup_guide_invalid_url">Invalid OpenClaw URL.</string>
+    <string name="setup_guide_invalid_url">Invalid o3clu URL.</string>
 
 
 
     <!-- Setup Code Apply & HTTP Sync -->
-    <string name="http_use_gateway_url">Use OpenClaw URL</string>
+    <string name="http_use_gateway_url">Use o3clu URL</string>
     <string name="setup_code_applied">Settings applied!</string>
     <string name="setup_code_invalid_code">Invalid or incomplete setup code.</string>
     <string name="setup_code_credential_copy_button">Copy command</string>
-    <string name="setup_code_credential_hint_title">Enter your OpenClaw password or token</string>
-    <string name="setup_code_credential_hint_desc">The setup code configured your server URL. To connect the operator session, enter your OpenClaw password or token below.\n\nRun this command on the host running OpenClaw to retrieve it:</string>
+    <string name="setup_code_credential_hint_title">Enter your o3clu password or token</string>
+    <string name="setup_code_credential_hint_desc">The setup code configured your server URL. To connect the operator session, enter your o3clu password or token below.\n\nRun this command on the host running o3clu to retrieve it:</string>
 
     <!-- Additional Setup Guide Strings -->
     <string name="permission_camera_desc">Required for the AI to see your camera stream</string>
@@ -828,13 +828,13 @@
     <string name="setup_guide_auth_token">Token</string>
     <string name="setup_guide_auth_password">Password</string>
     <string name="setup_guide_auth_none">None</string>
-    <string name="setup_guide_gateway_label">OpenClaw</string>
+    <string name="setup_guide_gateway_label">o3clu</string>
     <string name="setup_guide_auth_label">Auth</string>
-    <string name="setup_guide_test_connection_desc">Press Test Connection to verify OpenClaw reachability.</string>
+    <string name="setup_guide_test_connection_desc">Press Test Connection to verify o3clu reachability.</string>
     <string name="setup_guide_e2e_title">Required live test</string>
     <string name="setup_guide_e2e_target">Primary backend: %1$s</string>
     <string name="setup_guide_e2e_targets_all">Required backends: %1$s</string>
-    <string name="setup_guide_e2e_openclaw_tls_note">If OpenClaw shows a certificate prompt, approve the fingerprint here before the chat test continues.</string>
+    <string name="setup_guide_e2e_openclaw_tls_note">If o3clu shows a certificate prompt, approve the fingerprint here before the chat test continues.</string>
     <string name="setup_guide_e2e_button">Test connection and chat</string>
     <string name="setup_guide_e2e_testing_connection">Testing %1$s connection...</string>
     <string name="setup_guide_e2e_waiting_tls">Waiting for certificate approval...</string>
@@ -848,7 +848,7 @@
     <string name="setup_guide_testing_in_progress">Testing connection...</string>
     <string name="setup_guide_connection_state">Connection state: %1$s</string>
     <string name="setup_guide_pairing_required">Pairing Required</string>
-    <string name="setup_guide_pairing_run_on_host">Run these on the OpenClaw host:</string>
+    <string name="setup_guide_pairing_run_on_host">Run these on the o3clu host:</string>
     <string name="setup_guide_pairing_retest_desc">Then tap Test Connection again.</string>
     <string name="setup_guide_copied">Copied</string>
 
@@ -924,8 +924,8 @@
     <string name="qr_scan_prompt">Scan QR Code</string>
 <string name="qr_scan_desc">Align the QR code within the frame to scan it</string>
     <string name="qr_scan_unavailable">QR scanning is unavailable. Please update Google Play Services.</string>
-    <string name="setup_guide_qr_scan_title">OpenClaw QR pairing</string>
-    <string name="setup_guide_qr_scan_cmd_label">Run this on the OpenClaw host, then scan the QR in this app:</string>
+    <string name="setup_guide_qr_scan_title">o3clu QR pairing</string>
+    <string name="setup_guide_qr_scan_cmd_label">Run this on the o3clu host, then scan the QR in this app:</string>
     <string name="setup_guide_code_input_title">Option 2: Enter Setup Code</string>
     <!-- Bottom Navigation Tabs -->
     <string name="tab_nav_home">Home</string>
@@ -957,11 +957,11 @@
     <string name="cron_empty_fields">Name and schedule are required</string>
     <string name="cron_job_deliver">Deliver target</string>
     <string name="cron_owner_hermes_agent">HermesAgent</string>
-    <string name="cron_owner_openclaw">OpenClaw</string>
+    <string name="cron_owner_openclaw">o3clu</string>
     <string name="cron_hermes_not_configured">HermesAgent cron is not configured</string>
     <string name="cron_hermes_not_configured_desc">Add and enable a Hermes API Server backend in Settings to manage HermesAgent cron jobs.</string>
-    <string name="cron_openclaw_title">OpenClaw cron</string>
-    <string name="cron_openclaw_not_configured_desc">No enabled OpenClaw backend is configured.</string>
+    <string name="cron_openclaw_title">o3clu cron</string>
+    <string name="cron_openclaw_not_configured_desc">No enabled o3clu backend is configured.</string>
     <string name="cron_job_deliver_value">Delivery: %1$s</string>
     <string name="cron_job_prompt_value">Prompt: %1$s</string>
     <string name="cron_job_repeat_value">Repeat: %1$d / %2$d</string>
@@ -977,14 +977,14 @@
     <string name="canvas_placeholder_body">Canvas is a display area controlled by the AI assistant. Ask the assistant in Chat to show something here.</string>
     <string name="canvas_go_to_chat">Go to Chat</string>
     <string name="canvas_chat_hint">What to show on Canvas?</string>
-    <string name="canvas_chat_not_connected">Connect to OpenClaw to chat</string>
+    <string name="canvas_chat_not_connected">Connect to o3clu to chat</string>
     <string name="canvas_chat_send">Send</string>
     <string name="canvas_status_sending">Sending...</string>
     <string name="canvas_status_thinking">Thinking...</string>
     <string name="canvas_status_tool">Using tools...</string>
     <string name="canvas_status_loading">Loading Canvas...</string>
     <string name="canvas_diag_no_canvas">AI did not use Canvas — text response shown below.\nCanvas tools may not be available or enabled.</string>
-    <string name="canvas_diag_not_connected">Not connected to OpenClaw. Connect to allow AI to operate Canvas.</string>
+    <string name="canvas_diag_not_connected">Not connected to o3clu. Connect to allow AI to operate Canvas.</string>
     <string name="media_button_enabled">Headset Button Trigger</string>
     <string name="media_button_enabled_desc">Start voice chat by pressing the button on a Bluetooth headset or wired headphones. Requires Wake Word to be enabled.</string>
     <string name="wake_word_debug_enabled">Wake Word Debug Log</string>
@@ -1014,16 +1014,16 @@
     <string name="av_pairing_fallback_urls_hint">One URL per line, or separate with commas.</string>
     <string name="av_pairing_runs_api">Use Runs API</string>
     <string name="av_pairing_streaming">Use streaming</string>
-    <string name="av_pairing_openclaw_setup_code">OpenClaw setup code</string>
-    <string name="av_pairing_openclaw_decoded">Decoded OpenClaw URL</string>
+    <string name="av_pairing_openclaw_setup_code">o3clu setup code</string>
+    <string name="av_pairing_openclaw_decoded">Decoded o3clu URL</string>
     <string name="av_pairing_primary_title">Primary backend</string>
     <string name="av_pairing_primary_hermes">Use Hermes Agent as primary</string>
-    <string name="av_pairing_primary_openclaw">Use OpenClaw as primary</string>
+    <string name="av_pairing_primary_openclaw">Use o3clu as primary</string>
     <string name="av_pairing_review_loaded">QR contents loaded. Review and apply them.</string>
     <string name="av_pairing_apply_review">Apply reviewed setup</string>
     <string name="av_settings_no_hermes">No Hermes Agent backend is configured yet.</string>
-    <string name="av_settings_no_openclaw">No OpenClaw backend is configured yet.</string>
-    <string name="av_settings_openclaw_advanced">OpenClaw advanced connection details</string>
+    <string name="av_settings_no_openclaw">No o3clu backend is configured yet.</string>
+    <string name="av_settings_openclaw_advanced">o3clu advanced connection details</string>
     <string name="av_backend_url_unset">URL unset</string>
     <string name="av_backend_host_unset">Host unset</string>
     <string name="av_home_connections_title">Connections</string>

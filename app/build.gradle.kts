@@ -44,11 +44,11 @@ fun getTagVersionCode(): Int {
 }
 
 android {
-    namespace = "com.openclaw.assistant"
+    namespace = "cloud.ori3com.o3clu"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.openclaw.assistant"
+        applicationId = "cloud.ori3com.o3clu"
         minSdk = 26
         targetSdk = 34
         versionCode = getTagVersionCode()

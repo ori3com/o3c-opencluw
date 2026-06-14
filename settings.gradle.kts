@@ -14,7 +14,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "OpenClawAssistant"
+rootProject.name = "o3c-opencluw"
 include(":app")
 include(":wear")
 include(":shared")
